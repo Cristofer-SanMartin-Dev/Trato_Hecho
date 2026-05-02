@@ -1,0 +1,227 @@
+
+====================== calculadora.html ======================
+
+        <section class="mb-12 text-center md:text-left">
+            <h2 class="text-4xl font-black tracking-tight text-slate-900 dark:text-white md:text-5xl lg:text-6xl">
+                Calculadora de Materiales <br /><span class="text-primary">para tu Proyecto</span>
+            </h2>
+            <p class="mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
+                Optimiza tu presupuesto y evita desperdicios. Ingresa las dimensiones de tu terreno y calcularemos
+                automáticamente todos los insumos necesarios para una instalación profesional.
+            </p>
+        </section>
+        <!-- Calculator Grid -->
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+            <!-- Input Form -->
+            <div class="lg:col-span-7">
+                <div class="rounded-2xl border border-primary/10 bg-white p-8 shadow-sm dark:bg-slate-900">
+                    <div class="mb-6 flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">square_foot</span>
+                        <h3 class="text-xl font-bold">Configura tu área</h3>
+                    </div>
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700 dark:text-slate-300">Largo del terreno
+                                (m)</label>
+                            <div class="relative">
+                                <input
+                                    class="w-full rounded-xl border-primary/10 bg-background-light p-4 pr-12 focus:border-primary focus:ring-primary dark:bg-background-dark"
+                                    placeholder="Ej: 10.5" type="number" />
+                                <span
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">m</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700 dark:text-slate-300">Ancho del terreno
+                                (m)</label>
+                            <div class="relative">
+                                <input
+                                    class="w-full rounded-xl border-primary/10 bg-background-light p-4 pr-12 focus:border-primary focus:ring-primary dark:bg-background-dark"
+                       
+
+====================== contacto.html ======================
+
+        <section class="mb-12 text-center md:text-left">
+            <h2 class="text-4xl font-black tracking-tight text-slate-900 dark:text-white md:text-5xl lg:text-6xl">
+                Formulario de <span class="text-primary">Contacto</span>
+            </h2>
+            <p class="mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
+                Ponte en contacto con nosotros para cotizaciones, dudas o asesoría personalizada sobre nuestros
+                productos y servicios.
+            </p>
+        </section>
+
+        <!-- Contact Form -->
+        <div
+            class="max-w-2xl border border-primary/10 bg-white p-8 rounded-2xl shadow-sm dark:bg-slate-900 mx-auto md:mx-0">
+            <div class="mb-6 flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">mail</span>
+                <h3 class="text-xl font-bold">Envíanos un mensaje</h3>
+            </div>
+
+            <form id="contactoForm" action="https://formsubmit.co/aromero.madrid@gmail.com" method="POST"
+                class="space-y-6" novalidate>
+                <!-- Evita mostrar el reCAPTCHA nativo si FormSubmit confía en el origen, y configura respuesta visualmente (opcional) -->
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_subject" value="Nuevo mensaje de contacto - Cesped Sintético">
+
+                <!-- Nombre -->
+                <div class="space-y-2">
+                    <label for="nombre" class="text-sm font-bold text-slate-700 dark:text-slate-300">Nombre
+                        completo</label>
+                    <input type="text" id="nombre" name="nombre" required
+                        class="w-full rounded-xl border border-primary/10 bg-background-light p-4 focus:border-primary focus:ring-primary dark:bg-background-dark transition-colors"
+                        placeholder="Ej: Juan Pérez" />
+                    <p class="text-red-500 text-xs hidden mt-1" id="error-nombre"></p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <!-- Teléfono -->
+                    <div class="space-y-2">
+                        <label for="telefono"
+                            class="text-sm font-bold text-slate-700 dark:text-slate-300">Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" required
+                            class="w-full rounded-xl border border-primary/10 
+
+====================== index.html ======================
+
+        <section class="relative px-6 md:px-10 py-8">
+            <div class="mx-auto max-w-7xl">
+                <div class="relative min-h-[560px] flex flex-col justify-center overflow-hidden rounded-3xl bg-cover bg-center px-8 md:px-16"
+                    data-alt="Lush green synthetic soccer field under bright sun"
+                    style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuCyvYjkhVnkhit5kjPRBh0ATEkF9T3JAlGxa-Kg_DlZeAPV4alHZJtdeqgEeK2bumqugIhRDtg4rqCAyqYfycpvmwCxw4S0VcOj3_3cKbamaljL1S2UuEpgF69l4V9dzYjdD763KcUSQy_mJBjhlzNVeURMS2-4wa71ENgAS-IRfdJB743cadgXLrPn9PzL8ebYVZMSOjpjFfeIvOUAfaFBjxW7CthLxWQJOEFGJ7__ovYWF75rcw9PVVLm9OVwqKT1cejYAdMpRsA');">
+                    <div class="max-w-2xl">
+                        <h1 class="text-5xl md:text-7xl font-black leading-tight text-white mb-6">
+                            Transforma tus <br /><span class="text-primary bg-white/90 px-2 rounded-lg">espacios</span>
+                        </h1>
+                        <p class="text-lg md:text-xl text-slate-100 mb-8 max-w-lg">
+                            Calidad premium en pasto sintético para residencias, áreas deportivas y comerciales.
+                            Durabilidad extrema y estética natural garantizada.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <button
+                                class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-colors">
+                                Cotizar Proyecto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Pasto Deportivo -->
+        <section class="py-20 px-6" id="deportivo">
+            <div class="mx-auto max-w-7xl">
+                <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
+                    <div class="max-w-xl">
+                        <span class="text-primary font-bold tracking-widest uppercase text-sm">Rendimiento
+                            Extremo</span>
+                        <h2 class="text-4xl font-black mt-2">Pasto Deportivo de Alta Competición</h2>
+                        <p class="text-slate-600 dark:text-slate-400 mt-4 text-lg">Diseñado para soportar el uso más
+                            e
+
+====================== insumos.html ======================
+
+        <section class="container mx-auto px-4 md:px-10 py-8">
+            <div class="relative overflow-hidden rounded-2xl bg-primary text-white">
+                <div class="absolute inset-0 opacity-20"
+                    style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;">
+                </div>
+                <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 p-8 md:p-12">
+                    <div class="flex-1 text-center md:text-left">
+                        <h1 class="text-3xl md:text-5xl font-black leading-tight mb-4">Todo para una Instalación
+                            Profesional</h1>
+                        <p class="text-lg text-white/80 max-w-xl mb-8">Garantiza la durabilidad y el acabado perfecto de
+                            tu pasto sintético con insumos de alta calidad diseñados para resistir cualquier clima.</p>
+                        <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                            <button
+                                class="bg-white text-primary px-8 py-3 rounded-lg font-bold hover:bg-slate-100 transition-all flex items-center gap-2">
+                                Ver Catálogo <span class="material-symbols-outlined">arrow_downward</span>
+                            </button>
+                            <button
+                                class="bg-primary/20 border border-white/30 backdrop-blur-sm text-white px-8 py-3 rounded-lg font-bold hover:bg-primary/40 transition-all">
+                                Guía de Instalación
+                            </button>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/3 aspect-square rounded-xl overflow-hidden shadow-2xl">
+                        <img alt="Supplies Image" class="w-full h-full object-cover"
+                            data-alt="Rolls of seaming tape and adhesive buckets on synthetic grass"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD42KQlSw67hpnwfaQXgaNIAC1Z4KT8n4IiWxl-LEQ_8nIYRVyQb-x7gJFXOhtD30aLJgQeBj-dh0Kg3CnIFRL_1xUY2TNrZ9DD7cuxEzYTMUoh9nyVw0lJetHKlnbbW6TNXSXEngHjOp5UxzspEQGAx84eFPihAUgJkKh_Yz0RIgxq0VRgrxRns3Yd1rLBBJtlAQwNXUArgrwJEV3-m3a836Y22v4sEYqsNDq4oPVzMCjMsoceLsae57LE74DTLDdBEhgiWh6ALj4" />
+                    </div>
+                </div>
+            </div>
+        </section>
+        <main class="container mx-auto px-4 md:px-10 
+
+====================== jardines.html ======================
+
+        <section class="relative w-full h-[600px] flex items-center px-4 md:px-10 lg:px-20 overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img alt="Garden background" class="w-full h-full object-cover"
+                    data-alt="Modern residential garden with lush green synthetic grass and patio furniture"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0YbuscIo9O1qfSJJbr3Oa7FZL9Mtc1VXSuXL6WKn8b2ecvuenZpXSTlA1jTR-Kfl7-ShcPvpB3T28xmBptYeQGXAn6nUtnvJgmsGHHSlaxhtMFryqRY4FClaaKaFgjQuc33rIxjWVC5UHh61_87DwipawBHRRByqajcRNnNRZMFergLNWu-eHQn8rg1X1vqqyox-yg43mchLAeit69AXbctpGDQWXqPhV2G4O-4rLN7kWuWEBumFQFb6ybOPuaQbxD23ejpgv-lY" />
+                <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
+            </div>
+            <div class="relative z-10 max-w-3xl text-white">
+                <span
+                    class="inline-block px-4 py-1.5 bg-primary rounded-full text-xs font-bold tracking-widest uppercase mb-4">Paisajismo
+                    Residencial</span>
+                <h1 class="text-5xl md:text-6xl font-black leading-tight mb-6">Transforma tu Hogar con Jardines Siempre
+                    Verdes</h1>
+                <p class="text-lg md:text-xl text-slate-100 mb-10 leading-relaxed max-w-2xl">
+                    Soluciones de paisajismo premium que combinan estética natural con durabilidad extrema. Olvídate del
+                    riego y disfruta la perfección todo el año.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <button
+                        class="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-bold transition-all transform hover:scale-105">
+                        Ver Modelos Residenciales
+                    </button>
+                    <button
+                        class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-lg font-bold transition-all">
+                        Solicitar Cotización
+                    </button>
+                </div>
+            </div>
+        </section>
+        <div class="max-w-7xl mx-auto px-4 py-12 lg:flex lg:gap-10">
+            <!-- Sidebar Filters -->
+            <aside class="lg:w-64 shrink-0 space-y-8 mb-10 lg:mb-0">
+                <div>
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        <span class="material-symbols-
+
+====================== pasto-deportivo.html ======================
+
+        <section class="relative rounded-xl overflow-hidden mb-12 min-h-[300px] flex items-end">
+            <div class="absolute inset-0 bg-cover bg-center"
+                data-alt="Top down view of professional green soccer field turf"
+                style="background-image: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 60%), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDJXN_9HiC8inDu0BCD5K81Nkv14-nzdCkLnBcisK-O3kVGQhOn6zKooJ0sfjRbb1UaxKaeqfH3m7hY2o2vBo-INmmmoRydd3Skms_HUGV_gVRiIoVB5TImqGHjnhNFYQdJbbao2cD1o_HxW8b9_T8fpoN7oWhBPwlepi91zw1RBItDTCFX-rVBZ6yFMcO9__DJIgI57juZCF6gJK_qOhM-2yXpqisIsvROC6oR6yNWLqXUML0RM7dUN8Qg8wuXRlc3SK-lCmtEnI8');">
+            </div>
+            <div class="relative p-8 md:p-12 w-full">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" style="">Pasto Deportivo Profesional</h1>
+                <p class="text-white/80 max-w-2xl text-lg" style="">Superficies de alto rendimiento diseñadas para
+                    superar los estándares de la FIFA y federaciones internacionales.</p>
+            </div>
+        </section>
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar Filters -->
+            <aside class="w-full lg:w-64 space-y-8">
+                <div>
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2" style="">
+                        <span class="material-symbols-outlined text-primary" style="">filter_list</span> Filtrar por
+                    </h3>
+                    <div class="space-y-6">
+                        <!-- Sport -->
+                        <div>
+                            <p class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3"
+                                style="">Deporte</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-2 cursor-pointer group" style="">
+                                    <input class="rounded border-slate-300 text-primary focus:ring-primary"
+                                        type="checkbox" />
+                                    <span class="text-sm group-hover:text-primary" style="">Fútbol</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer group" style="">
+                                    <input class="rounded border-slate-300 text-primary focus:ring-primary"
+                  

@@ -1,0 +1,1919 @@
+{
+  "updatedAt": "2026-05-02T16:03:43.919Z",
+  "createdAt": "2026-05-02T02:09:28.457Z",
+  "id": "CjS3Gm0863S4j9Ij",
+  "name": "Trato Hecho - Chat Agent",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "95504852-22df-4116-8621-7d3828534d55",
+      "name": "Webhook Chat",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1808,
+        448
+      ],
+      "webhookId": "7932d703-57b1-48cd-a334-4f11edcc1725"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst body = raw.body || raw;\n\nconst uuid = String(body.sessionId || body.uuid || '').trim()\n             || 'auto_' + Date.now() + '_' + Math.random().toString(36).substr(2,6);\n\nconst message = String(body.message || body.chatInput || '').trim();\n\nif (!message) throw new Error('message es requerido');\n\nlet bodyHistory = [];\ntry {\n  if (Array.isArray(body.history)) bodyHistory = body.history;\n} catch(e) { bodyHistory = []; }\n\nreturn [{ json: { uuid, message, bodyHistory } }];"
+      },
+      "id": "2ff5e22d-da17-4d23-aa49-29b7af8c560a",
+      "name": "Extraer Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1600,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const extract = $('Extraer Input').first().json;\nconst { uuid, message, bodyHistory } = extract;\n\n// 1. HISTORIAL: Supabase → fallback frontend\nlet history = [];\ntry {\n  const raw = $('GET Historial Supabase').first()?.json;\n  // Supabase devuelve array: [{messages:[...]}, ...] o []\n  if (Array.isArray(raw) && raw.length > 0 && Array.isArray(raw[0].messages)) {\n    history = raw[0].messages;\n  } else if (raw && Array.isArray(raw.messages)) {\n    history = raw.messages;\n  }\n} catch(e) {}\nif (!Array.isArray(history) || history.length === 0) {\n  if (Array.isArray(bodyHistory) && bodyHistory.length > 0) history = bodyHistory;\n}\nhistory = history.filter(m => m && m.content);\n\n// 2. COTIZACIÓN EXISTENTE desde Supabase\nlet quoteContext = '';\ntry {\n  const raw = $('GET Cotización Supabase').first()?.json;\n  const q = Array.isArray(raw) && raw.length > 0 ? raw[0]\n            : (raw && raw.numero ? raw : null);\n  if (q) {\n    quoteContext = '\\n\\nCOTIZACIÓN EXISTENTE #' + q.numero\n      + ': ' + q.producto\n      + ', ' + q.m2 + ' m²'\n      + ', instalacion=' + (q.instalacion ? 'SI' : 'NO')\n      + ', total=$' + Number(q.total).toLocaleString('es-CL')\n      + '. Estado: ' + q.estado + '.';\n  }\n} catch(e) {}\n\n// 3. SYSTEM PROMPT COMPLETO\nconst systemPrompt = `Eres Queno, vendedor virtual de Césped Sintético ARM en Melipilla, Chile.\nTu objetivo es vender césped sintético, tomar medidas, calcular precios y generar cotizaciones formales.\n${quoteContext}\n\nCATÁLOGO (precios CLP/m2, con IVA):\n- Luxury Emerald (40mm): $28.500/m2 — jardín o terraza premium\n- Soft Touch (30mm): $22.900/m2 — jardín residencial, suave al tacto\n- Pet-Friendly Turf (35mm): $26.000/m2 — jardines con mascotas, fibra antimicrobiana\n- Pasto Deportivo Fútbol: precio a cotizar — canchas fútbol 11 y fútbol 7\n- Pasto Tenis & Pádel: precio a cotizar — canchas tenis y pádel\n- Instalación opcional: +$4.500/m2\n\nCÓMO CALCULAR EL PRECIO (hazlo tú mismo con precisión):\n1. m2 solicitados × 1.10 → redondear hacia arriba al entero = m2 con margen técnico\n2. m2 con margen × precio/m2 = subtotal pasto\n3. Si instalación: m2 con margen × 4.500 = subtotal instalación\n4. Total = subtotal pasto + subtotal instalación\nMuestra siempre el desglose paso a paso.\n\nFLUJO DE VENTA:\n1. Sin producto → pregunta uso (jardín/terraza o cancha deportiva) y muestra opciones con precios\n2. Con producto, sin m2 → pregunta cuántos m2 o dimensiones (acepta \"5x8\", \"5 por 8\", número solo)\n3. Con producto + m2 → calcula y muestra desglose. Luego pregunta: ¿necesita instalación? (+$4.500/m2) SI o NO\n4. Con instalación definida → muestra total final. Di: 'Escribe COTIZAR para cotización formal'\n5. Cliente escribe COTIZAR → pide nombre completo\n6. Tras nombre → pide RUT (formato chileno: 12.345.678-9)\n7. Tras RUT → pide dirección de instalación completa\n8. Tras dirección → emite ÚNICAMENTE esta etiqueta sin ningún texto antes ni después:\n[COTIZAR: nombre=X, rut=X, direccion=X, m2=X, tipo=X, instalacion=SI/NO, total=X]\n\nINTERPRETACIÓN DE MEDIDAS:\n- Número solo (20) o con unidad (20m2, 20 metros) = m2 directamente\n- Dos números con x/por/* (5x8, 5 por 8, 5*8) = largo × ancho → calcula m2\n- EXCEPCIÓN: en modo nombre/RUT/dirección, NUNCA interpretes texto ni números como m2\n\nCUANDO EL CLIENTE NO SABE SUS MEDIDAS:\n- Explica brevemente cómo medir (huincha, largo × ancho en metros)\n- Agrega al final exactamente: [CALCULAR]\n\nSI HAY COTIZACIÓN EXISTENTE en el contexto:\n- Muéstrale los datos al cliente\n- Ofrece: '¿Quieres proceder al pago?'\n- Para iniciar pago usa: [PAGAR: numero=X, monto=X]\n\nREGLAS ESTRICTAS:\n- Máximo 4 líneas por respuesta. Solo 1 pregunta por mensaje.\n- NUNCA saludar con 'Hola' si ya hay historial de conversación.\n- NUNCA reiniciar el flujo si ya hay producto o datos recopilados.\n- NUNCA pedir datos ya entregados en el historial.\n- NUNCA calcular precios para productos deportivos (precio a cotizar).\n- NUNCA agregar texto antes o después de [COTIZAR:] o [PAGAR:] cuando corresponda.\n- No interpretar RUT, teléfono o código postal como metros cuadrados.\n- Si el número parece fuera de rango (<1 o >1000 m2), confirma antes de continuar.\n- Si el cliente cambia de producto, confirma el cambio explícitamente.`;\n\n// 4. MENSAJES para Claude\nconst messages = [\n  ...history.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content })),\n  { role: 'user', content: message }\n];\n\n// 5. Body para Claude API\nconst claudeBody = JSON.stringify({\n  model: 'claude-sonnet-4-5',\n  max_tokens: 1024,\n  system: systemPrompt,\n  messages\n});\n\nreturn [{ json: { uuid, message, claudeBody, historyLength: history.length } }];"
+      },
+      "id": "742904d0-5ff8-436d-b70f-4a0ef3a56a1c",
+      "name": "Construir Prompt Claude",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.claudeBody }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "7b976c3e-b321-43a7-9958-a4f0fd000a6a",
+      "name": "Llamar Claude API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -816,
+        432
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "TeM2S1g4Qzk06fx0",
+          "name": "Bearer Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "GoQq4Na0MeD7nLo1",
+          "name": "Claude - Trato Hecho"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText = Array.isArray($json.content)\n  ? $json.content\n      .filter(b => b.type === 'text')\n      .map(b => b.text || '')\n      .join('\\n')\n  : String($json.content || '');\n\nconst cotizarRegex = /\\[COTIZAR:\\s*([\\s\\S]*?)\\]/i;\nconst pagarRegex = /\\[PAGAR:\\s*([\\s\\S]*?)\\]/i;\n\nconst cotizarMatch = rawText.match(cotizarRegex);\nconst pagarMatch = rawText.match(pagarRegex);\nconsole.log(\"muestra valor:\", rawText.match(cotizarRegex));\n\n\nfunction parseKeyValueBlock(blockText) {\n  const result = {};\n  const parts = blockText.split(/,\\s*(?=[a-zA-Z_]+\\s*=)/);\n\n  for (const part of parts) {\n    const idx = part.indexOf('=');\n    if (idx === -1) continue;\n    const key = part.slice(0, idx).trim().toLowerCase();\n    const value = part.slice(idx + 1).trim();\n    result[key] = value;\n  }\n\n  return result;\n}\n\nfunction limpiarNumero(str) {\n  return parseInt(String(str || '').replace(/[$.\\s]/g, '').replace(',', '.'), 10) || 0;\n}\n\nlet cleanText = rawText\n  .replace(cotizarRegex, '')\n  .replace(pagarRegex, '')\n  .trim();\n\nlet action = 'CHAT';\nlet actionData = null;\n\nif (cotizarMatch) {\n  const data = parseKeyValueBlock(cotizarMatch[1]);\n\n  action = 'COTIZAR';\n  actionData = {\n    nombre: data.nombre || '',\n    rut: data.rut || '',\n    direccion: data.direccion || '',\n    m2: parseFloat(data.m2 || '0') || 0,\n    tipo: data.tipo || '',\n    instalacion: String(data.instalacion || '').toUpperCase() === 'SI',\n    total: limpiarNumero(data.total),\n  };\n} else if (pagarMatch) {\n  const data = parseKeyValueBlock(pagarMatch[1]);\n\n  action = 'PAGAR';\n  actionData = {\n    numero: data.numero || '',\n    monto: limpiarNumero(data.monto),\n  };\n}\n\nreturn [\n  {\n    json: {\n      rawText,\n      cleanText,\n      action,\n      actionData,\n      debug: {\n        cotizarFound: !!cotizarMatch,\n        pagarFound: !!pagarMatch,\n        cotizarBlock: cotizarMatch ? cotizarMatch[1] : null,\n        pagarBlock: pagarMatch ? pagarMatch[1] : null,\n      }\n    }\n  }\n];"
+      },
+      "id": "e92d4f67-d377-4b34-899b-a0818086f295",
+      "name": "Parsear Respuesta Claude",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parsear Respuesta Claude').first().json.action }}",
+                    "rightValue": "COTIZAR",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c91ac9c7-7fb7-4c7b-89cb-48cafb69ec75"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parsear Respuesta Claude').first().json.action }}",
+                    "rightValue": "PAGAR",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "db93e55e-8522-4dd5-a01d-b8661b0c6ce8"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "5e4b8335-a4bb-4ad8-94ca-33b344f23156",
+      "name": "Switch Acción",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -176,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const parseData  = $('Parsear Respuesta Claude').first().json;\nconst actionData = parseData.actionData || {};\nconst uuid       = parseData.uuid || $('Extraer Input').first().json.uuid || 'sin-uuid';\nconst cleanText  = parseData.cleanText || '';\n\n// Número de cotización: COT-AÑO-XXXXX (basado en timestamp)\nconst year   = new Date().getFullYear();\nconst seq    = String(Date.now()).slice(-5);\nconst numero = 'COT-' + year + '-' + seq;\n\nconst total      = Number(actionData.total) || 0;\nconst m2         = Number(actionData.m2) || 0;\nconst instalacion = (String(actionData.instalacion || '')).toUpperCase() === 'SI';\n\nconst quote = {\n  numero,\n  session_id:  uuid,\n  nombre:      actionData.nombre    || '',\n  rut:         actionData.rut       || '',\n  direccion:   actionData.direccion || '',\n  producto:    actionData.tipo      || '',\n  m2,\n  instalacion,\n  total,\n  estado: 'pendiente'\n};\n\nconst totalStr = total > 0\n  ? '$' + total.toLocaleString('es-CL')\n  : 'a cotizar';\n\nconst message = '✅ Cotización generada!\\n'\n  + '📋 N° ' + numero + '\\n'\n  + '👤 ' + quote.nombre + ' — ' + quote.rut + '\\n'\n  + '📍 ' + quote.direccion + '\\n'\n  + '🌿 ' + quote.producto + ' — ' + m2 + ' m²\\n'\n  + (instalacion ? '🔧 Con instalación\\n' : '')\n  + '💰 Total: ' + totalStr + '\\n\\n'\n  + 'Escribe PAGAR para continuar con el pago.';\n\nreturn [{ json: { quote, message, uuid, cleanText } }];"
+      },
+      "id": "8ae42054-a7a7-4111-a2ce-bcd6aa9a2763",
+      "name": "Crear Cotización",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Respuesta al frontend con cotización ─────────────\nconst quoteData = $('Crear Cotización').first().json;\n\nreturn [{\n  json: {\n    message: quoteData.message,\n    quote:   quoteData.quote,\n    paymentLink: null\n  }\n}];"
+      },
+      "id": "d31376b6-4f76-4751-9ee0-7894432c3f9c",
+      "name": "Respuesta Cotización",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mercadopago.com/checkout/preferences",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"items\": [\n    {\n      \"id\": \"123456\",\n      \"title\": \"Producto de Prueba\",\n      \"description\": \"Descripción del Producto\",\n      \"category_id\": \"producto\",\n      \"quantity\": 1,\n      \"currency_id\": \"ARS\",\n      \"unit_price\": 3500\n    }\n  ],\n  \"payer\": {\n    \"name\": \"Soledad\",\n    \"surname\": \"Gomez\",\n    \"email\": \"solgomez@gmail.com\",\n    \"phone\": {\n      \"area_code\": \"11\",\n      \"number\": 116565984\n    }\n  },\n  \"identification\": {\n    \"type\": \"DNI\",\n    \"number\": \"564654654\"\n  },\n  \"external_reference\": \"prueba_123\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "1801e4f5-7826-41bd-9571-208938a1830b",
+      "name": "Llamar MercadoPago",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        336,
+        416
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "TeM2S1g4Qzk06fx0",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- Respuesta al frontend con link de pago ---------\nconst mpResp = $input.first().json;\nconst parseData = $('Parsear Respuesta Claude').first().json;\n\n// Buscamos el link, ya sea producción o sandbox\nconst paymentLink = mpResp.init_point || mpResp.sandbox_init_point || null;\n\n// Acceso seguro a los datos de la cotización (si no existen, ponemos vacío)\nconst numeroCotizacion = 1/**parseData.actionData?.numero*/ || \"N/A\";\nconst textoLimpio = parseData.cleanText || \"\";\n\nconst message = paymentLink \n  ? `${textoLimpio}\\n\\n🎫 **Orden #${numeroCotizacion}**\\n✅ ¡Listo! Aquí está tu link para pagar de forma segura con Mercado Pago:\\n${paymentLink}`\n  : `${textoLimpio}\\n\\n⚠️ Hubo un problema al generar el link de pago. Por favor, contáctanos directamente.`;\n\nreturn [{\n  json: {\n    message,\n    quote: parseData.existingQuote || null,\n    paymentLink\n  }\n}];"
+      },
+      "id": "cc34fb13-2dfe-4d4d-b43d-f73d44266862",
+      "name": "Respuesta Pago",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Respuesta simple (sin accion especial)\nconst parseData = $('Parsear Respuesta Claude').first().json;\n\nreturn [{\n  json: {\n    message: parseData.cleanText || parseData.rawText || '',\n    quote: parseData.existingQuote || null,\n    paymentLink: null\n  }\n}];"
+      },
+      "id": "d8191df4-5d15-4be3-9249-7f96bbb97fed",
+      "name": "Respuesta Simple",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "3799f2c6-4022-42ca-a01e-c0d1cacbaef4",
+      "name": "Responder Webhook (Cotizar)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a757e730-1d85-4dd3-9d96-fa7cab12206b",
+      "name": "Responder Webhook (Pagar)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "c86ac9d9-6f40-4e3d-8594-6a3f7f205ded",
+      "name": "Responder Webhook (Simple)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        416,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "8605918152",
+        "text": "=🧾 *Nueva Cotización Generada*  📋 Número: `{{ $('Crear Cotización').first().json.quote.numero }}` 🌿 Producto: {{ $('Crear Cotización').first().json.quote.tipo }} 📐 M²: {{ $('Crear Cotización').first().json.quote.m2 }} m² 🔧 Instalación: {{ $('Crear Cotización').first().json.quote.instalacion ? 'Sí' : 'No' }} 💰 Total: ${{ Number($('Crear Cotización').first().json.quote.total).toLocaleString('es-CL') }} CLP 📅 Fecha: {{ $('Crear Cotización').first().json.quote.fecha }} 🆔 UUID cliente: `{{ $('Crear Cotización').first().json.uuid }}`",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        0
+      ],
+      "id": "b6b932b5-e2e1-4e6d-afd6-ee24617a9069",
+      "name": "Telegram - MsgeCotiza",
+      "webhookId": "c8d162e4-16be-491a-b8a4-16358efa73e7",
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-trato-hecho-001",
+          "name": "Telegram Bot - Trato Hecho"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "aromero.madrid@gmail.com",
+        "subject": "Nueva Cotizacion de Queno",
+        "message": "<div style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">   <h2 style=\"color: #2e7d32;\">Resumen de tu Cotización</h2>   <p>Hola, adjuntamos los detalles de la cotización solicitada para tu proyecto:</p>      <table style=\"width: 100%; border-collapse: collapse; margin-bottom: 20px;\">     <tr>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;\">Número:</td>       <td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.quote.numero }}</td>     </tr>     <tr>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;\">Fecha:</td>       <td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.quote.fecha }}</td>     </tr>     <tr>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;\">Superficie:</td>       <td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.quote.m2 }} m²</td>     </tr>     <tr>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;\">Tipo de Pasto:</td>       <td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.quote.tipo }}</td>     </tr>     <tr>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;\">Instalación:</td>       <td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.quote.instalacion ? 'Incluida' : 'No incluida' }}</td>     </tr>     <tr style=\"font-size: 1.2em; color: #2e7d32;\">       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold;\">TOTAL:</td>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold;\">${{ $json.quote.total.toLocaleString('es-CL') }} CLP</td>     </tr>   </table>    <p>Si deseas proceder con la compra, puedes hacerlo directamente a través del link enviado por chat.</p>   <hr>   <p style=\"font-size: 0.9em; color: #777;\">Césped Sintético SpA - Melipilla, Chile.</p> </div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1136,
+        0
+      ],
+      "id": "ad075c19-1962-487a-9e36-52fa6e233936",
+      "name": "MsjeCotiza",
+      "webhookId": "20c551e2-7ae2-4ea4-b3f8-ae0037e13bca",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "F7GcQZm8AEno5j25",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8605918152",
+        "text": "=💳 *¡Nueva Venta / Pago Iniciado!*  📋 Cotización: `{{ $json.actionData.numero }}` 💰 Monto: ${{ Number($json.actionData.monto).toLocaleString('es-CL') }} CLP 🔗 Link de pago: {{ $json.paymentLink \n\n 'No disponible' }} 📅 Fecha: {{ new Date().toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        416
+      ],
+      "id": "05e84850-fc6b-4b1b-903c-9b52548fe386",
+      "name": "Send a text message1",
+      "webhookId": "4cc1cf23-3935-442d-8289-c1298b1a739f",
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-trato-hecho-001",
+          "name": "Telegram Bot - Trato Hecho"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "aromero.madrid@gmail.com",
+        "subject": "Nueva Venta",
+        "message": "<div style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; border: 1px solid #eee; padding: 20px;\">   <div style=\"text-align: center; background-color: #2e7d32; padding: 10px;\">     <h1 style=\"color: white; margin: 0;\">¡Gracias por tu compra!</h1>   </div>      <p style=\"margin-top: 20px;\">Hola,</p>   <p>Hemos recibido correctamente el pago/confirmación de tu pedido. A continuación, te detallamos el resumen de tu compra para <strong>Melipilla</strong>:</p>      <div style=\"background-color: #f4f4f4; padding: 15px; border-radius: 5px; margin: 20px 0;\">     <p style=\"margin: 5px 0;\"><strong>Orden:</strong> {{ $json.quote.numero }}</p>     <p style=\"margin: 5px 0;\"><strong>Producto:</strong> {{ $json.quote.tipo }}</p>     <p style=\"margin: 5px 0;\"><strong>Superficie:</strong> {{ $json.quote.m2 }} m²</p>     <p style=\"margin: 5px 0;\"><strong>Instalación:</strong> {{ $json.quote.instalacion ? '✅ Incluida' : '❌ No incluida' }}</p>     <p style=\"margin: 5px 0; font-size: 1.2em; color: #2e7d32;\"><strong>Total Pagado: ${{ $json.quote.total.toLocaleString('es-CL') }} CLP</strong></p>   </div>    <h3 style=\"color: #2e7d32;\">¿Qué sigue ahora?</h3>   <ol>     <li>Nuestro equipo técnico revisará los detalles de tu proyecto.</li>     <li>Te contactaremos en las próximas 24 horas hábiles para coordinar la entrega o la fecha de instalación.</li>   </ol>    <p>Si tienes alguna duda, puedes responder a este correo o escribirnos directamente por WhatsApp.</p>      <hr style=\"border: 0; border-top: 1px solid #eee; margin: 30px 0;\">   <p style=\"font-size: 0.8em; color: #999; text-align: center;\">     Césped Sintético SpA - Especialistas en áreas verdes para Melipilla y alrededores.   </p> </div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        416
+      ],
+      "id": "389a61ce-d59f-4e7e-8d1f-663e4e9b4d15",
+      "name": "MsjeVenta1",
+      "webhookId": "3723d494-a673-47ee-905f-e9a955c19e6b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "F7GcQZm8AEno5j25",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Respuesta cuando no hay cotización previa con monto ──\nconst data = $input.first().json;\n\nreturn [{\n  json: {\n    message: 'Revisar o generar cotización previa',\n    quote: data.existingQuote || null,\n    paymentLink: null\n  }\n}];"
+      },
+      "id": "d0fac113-7c3e-4299-8b1b-bf92b3a4c63e",
+      "name": "Respuesta Sin Cotización1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "e80152a9-8670-4dbe-9572-7f214fdf5028",
+      "name": "Responder Webhook (Sin Cotización)1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        576,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "15d6dade-9d8e-4586-a118-3fa82746e800",
+              "leftValue": "={{ $json.actionData.monto }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        32,
+        432
+      ],
+      "id": "fd4800ff-78c5-4b01-ab51-6c30834bc2a2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "const extract = $('Extraer Input').first()?.json || {};\nconst parse   = $('Parsear Respuesta Claude').first()?.json || {};\n\nconst uuid         = extract.uuid || 'anonimo';\nconst userMsg      = extract.message || '';\nconst assistantMsg = parse.cleanText || parse.fullResponse || '';\n\n// Leer historial previo desde Supabase\nlet history = [];\ntry {\n  const raw = $('GET Historial Supabase').first()?.json;\n  if (Array.isArray(raw) && raw.length > 0 && Array.isArray(raw[0].messages)) {\n    history = raw[0].messages;\n  } else if (raw && Array.isArray(raw.messages)) {\n    history = raw.messages;\n  }\n} catch(e) {}\n\n// Fallback bodyHistory del frontend\nif (!Array.isArray(history) || history.length === 0) {\n  try {\n    const bh = extract.bodyHistory;\n    if (Array.isArray(bh)) history = bh;\n  } catch(e) {}\n}\n\nif (!Array.isArray(history)) history = [];\nhistory = history.filter(m => m && m.content);\n\n// Agregar el turno actual\nhistory.push({ role: 'user', content: userMsg });\nhistory.push({ role: 'assistant', content: assistantMsg });\n\n// Máximo 40 mensajes (20 turnos)\nhistory = history.slice(-40);\n\nreturn [{ json: { uuid, history, message: userMsg, assistantMsg } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -432,
+        432
+      ],
+      "id": "741ea0da-7694-420e-afd6-255415c84fcb",
+      "name": "Preparar Historial"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/historial?session_id=eq.' + $json.uuid + '&select=messages' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+            }
+          ]
+        },
+        "options": {},
+        "authentication": "none"
+      },
+      "id": "89ef7229-9790-46a7-b398-ffe362246ae9",
+      "name": "GET Historial Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1408,
+        448
+      ],
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/cotizaciones?session_id=eq.' + $('Extraer Input').first().json.uuid + '&order=created_at.desc&limit=1&select=*' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+            }
+          ]
+        },
+        "options": {},
+        "authentication": "none"
+      },
+      "id": "97a5b356-2417-471c-836d-4ee2d1469e40",
+      "name": "GET Cotización Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1232,
+        448
+      ],
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/historial",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ session_id: $json.uuid, messages: $json.history, updated_at: new Date().toISOString() }) }}",
+        "options": {},
+        "authentication": "none"
+      },
+      "id": "6eaa3201-8ab4-4cbb-b730-c344233e93bb",
+      "name": "Guardar Historial Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -192,
+        400
+      ],
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/cotizaciones",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.quote) }}",
+        "options": {},
+        "authentication": "none"
+      },
+      "id": "c3ed2543-9ddb-4afe-8caa-00fc43597399",
+      "name": "Guardar Cotización Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Chat": {
+      "main": [
+        [
+          {
+            "node": "Extraer Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Input": {
+      "main": [
+        [
+          {
+            "node": "GET Historial Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Historial Supabase": {
+      "main": [
+        [
+          {
+            "node": "GET Cotización Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Cotización Supabase": {
+      "main": [
+        [
+          {
+            "node": "Construir Prompt Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir Prompt Claude": {
+      "main": [
+        [
+          {
+            "node": "Llamar Claude API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Llamar Claude API": {
+      "main": [
+        [
+          {
+            "node": "Parsear Respuesta Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear Respuesta Claude": {
+      "main": [
+        [
+          {
+            "node": "Preparar Historial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Historial": {
+      "main": [
+        [
+          {
+            "node": "Guardar Historial Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar Historial Supabase": {
+      "main": [
+        [
+          {
+            "node": "Switch Acción",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Acción": {
+      "main": [
+        [
+          {
+            "node": "Crear Cotización",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respuesta Simple",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Cotización": {
+      "main": [
+        [
+          {
+            "node": "Guardar Cotización Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar Cotización Supabase": {
+      "main": [
+        [
+          {
+            "node": "Respuesta Cotización",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respuesta Cotización": {
+      "main": [
+        [
+          {
+            "node": "Telegram - MsgeCotiza",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram - MsgeCotiza": {
+      "main": [
+        [
+          {
+            "node": "MsjeCotiza",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MsjeCotiza": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook (Cotizar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Llamar MercadoPago",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respuesta Sin Cotización1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Llamar MercadoPago": {
+      "main": [
+        [
+          {
+            "node": "Respuesta Pago",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respuesta Pago": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "MsjeVenta1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MsjeVenta1": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook (Pagar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respuesta Sin Cotización1": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook (Sin Cotización)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respuesta Simple": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook (Simple)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {},
+  "meta": null,
+  "pinData": {},
+  "versionId": "8dcff778-7c88-413c-8cc2-24750b02685c",
+  "activeVersionId": "8dcff778-7c88-413c-8cc2-24750b02685c",
+  "versionCounter": 137,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-05-02T02:09:28.473Z",
+      "createdAt": "2026-05-02T02:09:28.473Z",
+      "role": "workflow:owner",
+      "workflowId": "CjS3Gm0863S4j9Ij",
+      "projectId": "WFAsewOsXFDwGJWF",
+      "project": {
+        "updatedAt": "2026-03-28T13:04:48.870Z",
+        "createdAt": "2026-03-28T13:01:08.818Z",
+        "id": "WFAsewOsXFDwGJWF",
+        "name": "Gonzalo ghon.cbr@gmail.com <ghon.cbr@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "b4851c5e-a89a-4984-af61-213ba884aaeb"
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2026-03-28T13:23:08.567Z",
+      "createdAt": "2026-03-28T13:23:08.567Z",
+      "id": "JL63ldyzA1UQlelo",
+      "name": "trato-hecho"
+    },
+    {
+      "updatedAt": "2026-03-28T13:23:08.570Z",
+      "createdAt": "2026-03-28T13:23:08.570Z",
+      "id": "nnzNct4HPQf6Xwta",
+      "name": "chat-agent"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-05-02T16:03:43.921Z",
+    "createdAt": "2026-05-02T16:03:43.921Z",
+    "versionId": "8dcff778-7c88-413c-8cc2-24750b02685c",
+    "workflowId": "CjS3Gm0863S4j9Ij",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "chat",
+          "responseMode": "responseNode",
+          "options": {
+            "allowedOrigins": "*"
+          }
+        },
+        "id": "95504852-22df-4116-8621-7d3828534d55",
+        "name": "Webhook Chat",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -1808,
+          448
+        ],
+        "webhookId": "7932d703-57b1-48cd-a334-4f11edcc1725"
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw = $input.first().json;\nconst body = raw.body || raw;\n\nconst uuid = String(body.sessionId || body.uuid || '').trim()\n             || 'auto_' + Date.now() + '_' + Math.random().toString(36).substr(2,6);\n\nconst message = String(body.message || body.chatInput || '').trim();\n\nif (!message) throw new Error('message es requerido');\n\nlet bodyHistory = [];\ntry {\n  if (Array.isArray(body.history)) bodyHistory = body.history;\n} catch(e) { bodyHistory = []; }\n\nreturn [{ json: { uuid, message, bodyHistory } }];"
+        },
+        "id": "2ff5e22d-da17-4d23-aa49-29b7af8c560a",
+        "name": "Extraer Input",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1600,
+          448
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const extract = $('Extraer Input').first().json;\nconst { uuid, message, bodyHistory } = extract;\n\n// 1. HISTORIAL: Supabase → fallback frontend\nlet history = [];\ntry {\n  const raw = $('GET Historial Supabase').first()?.json;\n  // Supabase devuelve array: [{messages:[...]}, ...] o []\n  if (Array.isArray(raw) && raw.length > 0 && Array.isArray(raw[0].messages)) {\n    history = raw[0].messages;\n  } else if (raw && Array.isArray(raw.messages)) {\n    history = raw.messages;\n  }\n} catch(e) {}\nif (!Array.isArray(history) || history.length === 0) {\n  if (Array.isArray(bodyHistory) && bodyHistory.length > 0) history = bodyHistory;\n}\nhistory = history.filter(m => m && m.content);\n\n// 2. COTIZACIÓN EXISTENTE desde Supabase\nlet quoteContext = '';\ntry {\n  const raw = $('GET Cotización Supabase').first()?.json;\n  const q = Array.isArray(raw) && raw.length > 0 ? raw[0]\n            : (raw && raw.numero ? raw : null);\n  if (q) {\n    quoteContext = '\\n\\nCOTIZACIÓN EXISTENTE #' + q.numero\n      + ': ' + q.producto\n      + ', ' + q.m2 + ' m²'\n      + ', instalacion=' + (q.instalacion ? 'SI' : 'NO')\n      + ', total=$' + Number(q.total).toLocaleString('es-CL')\n      + '. Estado: ' + q.estado + '.';\n  }\n} catch(e) {}\n\n// 3. SYSTEM PROMPT COMPLETO\nconst systemPrompt = `Eres Queno, vendedor virtual de Césped Sintético ARM en Melipilla, Chile.\nTu objetivo es vender césped sintético, tomar medidas, calcular precios y generar cotizaciones formales.\n${quoteContext}\n\nCATÁLOGO (precios CLP/m2, con IVA):\n- Luxury Emerald (40mm): $28.500/m2 — jardín o terraza premium\n- Soft Touch (30mm): $22.900/m2 — jardín residencial, suave al tacto\n- Pet-Friendly Turf (35mm): $26.000/m2 — jardines con mascotas, fibra antimicrobiana\n- Pasto Deportivo Fútbol: precio a cotizar — canchas fútbol 11 y fútbol 7\n- Pasto Tenis & Pádel: precio a cotizar — canchas tenis y pádel\n- Instalación opcional: +$4.500/m2\n\nCÓMO CALCULAR EL PRECIO (hazlo tú mismo con precisión):\n1. m2 solicitados × 1.10 → redondear hacia arriba al entero = m2 con margen técnico\n2. m2 con margen × precio/m2 = subtotal pasto\n3. Si instalación: m2 con margen × 4.500 = subtotal instalación\n4. Total = subtotal pasto + subtotal instalación\nMuestra siempre el desglose paso a paso.\n\nFLUJO DE VENTA:\n1. Sin producto → pregunta uso (jardín/terraza o cancha deportiva) y muestra opciones con precios\n2. Con producto, sin m2 → pregunta cuántos m2 o dimensiones (acepta \"5x8\", \"5 por 8\", número solo)\n3. Con producto + m2 → calcula y muestra desglose. Luego pregunta: ¿necesita instalación? (+$4.500/m2) SI o NO\n4. Con instalación definida → muestra total final. Di: 'Escribe COTIZAR para cotización formal'\n5. Cliente escribe COTIZAR → pide nombre completo\n6. Tras nombre → pide RUT (formato chileno: 12.345.678-9)\n7. Tras RUT → pide dirección de instalación completa\n8. Tras dirección → emite ÚNICAMENTE esta etiqueta sin ningún texto antes ni después:\n[COTIZAR: nombre=X, rut=X, direccion=X, m2=X, tipo=X, instalacion=SI/NO, total=X]\n\nINTERPRETACIÓN DE MEDIDAS:\n- Número solo (20) o con unidad (20m2, 20 metros) = m2 directamente\n- Dos números con x/por/* (5x8, 5 por 8, 5*8) = largo × ancho → calcula m2\n- EXCEPCIÓN: en modo nombre/RUT/dirección, NUNCA interpretes texto ni números como m2\n\nCUANDO EL CLIENTE NO SABE SUS MEDIDAS:\n- Explica brevemente cómo medir (huincha, largo × ancho en metros)\n- Agrega al final exactamente: [CALCULAR]\n\nSI HAY COTIZACIÓN EXISTENTE en el contexto:\n- Muéstrale los datos al cliente\n- Ofrece: '¿Quieres proceder al pago?'\n- Para iniciar pago usa: [PAGAR: numero=X, monto=X]\n\nREGLAS ESTRICTAS:\n- Máximo 4 líneas por respuesta. Solo 1 pregunta por mensaje.\n- NUNCA saludar con 'Hola' si ya hay historial de conversación.\n- NUNCA reiniciar el flujo si ya hay producto o datos recopilados.\n- NUNCA pedir datos ya entregados en el historial.\n- NUNCA calcular precios para productos deportivos (precio a cotizar).\n- NUNCA agregar texto antes o después de [COTIZAR:] o [PAGAR:] cuando corresponda.\n- No interpretar RUT, teléfono o código postal como metros cuadrados.\n- Si el número parece fuera de rango (<1 o >1000 m2), confirma antes de continuar.\n- Si el cliente cambia de producto, confirma el cambio explícitamente.`;\n\n// 4. MENSAJES para Claude\nconst messages = [\n  ...history.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content })),\n  { role: 'user', content: message }\n];\n\n// 5. Body para Claude API\nconst claudeBody = JSON.stringify({\n  model: 'claude-sonnet-4-5',\n  max_tokens: 1024,\n  system: systemPrompt,\n  messages\n});\n\nreturn [{ json: { uuid, message, claudeBody, historyLength: history.length } }];"
+        },
+        "id": "742904d0-5ff8-436d-b70f-4a0ef3a56a1c",
+        "name": "Construir Prompt Claude",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1008,
+          432
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.anthropic.com/v1/messages",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "anthropic-version",
+                "value": "2023-06-01"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ $json.claudeBody }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "7b976c3e-b321-43a7-9958-a4f0fd000a6a",
+        "name": "Llamar Claude API",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -816,
+          432
+        ],
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "TeM2S1g4Qzk06fx0",
+            "name": "Bearer Auth account"
+          },
+          "httpHeaderAuth": {
+            "id": "GoQq4Na0MeD7nLo1",
+            "name": "Claude - Trato Hecho"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const rawText = Array.isArray($json.content)\n  ? $json.content\n      .filter(b => b.type === 'text')\n      .map(b => b.text || '')\n      .join('\\n')\n  : String($json.content || '');\n\nconst cotizarRegex = /\\[COTIZAR:\\s*([\\s\\S]*?)\\]/i;\nconst pagarRegex = /\\[PAGAR:\\s*([\\s\\S]*?)\\]/i;\n\nconst cotizarMatch = rawText.match(cotizarRegex);\nconst pagarMatch = rawText.match(pagarRegex);\nconsole.log(\"muestra valor:\", rawText.match(cotizarRegex));\n\n\nfunction parseKeyValueBlock(blockText) {\n  const result = {};\n  const parts = blockText.split(/,\\s*(?=[a-zA-Z_]+\\s*=)/);\n\n  for (const part of parts) {\n    const idx = part.indexOf('=');\n    if (idx === -1) continue;\n    const key = part.slice(0, idx).trim().toLowerCase();\n    const value = part.slice(idx + 1).trim();\n    result[key] = value;\n  }\n\n  return result;\n}\n\nfunction limpiarNumero(str) {\n  return parseInt(String(str || '').replace(/[$.\\s]/g, '').replace(',', '.'), 10) || 0;\n}\n\nlet cleanText = rawText\n  .replace(cotizarRegex, '')\n  .replace(pagarRegex, '')\n  .trim();\n\nlet action = 'CHAT';\nlet actionData = null;\n\nif (cotizarMatch) {\n  const data = parseKeyValueBlock(cotizarMatch[1]);\n\n  action = 'COTIZAR';\n  actionData = {\n    nombre: data.nombre || '',\n    rut: data.rut || '',\n    direccion: data.direccion || '',\n    m2: parseFloat(data.m2 || '0') || 0,\n    tipo: data.tipo || '',\n    instalacion: String(data.instalacion || '').toUpperCase() === 'SI',\n    total: limpiarNumero(data.total),\n  };\n} else if (pagarMatch) {\n  const data = parseKeyValueBlock(pagarMatch[1]);\n\n  action = 'PAGAR';\n  actionData = {\n    numero: data.numero || '',\n    monto: limpiarNumero(data.monto),\n  };\n}\n\nreturn [\n  {\n    json: {\n      rawText,\n      cleanText,\n      action,\n      actionData,\n      debug: {\n        cotizarFound: !!cotizarMatch,\n        pagarFound: !!pagarMatch,\n        cotizarBlock: cotizarMatch ? cotizarMatch[1] : null,\n        pagarBlock: pagarMatch ? pagarMatch[1] : null,\n      }\n    }\n  }\n];"
+        },
+        "id": "e92d4f67-d377-4b34-899b-a0818086f295",
+        "name": "Parsear Respuesta Claude",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -624,
+          432
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Parsear Respuesta Claude').first().json.action }}",
+                      "rightValue": "COTIZAR",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "c91ac9c7-7fb7-4c7b-89cb-48cafb69ec75"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Parsear Respuesta Claude').first().json.action }}",
+                      "rightValue": "PAGAR",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "db93e55e-8522-4dd5-a01d-b8661b0c6ce8"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra"
+          }
+        },
+        "id": "5e4b8335-a4bb-4ad8-94ca-33b344f23156",
+        "name": "Switch Acción",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3,
+        "position": [
+          -176,
+          144
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const parseData  = $('Parsear Respuesta Claude').first().json;\nconst actionData = parseData.actionData || {};\nconst uuid       = parseData.uuid || $('Extraer Input').first().json.uuid || 'sin-uuid';\nconst cleanText  = parseData.cleanText || '';\n\n// Número de cotización: COT-AÑO-XXXXX (basado en timestamp)\nconst year   = new Date().getFullYear();\nconst seq    = String(Date.now()).slice(-5);\nconst numero = 'COT-' + year + '-' + seq;\n\nconst total      = Number(actionData.total) || 0;\nconst m2         = Number(actionData.m2) || 0;\nconst instalacion = (String(actionData.instalacion || '')).toUpperCase() === 'SI';\n\nconst quote = {\n  numero,\n  session_id:  uuid,\n  nombre:      actionData.nombre    || '',\n  rut:         actionData.rut       || '',\n  direccion:   actionData.direccion || '',\n  producto:    actionData.tipo      || '',\n  m2,\n  instalacion,\n  total,\n  estado: 'pendiente'\n};\n\nconst totalStr = total > 0\n  ? '$' + total.toLocaleString('es-CL')\n  : 'a cotizar';\n\nconst message = '✅ Cotización generada!\\n'\n  + '📋 N° ' + numero + '\\n'\n  + '👤 ' + quote.nombre + ' — ' + quote.rut + '\\n'\n  + '📍 ' + quote.direccion + '\\n'\n  + '🌿 ' + quote.producto + ' — ' + m2 + ' m²\\n'\n  + (instalacion ? '🔧 Con instalación\\n' : '')\n  + '💰 Total: ' + totalStr + '\\n\\n'\n  + 'Escribe PAGAR para continuar con el pago.';\n\nreturn [{ json: { quote, message, uuid, cleanText } }];"
+        },
+        "id": "8ae42054-a7a7-4111-a2ce-bcd6aa9a2763",
+        "name": "Crear Cotización",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          256,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// ── Respuesta al frontend con cotización ─────────────\nconst quoteData = $('Crear Cotización').first().json;\n\nreturn [{\n  json: {\n    message: quoteData.message,\n    quote:   quoteData.quote,\n    paymentLink: null\n  }\n}];"
+        },
+        "id": "d31376b6-4f76-4751-9ee0-7894432c3f9c",
+        "name": "Respuesta Cotización",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          688,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.mercadopago.com/checkout/preferences",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"items\": [\n    {\n      \"id\": \"123456\",\n      \"title\": \"Producto de Prueba\",\n      \"description\": \"Descripción del Producto\",\n      \"category_id\": \"producto\",\n      \"quantity\": 1,\n      \"currency_id\": \"ARS\",\n      \"unit_price\": 3500\n    }\n  ],\n  \"payer\": {\n    \"name\": \"Soledad\",\n    \"surname\": \"Gomez\",\n    \"email\": \"solgomez@gmail.com\",\n    \"phone\": {\n      \"area_code\": \"11\",\n      \"number\": 116565984\n    }\n  },\n  \"identification\": {\n    \"type\": \"DNI\",\n    \"number\": \"564654654\"\n  },\n  \"external_reference\": \"prueba_123\"\n}",
+          "options": {
+            "timeout": 15000
+          }
+        },
+        "id": "1801e4f5-7826-41bd-9571-208938a1830b",
+        "name": "Llamar MercadoPago",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          336,
+          416
+        ],
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "TeM2S1g4Qzk06fx0",
+            "name": "Bearer Auth account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- Respuesta al frontend con link de pago ---------\nconst mpResp = $input.first().json;\nconst parseData = $('Parsear Respuesta Claude').first().json;\n\n// Buscamos el link, ya sea producción o sandbox\nconst paymentLink = mpResp.init_point || mpResp.sandbox_init_point || null;\n\n// Acceso seguro a los datos de la cotización (si no existen, ponemos vacío)\nconst numeroCotizacion = 1/**parseData.actionData?.numero*/ || \"N/A\";\nconst textoLimpio = parseData.cleanText || \"\";\n\nconst message = paymentLink \n  ? `${textoLimpio}\\n\\n🎫 **Orden #${numeroCotizacion}**\\n✅ ¡Listo! Aquí está tu link para pagar de forma segura con Mercado Pago:\\n${paymentLink}`\n  : `${textoLimpio}\\n\\n⚠️ Hubo un problema al generar el link de pago. Por favor, contáctanos directamente.`;\n\nreturn [{\n  json: {\n    message,\n    quote: parseData.existingQuote || null,\n    paymentLink\n  }\n}];"
+        },
+        "id": "cc34fb13-2dfe-4d4d-b43d-f73d44266862",
+        "name": "Respuesta Pago",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          640,
+          416
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Respuesta simple (sin accion especial)\nconst parseData = $('Parsear Respuesta Claude').first().json;\n\nreturn [{\n  json: {\n    message: parseData.cleanText || parseData.rawText || '',\n    quote: parseData.existingQuote || null,\n    paymentLink: null\n  }\n}];"
+        },
+        "id": "d8191df4-5d15-4be3-9249-7f96bbb97fed",
+        "name": "Respuesta Simple",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          128,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json) }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        "id": "3799f2c6-4022-42ca-a01e-c0d1cacbaef4",
+        "name": "Responder Webhook (Cotizar)",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1,
+        "position": [
+          1360,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json) }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        "id": "a757e730-1d85-4dd3-9d96-fa7cab12206b",
+        "name": "Responder Webhook (Pagar)",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1,
+        "position": [
+          1392,
+          416
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json) }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        "id": "c86ac9d9-6f40-4e3d-8594-6a3f7f205ded",
+        "name": "Responder Webhook (Simple)",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1,
+        "position": [
+          416,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "chatId": "8605918152",
+          "text": "=🧾 *Nueva Cotización Generada*  📋 Número: `{{ $('Crear Cotización').first().json.quote.numero }}` 🌿 Producto: {{ $('Crear Cotización').first().json.quote.tipo }} 📐 M²: {{ $('Crear Cotización').first().json.quote.m2 }} m² 🔧 Instalación: {{ $('Crear Cotización').first().json.quote.instalacion ? 'Sí' : 'No' }} 💰 Total: ${{ Number($('Crear Cotización').first().json.quote.total).toLocaleString('es-CL') }} CLP 📅 Fecha: {{ $('Crear Cotización').first().json.quote.fecha }} 🆔 UUID cliente: `{{ $('Crear Cotización').first().json.uuid }}`",
+          "additionalFields": {
+            "parse_mode": "Markdown"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          928,
+          0
+        ],
+        "id": "b6b932b5-e2e1-4e6d-afd6-ee24617a9069",
+        "name": "Telegram - MsgeCotiza",
+        "webhookId": "c8d162e4-16be-491a-b8a4-16358efa73e7",
+        "credentials": {
+          "telegramApi": {
+            "id": "telegram-trato-hecho-001",
+            "name": "Telegram Bot - Trato Hecho"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sendTo": "aromero.madrid@gmail.com",
+          "subject": "Nueva Cotizacion de Queno",
+          "message": "<div style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">   <h2 style=\"color: #2e7d32;\">Resumen de tu Cotización</h2>   <p>Hola, adjuntamos los detalles de la cotización solicitada para tu proyecto:</p>      <table style=\"width: 100%; border-collapse: collapse; margin-bottom: 20px;\">     <tr>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;\">Número:</td>       <td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.quote.numero }}</td>     </tr>     <tr>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;\">Fecha:</td>       <td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.quote.fecha }}</td>     </tr>     <tr>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;\">Superficie:</td>       <td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.quote.m2 }} m²</td>     </tr>     <tr>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;\">Tipo de Pasto:</td>       <td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.quote.tipo }}</td>     </tr>     <tr>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;\">Instalación:</td>       <td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.quote.instalacion ? 'Incluida' : 'No incluida' }}</td>     </tr>     <tr style=\"font-size: 1.2em; color: #2e7d32;\">       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold;\">TOTAL:</td>       <td style=\"padding: 8px; border: 1px solid #ddd; font-weight: bold;\">${{ $json.quote.total.toLocaleString('es-CL') }} CLP</td>     </tr>   </table>    <p>Si deseas proceder con la compra, puedes hacerlo directamente a través del link enviado por chat.</p>   <hr>   <p style=\"font-size: 0.9em; color: #777;\">Césped Sintético SpA - Melipilla, Chile.</p> </div>",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          1136,
+          0
+        ],
+        "id": "ad075c19-1962-487a-9e36-52fa6e233936",
+        "name": "MsjeCotiza",
+        "webhookId": "20c551e2-7ae2-4ea4-b3f8-ae0037e13bca",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "F7GcQZm8AEno5j25",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "8605918152",
+          "text": "=💳 *¡Nueva Venta / Pago Iniciado!*  📋 Cotización: `{{ $json.actionData.numero }}` 💰 Monto: ${{ Number($json.actionData.monto).toLocaleString('es-CL') }} CLP 🔗 Link de pago: {{ $json.paymentLink \n\n 'No disponible' }} 📅 Fecha: {{ new Date().toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }}",
+          "additionalFields": {
+            "parse_mode": "Markdown"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          880,
+          416
+        ],
+        "id": "05e84850-fc6b-4b1b-903c-9b52548fe386",
+        "name": "Send a text message1",
+        "webhookId": "4cc1cf23-3935-442d-8289-c1298b1a739f",
+        "credentials": {
+          "telegramApi": {
+            "id": "telegram-trato-hecho-001",
+            "name": "Telegram Bot - Trato Hecho"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sendTo": "aromero.madrid@gmail.com",
+          "subject": "Nueva Venta",
+          "message": "<div style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; border: 1px solid #eee; padding: 20px;\">   <div style=\"text-align: center; background-color: #2e7d32; padding: 10px;\">     <h1 style=\"color: white; margin: 0;\">¡Gracias por tu compra!</h1>   </div>      <p style=\"margin-top: 20px;\">Hola,</p>   <p>Hemos recibido correctamente el pago/confirmación de tu pedido. A continuación, te detallamos el resumen de tu compra para <strong>Melipilla</strong>:</p>      <div style=\"background-color: #f4f4f4; padding: 15px; border-radius: 5px; margin: 20px 0;\">     <p style=\"margin: 5px 0;\"><strong>Orden:</strong> {{ $json.quote.numero }}</p>     <p style=\"margin: 5px 0;\"><strong>Producto:</strong> {{ $json.quote.tipo }}</p>     <p style=\"margin: 5px 0;\"><strong>Superficie:</strong> {{ $json.quote.m2 }} m²</p>     <p style=\"margin: 5px 0;\"><strong>Instalación:</strong> {{ $json.quote.instalacion ? '✅ Incluida' : '❌ No incluida' }}</p>     <p style=\"margin: 5px 0; font-size: 1.2em; color: #2e7d32;\"><strong>Total Pagado: ${{ $json.quote.total.toLocaleString('es-CL') }} CLP</strong></p>   </div>    <h3 style=\"color: #2e7d32;\">¿Qué sigue ahora?</h3>   <ol>     <li>Nuestro equipo técnico revisará los detalles de tu proyecto.</li>     <li>Te contactaremos en las próximas 24 horas hábiles para coordinar la entrega o la fecha de instalación.</li>   </ol>    <p>Si tienes alguna duda, puedes responder a este correo o escribirnos directamente por WhatsApp.</p>      <hr style=\"border: 0; border-top: 1px solid #eee; margin: 30px 0;\">   <p style=\"font-size: 0.8em; color: #999; text-align: center;\">     Césped Sintético SpA - Especialistas en áreas verdes para Melipilla y alrededores.   </p> </div>",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          1120,
+          416
+        ],
+        "id": "389a61ce-d59f-4e7e-8d1f-663e4e9b4d15",
+        "name": "MsjeVenta1",
+        "webhookId": "3723d494-a673-47ee-905f-e9a955c19e6b",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "F7GcQZm8AEno5j25",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// ── Respuesta cuando no hay cotización previa con monto ──\nconst data = $input.first().json;\n\nreturn [{\n  json: {\n    message: 'Revisar o generar cotización previa',\n    quote: data.existingQuote || null,\n    paymentLink: null\n  }\n}];"
+        },
+        "id": "d0fac113-7c3e-4299-8b1b-bf92b3a4c63e",
+        "name": "Respuesta Sin Cotización1",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          272,
+          736
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json) }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        "id": "e80152a9-8670-4dbe-9572-7f214fdf5028",
+        "name": "Responder Webhook (Sin Cotización)1",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1,
+        "position": [
+          576,
+          736
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "15d6dade-9d8e-4586-a118-3fa82746e800",
+                "leftValue": "={{ $json.actionData.monto }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          32,
+          432
+        ],
+        "id": "fd4800ff-78c5-4b01-ab51-6c30834bc2a2",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "jsCode": "const extract = $('Extraer Input').first()?.json || {};\nconst parse   = $('Parsear Respuesta Claude').first()?.json || {};\n\nconst uuid         = extract.uuid || 'anonimo';\nconst userMsg      = extract.message || '';\nconst assistantMsg = parse.cleanText || parse.fullResponse || '';\n\n// Leer historial previo desde Supabase\nlet history = [];\ntry {\n  const raw = $('GET Historial Supabase').first()?.json;\n  if (Array.isArray(raw) && raw.length > 0 && Array.isArray(raw[0].messages)) {\n    history = raw[0].messages;\n  } else if (raw && Array.isArray(raw.messages)) {\n    history = raw.messages;\n  }\n} catch(e) {}\n\n// Fallback bodyHistory del frontend\nif (!Array.isArray(history) || history.length === 0) {\n  try {\n    const bh = extract.bodyHistory;\n    if (Array.isArray(bh)) history = bh;\n  } catch(e) {}\n}\n\nif (!Array.isArray(history)) history = [];\nhistory = history.filter(m => m && m.content);\n\n// Agregar el turno actual\nhistory.push({ role: 'user', content: userMsg });\nhistory.push({ role: 'assistant', content: assistantMsg });\n\n// Máximo 40 mensajes (20 turnos)\nhistory = history.slice(-40);\n\nreturn [{ json: { uuid, history, message: userMsg, assistantMsg } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -432,
+          432
+        ],
+        "id": "741ea0da-7694-420e-afd6-255415c84fcb",
+        "name": "Preparar Historial"
+      },
+      {
+        "parameters": {
+          "method": "GET",
+          "url": "={{ 'https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/historial?session_id=eq.' + $json.uuid + '&select=messages' }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              }
+            ]
+          },
+          "options": {},
+          "authentication": "none"
+        },
+        "id": "89ef7229-9790-46a7-b398-ffe362246ae9",
+        "name": "GET Historial Supabase",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1408,
+          448
+        ],
+        "onError": "continueRegularOutput",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "method": "GET",
+          "url": "={{ 'https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/cotizaciones?session_id=eq.' + $('Extraer Input').first().json.uuid + '&order=created_at.desc&limit=1&select=*' }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              }
+            ]
+          },
+          "options": {},
+          "authentication": "none"
+        },
+        "id": "97a5b356-2417-471c-836d-4ee2d1469e40",
+        "name": "GET Cotización Supabase",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1232,
+          448
+        ],
+        "onError": "continueRegularOutput",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/historial",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Prefer",
+                "value": "resolution=merge-duplicates"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ session_id: $json.uuid, messages: $json.history, updated_at: new Date().toISOString() }) }}",
+          "options": {},
+          "authentication": "none"
+        },
+        "id": "6eaa3201-8ab4-4cbb-b730-c344233e93bb",
+        "name": "Guardar Historial Supabase",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -192,
+          400
+        ],
+        "onError": "continueRegularOutput",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/cotizaciones",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Prefer",
+                "value": "return=representation"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.quote) }}",
+          "options": {},
+          "authentication": "none"
+        },
+        "id": "c3ed2543-9ddb-4afe-8caa-00fc43597399",
+        "name": "Guardar Cotización Supabase",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          480,
+          0
+        ]
+      }
+    ],
+    "connections": {
+      "Webhook Chat": {
+        "main": [
+          [
+            {
+              "node": "Extraer Input",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer Input": {
+        "main": [
+          [
+            {
+              "node": "GET Historial Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "GET Historial Supabase": {
+        "main": [
+          [
+            {
+              "node": "GET Cotización Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "GET Cotización Supabase": {
+        "main": [
+          [
+            {
+              "node": "Construir Prompt Claude",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Construir Prompt Claude": {
+        "main": [
+          [
+            {
+              "node": "Llamar Claude API",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Llamar Claude API": {
+        "main": [
+          [
+            {
+              "node": "Parsear Respuesta Claude",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parsear Respuesta Claude": {
+        "main": [
+          [
+            {
+              "node": "Preparar Historial",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preparar Historial": {
+        "main": [
+          [
+            {
+              "node": "Guardar Historial Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Guardar Historial Supabase": {
+        "main": [
+          [
+            {
+              "node": "Switch Acción",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch Acción": {
+        "main": [
+          [
+            {
+              "node": "Crear Cotización",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respuesta Simple",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Crear Cotización": {
+        "main": [
+          [
+            {
+              "node": "Guardar Cotización Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Guardar Cotización Supabase": {
+        "main": [
+          [
+            {
+              "node": "Respuesta Cotización",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respuesta Cotización": {
+        "main": [
+          [
+            {
+              "node": "Telegram - MsgeCotiza",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram - MsgeCotiza": {
+        "main": [
+          [
+            {
+              "node": "MsjeCotiza",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MsjeCotiza": {
+        "main": [
+          [
+            {
+              "node": "Responder Webhook (Cotizar)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Llamar MercadoPago",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respuesta Sin Cotización1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Llamar MercadoPago": {
+        "main": [
+          [
+            {
+              "node": "Respuesta Pago",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respuesta Pago": {
+        "main": [
+          [
+            {
+              "node": "Send a text message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a text message1": {
+        "main": [
+          [
+            {
+              "node": "MsjeVenta1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MsjeVenta1": {
+        "main": [
+          [
+            {
+              "node": "Responder Webhook (Pagar)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respuesta Sin Cotización1": {
+        "main": [
+          [
+            {
+              "node": "Responder Webhook (Sin Cotización)1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respuesta Simple": {
+        "main": [
+          [
+            {
+              "node": "Responder Webhook (Simple)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Gonzalo ghon.cbr@gmail.com",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-05-02T16:03:46.089Z",
+        "id": 60,
+        "workflowId": "CjS3Gm0863S4j9Ij",
+        "versionId": "8dcff778-7c88-413c-8cc2-24750b02685c",
+        "event": "activated",
+        "userId": "b4851c5e-a89a-4984-af61-213ba884aaeb"
+      }
+    ]
+  }
+}
