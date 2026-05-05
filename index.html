@@ -1200,14 +1200,41 @@
             }
 
             function formatBotMsg(text) {
-                const card = formatCotizacionCard(String(text));
-                if (card) return card;
-                return String(text)
-                    .replace(/\[CALC\]/g, '') // strip marker — widget added separately
+                let t = String(text);
+
+                // ── 1. PAYMENT_URL debe procesarse PRIMERO (antes de la card)
+                //    porque el mensaje de pago también contiene COT-XXXX
+                const payMatch = t.match(/\[PAYMENT_URL:(https?:\/\/[^\]]+)\]/);
+                if (payMatch) {
+                    const url = payMatch[1].trim();
+                    t = t.replace(payMatch[0], '').trim();
+                    const safeUrl = url.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+                    const btnHtml = `<div style="margin-top:14px;text-align:center;"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:13px 32px;background:#009ee3;color:#fff;font-size:15px;font-weight:700;border-radius:14px;text-decoration:none;box-shadow:0 3px 12px rgba(0,158,227,0.45);">💳 Pagar con Mercado Pago</a></div>`;
+                    return t
+                        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n/g, '<br>')
+                        + btnHtml;
+                }
+
+                // ── 2. Card de cotización (solo si NO hay payment URL)
+                const card = formatCotizacionCard(t);
+                if (card) {
+                    // Botón PAGAR quick-reply debajo de la card
+                    return card + `<div style="margin-top:10px;text-align:center;"><button onclick="window.sendQuickMsg('PAGAR')" style="padding:10px 28px;background:#fff;color:#1a4a2e;font-size:13px;font-weight:700;border:none;border-radius:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15);">💳 PAGAR</button></div>`;
+                }
+
+                // ── 3. Texto plano
+                return t
+                    .replace(/\[CALC\]/g, '')
                     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
                     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
                     .replace(/\n/g, '<br>');
             }
+
+            window.sendQuickMsg = function(msg) {
+                if (!chatInput.disabled) sendMessage(msg);
+            };
 
             function buildCalcWidget() {
                 const id = 'calc-' + Date.now();

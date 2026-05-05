@@ -91,6 +91,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return loaderId;
     }
 
+    // Envía un mensaje programáticamente (usado por botones quick-reply)
+    window.sendQuickMessage = function(msg) {
+        if (chatInput.disabled) return;
+        chatInput.value = msg;
+        chatForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    };
+
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const message = chatInput.value.trim();
@@ -143,7 +150,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 botReply = botReply.replace('[CALCULAR]', '').trim();
                 calcularBtn = `<br><a href="calculadora.html" target="_blank" style="display:inline-block;margin-top:8px;padding:6px 14px;background:#16a34a;color:#fff;font-size:12px;font-weight:600;border-radius:12px;text-decoration:none;">📐 Calcular medidas</a>`;
             }
-            addMessage(botReply + calcularBtn, false);
+
+            // Detectar [PAYMENT_URL:...] y mostrar botón de Mercado Pago
+            let pagoBtn = '';
+            const paymentMatch = botReply.match(/\[PAYMENT_URL:(https?:\/\/[^\]]+)\]/);
+            if (paymentMatch) {
+                const paymentUrl = paymentMatch[1].trim();
+                if (paymentUrl.startsWith('https://') && (paymentUrl.includes('mercadopago') || paymentUrl.includes('mercadolibre'))) {
+                    botReply = botReply.replace(paymentMatch[0], '').trim();
+                    pagoBtn = `<br><a href="${paymentUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:10px;padding:10px 22px;background:#009ee3;color:#fff;font-size:13px;font-weight:700;border-radius:14px;text-decoration:none;box-shadow:0 2px 8px rgba(0,158,227,0.35);">💳 Pagar con Mercado Pago</a>`;
+                }
+            }
+
+            // Botón quick-reply PAGAR (aparece cuando el bot invita a iniciar el pago)
+            let pagarQuickBtn = '';
+            if (/escribe\s+pagar/i.test(botReply) && !paymentMatch) {
+                pagarQuickBtn = `<br><button onclick="window.sendQuickMessage('PAGAR')" style="margin-top:8px;padding:8px 20px;background:#16a34a;color:#fff;font-size:12px;font-weight:700;border:none;border-radius:12px;cursor:pointer;">💳 PAGAR</button>`;
+            }
+
+            addMessage(botReply + calcularBtn + pagoBtn + pagarQuickBtn, false);
 
             // Guardar historial estructurado para enviar a n8n en el próximo mensaje
             try {
