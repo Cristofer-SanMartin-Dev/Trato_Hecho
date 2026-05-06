@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="es-CL">
 
@@ -861,7 +861,7 @@
         <!-- Chat Body -->
         <div id="chat-body" class="flex-1 p-5 overflow-y-auto space-y-4 scroll-smooth">
             <!-- Welcome Message -->
-            <div class="flex gap-3 animate-fade-in">
+            <div id="chat-welcome" data-static="true" class="flex gap-3 animate-fade-in">
                 <div
                     class="w-8 h-8 rounded-full overflow-hidden shrink-0 shadow-sm bg-white border border-slate-200">
                     <img src="imagenes/avatarChat.png" alt="Queno" class="w-full h-full object-cover">
@@ -869,8 +869,9 @@
                 <div class="max-w-[80%]">
                     <div
                         class="bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-tl-none shadow-sm text-[13.5px] leading-relaxed text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-700">
-                        ¡Hola! Soy Queno, tu asesor experto en césped sintético. ¿En qué puedo ayudarte hoy para
-                        transformar tu espacio?
+                        ¡Hola! Soy Queno, tu asistente de ventas de pasto sintético. 🌱 ¿En qué puedo ayudarte hoy?
+                        Si tienes una cotización anterior, ingresa el número y la buscamos juntos. Si no lo recuerdas, lo puedes encontrar en tu correo.
+                        Si es una cotización o venta nueva, ¡solo hazme saber y avanzamos juntos!
                     </div>
                     <div class="flex items-center gap-4 mt-2 px-1">
                         <button class="text-slate-300 hover:text-blue-500 transition-colors"><span
@@ -1122,7 +1123,7 @@
 
             const savedChatHistory = sessionStorage.getItem('chatHistory');
             if (savedChatHistory) {
-                chatBody.innerHTML = savedChatHistory;
+                chatBody.insertAdjacentHTML('beforeend', savedChatHistory);
             }
 
             chatBody.scrollTop = chatBody.scrollHeight;
@@ -1132,7 +1133,12 @@
             }
 
             function saveChatHistory() {
-                sessionStorage.setItem('chatHistory', chatBody.innerHTML);
+                // Exclude static elements (welcome div) from saved history
+                const dynamic = Array.from(chatBody.children)
+                    .filter(el => !el.dataset.static)
+                    .map(el => el.outerHTML)
+                    .join('');
+                sessionStorage.setItem('chatHistory', dynamic);
             }
 
             chatbotButton.addEventListener('click', () => {
@@ -1303,7 +1309,7 @@
                 const loaderId = addLoader();
                 quenoAvatar.classList.add('is-talking');
                 try {
-                    const response = await fetch('http://localhost:5678/webhook/chat-v2', {
+                    const response = await fetch(WEBHOOK_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ message: message, sessionId: sessionId })
@@ -1410,8 +1416,7 @@
         });
     </script>
 
-
-
+<script src="config.js"></script>
 </body>
 
 </html>

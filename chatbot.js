@@ -23,10 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
         chatbotWindow.classList.remove('hidden');
     }
 
-    // Restore Chat History
+    // Restore Chat History (append only — don't overwrite static welcome)
     const savedChatHistory = sessionStorage.getItem('chatHistory');
     if (savedChatHistory) {
-        chatBody.innerHTML = savedChatHistory;
+        chatBody.insertAdjacentHTML('beforeend', savedChatHistory);
     }
 
     // Scroll to bottom
@@ -37,7 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveChatHistory() {
-        sessionStorage.setItem('chatHistory', chatBody.innerHTML);
+        // Exclude static elements (welcome, today label) from saved history
+        const dynamic = Array.from(chatBody.children)
+            .filter(el => !el.dataset.static)
+            .map(el => el.outerHTML)
+            .join('');
+        sessionStorage.setItem('chatHistory', dynamic);
     }
 
     chatbotButton.addEventListener('click', () => {
@@ -117,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // AI Agent v2 — Claude + Memory + Tools
-            const response = await fetch('http://localhost:5678/webhook/chat-v2'
+            const response = await fetch(WEBHOOK_URL
                 , {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

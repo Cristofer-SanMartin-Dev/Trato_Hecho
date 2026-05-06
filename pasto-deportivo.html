@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="es-CL">
 
@@ -526,13 +526,14 @@
             </div>
             <!-- Chat Body -->
             <div class="flex-1 p-4 bg-slate-50 dark:bg-slate-800 overflow-y-auto">
-                <div class="text-center text-xs text-slate-400 mb-4">Hoy</div>
-                <div class="flex gap-3 mb-4">
+                <div data-static="true" class="text-center text-xs text-slate-400 mb-4">Hoy</div>
+                <div data-static="true" class="flex gap-3 mb-4">
                     <img src="chatbot-avatar.png" alt=" Queno" class="w-8 h-8 rounded-full object-cover mt-1">
                     <div
                         class="bg-white dark:bg-slate-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-600">
-                        ¡Hola! Soy Queno, tu asesor experto en césped sintético. ¿En qué puedo ayudarte hoy para
-                        transformar tu espacio?
+                        ¡Hola! Soy Queno, tu asistente de ventas de pasto sintético. 🌱 ¿En qué puedo ayudarte hoy?
+                        Si tienes una cotización anterior, ingresa el número y la buscamos juntos. Si no lo recuerdas, lo puedes encontrar en tu correo.
+                        Si es una cotización o venta nueva, ¡solo hazme saber y avanzamos juntos!
                     </div>
                 </div>
             </div>
@@ -592,10 +593,10 @@
                 chatbotWindow.classList.remove('hidden');
             }
 
-            // Restore Chat History
+            // Restore Chat History (append only — don't overwrite static welcome)
             const savedChatHistory = sessionStorage.getItem('chatHistory');
             if (savedChatHistory) {
-                chatBody.innerHTML = savedChatHistory;
+                chatBody.insertAdjacentHTML('beforeend', savedChatHistory);
             }
 
             // Scroll to bottom
@@ -606,7 +607,12 @@
             }
 
             function saveChatHistory() {
-                sessionStorage.setItem('chatHistory', chatBody.innerHTML);
+                // Exclude static elements (welcome div) from saved history
+                const dynamic = Array.from(chatBody.children)
+                    .filter(el => !el.dataset.static)
+                    .map(el => el.outerHTML)
+                    .join('');
+                sessionStorage.setItem('chatHistory', dynamic);
             }
 
             chatbotButton.addEventListener('click', () => {
@@ -671,8 +677,8 @@
                 const loaderId = addLoader();
 
                 try {
-                    // URL COMPLETA DE TU WEBHOOK (Cambia solo si reinicias ngrok)
-                    const response = await fetch('https://marhta-unstubborn-minnie.ngrok-free.dev/webhook/8ba2c0b4-bb98-4437-b34d-4da692c16ed7', {
+                    // URL del webhook — configurada en config.js
+                    const response = await fetch(WEBHOOK_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -716,6 +722,7 @@
             });
         });
     </script>
+<script src="config.js"></script>
 </body>
 
 </html>
