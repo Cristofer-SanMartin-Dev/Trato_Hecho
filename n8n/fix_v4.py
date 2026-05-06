@@ -71,7 +71,7 @@ try {
   const row = data.length > 0 ? data[0] : null;
 
   if (!row) {
-    newOutput = 'No encontré la cotización ' + numero + '. Verifica el número e intenta de nuevo.';
+    newOutput = 'Esa cotización no existe. Si crees que el número es correcto, revísalo en el correo que recibiste cuando la generamos.';
   } else {
     const inst = row.instalacion ? 'Con instalación' : 'Sin instalación';
     const totalStr = row.total > 0 ? '$' + fmt(row.total) : 'A confirmar';
@@ -220,7 +220,12 @@ REGLA_BUSCAR = (
     '\n== BÚSQUEDA DE COTIZACIONES ==\n'
     'Si el cliente menciona un número que empiece con COT- o pide ver/recuperar/pagar '
     'una cotización anterior: llama buscar_cotizacion pasando el número exacto (COT-XXXX-XXXXX). '
-    'CRÍTICO: Copia literalmente el texto retornado por la herramienta, sin agregar nada.'
+    'CRÍTICO: Copia literalmente el texto retornado por la herramienta, sin agregar nada.\n'
+    'Si el cliente dice que NO recuerda o NO tiene su número de cotización '
+    '(cualquier variante de "no recuerdo", "no sé", "no lo tengo", "no me acuerdo"), '
+    'responde EXACTAMENTE: '
+    '"Puedes encontrar tu número de cotización en el correo que te enviamos cuando la generamos. '
+    'Búscalo con el asunto \'Cotización Césped Sintético ARM\'."'
 )
 for node in nodes:
     if node.get('type') == '@n8n/n8n-nodes-langchain.agent':
