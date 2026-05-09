@@ -173,7 +173,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 pagarQuickBtn = `<br><button onclick="window.sendQuickMessage('PAGAR')" style="margin-top:8px;padding:8px 20px;background:#16a34a;color:#fff;font-size:12px;font-weight:700;border:none;border-radius:12px;cursor:pointer;">💳 PAGAR</button>`;
             }
 
-            addMessage(botReply + calcularBtn + pagoBtn + pagarQuickBtn, false);
+            // Detectar [WZP:+XXXXXXXXX] y mostrar botón de WhatsApp
+            let wzpBtn = '';
+            const wzpMatch = botReply.match(/\[WZP:(\+\d+)\]/);
+            if (wzpMatch) {
+                const phone = wzpMatch[1];
+                botReply = botReply.replace(wzpMatch[0], '').trim();
+                wzpBtn = `<br><a href="https://wa.me/${phone.replace('+','')}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:10px;padding:10px 22px;background:#25d366;color:#fff;font-size:13px;font-weight:700;border-radius:14px;text-decoration:none;box-shadow:0 2px 8px rgba(37,211,102,0.35);">💬 Hablar con un asesor</a>`;
+            }
+
+            addMessage(botReply + calcularBtn + pagoBtn + pagarQuickBtn + wzpBtn, false);
 
             // Guardar historial estructurado para enviar a n8n en el próximo mensaje
             try {
