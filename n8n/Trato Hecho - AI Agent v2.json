@@ -1,0 +1,540 @@
+{
+  "name": "Trato Hecho - AI Agent v2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat-v2",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "4fff6cf8-6316-4ed2-a69e-e05d8950ea8a",
+      "name": "Webhook Chat",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -17696,
+        336
+      ],
+      "webhookId": "8e816c30-7bd9-42f2-94e5-93252709a292"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst body = raw.body || raw;\nconst sessionId = String(body.sessionId || body.uuid || '').trim()\n  || 'auto_' + Date.now() + '_' + Math.random().toString(36).substr(2,6);\nconst chatInput = String(body.message || body.chatInput || '').trim();\nif (!chatInput) throw new Error('message es requerido');\nreturn [{ json: { sessionId, chatInput } }];"
+      },
+      "id": "a255e1ad-1e12-4ba2-abe9-d73040c121b1",
+      "name": "Extraer Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -17472,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "Eres Queno, asesor virtual de Césped Sintético ARM en Melipilla, Chile.\nVendes césped sintético, calculas precios exactos con tus herramientas y generas cotizaciones formales.\n\n== CATÁLOGO (precios CLP/m², con IVA) ==\n- Luxury Emerald 40mm: $28.500/m² — jardín o terraza premium\n- Soft Touch 30mm: $22.900/m² — jardín residencial, suave al tacto\n- Pet-Friendly Turf 35mm: $26.000/m² — jardines con mascotas, fibra antimicrobiana\n- Pasto Deportivo Fútbol 7: $35.000/m²\n- Pasto Deportivo Fútbol 11: $32.000/m²\n- Pasto Tenis & Pádel: $38.000/m²\n- Instalación opcional: +$4.500/m² (solo productos residenciales)\n\n== REALISMO DEL PASTO ==\nCuando el cliente pregunte cuál pasto se ve más real, cuál parece más natural, cuál es más realista o preguntas similares, responde EXACTAMENTE así:\n\"En general, mientras más alto es el pasto (más mm), más natural se ve. En esa línea, los pastos Premium son los más realistas, y dentro de ellos se diferencian por gama de colores y Dtex (densidad de fibra). Para ayudarte a elegir el ideal según tu caso, te conecto con un especialista. ¿Te parece?\"\n\n== DERIVACIÓN A ESPECIALISTA ==\n- Esta regla aplica SOLO cuando el cliente ya expresó interés en los pastos Premium por realismo Y confirmó que quiere hablar con un especialista (respondió sí, dale, ok, claro, o similar).\n- Cuando eso ocurra, responde EXACTAMENTE:\n\"Perfecto, en un momento un especialista de ARM se pondrá en contacto contigo para asesorarte y evaluar un descuento especial. ¿Me puedes dejar tu nombre y número de WhatsApp para coordinar?\"\n- Una vez que el cliente entregue nombre y número, responde EXACTAMENTE:\n\"Listo, [NOMBRE]. Le avisaré a nuestro equipo y te contactarán a la brevedad al [NÚMERO]. ¡Gracias por tu interés en Césped Sintético ARM!\"\n- NO llames a ninguna herramienta en este flujo. NO sigas el flujo normal de cotización.\n\n== FLUJO DE VENTA ==\n1. Pregunta si necesita jardín/terraza o cancha deportiva\n2. Muestra las opciones según el tipo elegido\n3. Cliente elige producto → pregunta: \"¿Conoces las medidas de tu espacio (largo y ancho)?\"\n   - Si RESPONDE CON MEDIDAS o SÍ sabe → pide los m² o interpreta las dimensiones directamente\n   - Si dice NO sabe / no tiene las medidas → muestra calculadora (ver sección CALCULADORA)\n4. Con producto + m² definidos → llama calcular_precio (incluye con_instalacion si ya lo sabe)\n5. Muestra el desglose y pregunta: \"¿Necesita instalación? (+$4.500/m²) — responde SI o NO\"\n6. Con instalación definida → muestra total y di: \"Escribe COTIZAR para tu cotización formal\"\n7. Producto deportivo + m² → llama calcular_precio, muestra resumen y di: \"Escribe COTIZAR para tu cotización formal\"\n8. Cliente escribe COTIZAR → pide nombre completo\n9. Nombre obtenido → pide RUT (formato: 11.111.111-1)\n10. RUT obtenido → pide dirección completa de instalación\n11. Dirección obtenida → pide correo electrónico del cliente\n12. Correo obtenido → pide número de teléfono móvil\n13. Teléfono obtenido → llama guardar_cotizacion con todos los datos. La herramienta devuelve una cadena de texto. DEBES RESPONDER AL USUARIO CON ESA CADENA EXACTAMENTE, sin agregar ninguna palabra, sin saludos, sin reformatear, sin resumir. Tu respuesta debe ser única y exclusivamente el texto devuelto por la herramienta.\n\n== INTERPRETACIÓN DE MEDIDAS ==\n- Número solo (40) o con unidad (40m2, 40 metros) = metros cuadrados directos\n- Dos números (5x8, 5 por 8, 5*8) = largo × ancho → multiplica para obtener m²\n- EXCEPCIÓN: cuando estés pidiendo nombre, RUT o dirección, NO interpretes texto como m²\n\n== CALCULADORA DE METRAJE ==\nCuando el cliente diga que NO sabe sus metros cuadrados (cualquier variante de \"no sé\", \"no tengo idea\", \"no las tengo\", \"no sé las medidas\", \"no lo se\", \"no se\", \"no sé cuántos\", \"no tengo las medidas\", \"no conozco\"), responde EXACTAMENTE así, sin cambiar nada, sin agregar texto antes ni después:\n\"No hay problema, te muestro la calculadora. Ingresa el largo y ancho de tu terreno: [CALC]\"\n\nEl marcador [CALC] DEBE estar al final de la frase. NUNCA describas la calculadora con texto adicional. NUNCA digas \"la calculadora aparece arriba\" ni nada similar. Solo responde esa frase exacta con [CALC] al final.\n\n== BÚSQUEDA Y PAGO DE COTIZACIONES ==\n- Cuando el cliente mencione un número COT-XXXX-XXXXX o C0T-XXXX-XXXXX explícito para verla o recuperarla: llama buscar_cotizacion pasando el número exacto.\n- Cuando el cliente escriba PAGAR o diga que QUIERE PAGAR: llama SIEMPRE a generar_pago. NO llames a buscar_cotizacion si ya tienes el número.\n- CRÍTICO: Para CUALQUIER llamada a buscar_cotizacion o generar_pago, DEBES responder ÚNICA Y EXCLUSIVAMENTE con el texto que devuelve la herramienta, sin agregar saludos, sin refrasear, sin disculpas. Si la herramienta dice \"[BUSCAR_COT:...]\", responde exactamente eso. Si dice \"No existe...\", responde exactamente eso.\n- NUNCA digas que no encuentras una cotización si acabas de llamar a buscar_cotizacion; simplemente entrega el marcador que devuelve la herramienta.\n- Si el cliente quiere pagar pero no recuerdas el total, pregúntale: \"¿Me podrías confirmar el monto total de tu cotización para generar el link?\"\n- Si el cliente dice que NO recuerda o NO tiene su número de cotización, responde EXACTAMENTE: \"Puedes encontrar tu número de cotización en el correo que te enviamos cuando la generamos. Búscalo con el asunto 'Cotización Césped Sintético ARM'.\"\n\n== REGLAS ESTRICTAS ==\n- Máximo 4 líneas por respuesta. Solo 1 pregunta por mensaje.\n- Cuando el primer mensaje del usuario sea solo un saludo (hola, buenas, hey, buenos dias, buenas tardes, etc.), responde EXACTAMENTE: \"Hola, soy Queno, tu asistente de ventas para pasto sintetico. Dime en que puedo ayudarte hoy. Si tienes una cotizacion anterior, ingresa el numero y la buscamos juntos. Si no la recuerdas, la puedes buscar en tu correo. Si es una cotizacion o venta nueva, solo hazme saber y avanzamos juntos.\"\n- NUNCA saludar con \"Hola\" si ya hay historial anterior.\n- NUNCA volver a preguntar algo que el cliente ya respondió.\n- NO agregues texto extra cuando uses marcadores o herramientas. Tu respuesta final debe ser el marcador literal si la herramienta lo devuelve."
+        }
+      },
+      "id": "8170021c-54a4-408e-b576-dd5ffd0732d9",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -17296,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "1d05315a-81b9-45e2-a0b3-25c5761acee9",
+      "name": "Anthropic Claude Sonnet",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -17424,
+        576
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "XhSWggQh5Y1oKqNB",
+          "name": "Anthropic account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Extraer Input').first().json.sessionId }}",
+        "contextWindowLength": 20
+      },
+      "id": "625b8c55-4f14-4821-b044-70018c5571da",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -17248,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "name": "calcular_precio",
+        "description": "Calcula el precio total del pasto sintético. Úsala cuando el cliente haya elegido un producto y tenga m² definidos. Devuelve desglose detallado con subtotales y total.",
+        "jsCode": "const inp = $input.first().json;\nconst producto = String(inp.producto || '').toLowerCase();\nconst m2 = parseFloat(inp.m2) || 0;\nconst conInst = inp.con_instalacion === true || inp.con_instalacion === 'true' || inp.con_instalacion === 'SI';\n\nconst PRECIOS = {\n  // Residenciales\n  'luxury': 28500,\n  'emerald': 28500,\n  'soft touch': 22900,\n  'soft': 22900,\n  'pet': 26000,\n  'friendly': 26000,\n  // Deportivos (precios provisionales)\n  'futbol 7': 35000,\n  'fútbol 7': 35000,\n  'futbol7': 35000,\n  'fútbol7': 35000,\n  'futbol 11': 32000,\n  'fútbol 11': 32000,\n  'futbol11': 32000,\n  'fútbol11': 32000,\n  'tenis': 38000,\n  'padel': 38000,\n  'pádel': 38000,\n  'deportivo': 34000,\n};\n\nlet precioPorM2 = 0;\nfor (const [key, price] of Object.entries(PRECIOS)) {\n  if (producto.includes(key)) { precioPorM2 = price; break; }\n}\n\nif (m2 <= 0) {\n  return [{ json: { error: 'Se necesitan los m² para calcular' } }];\n}\nif (precioPorM2 === 0) {\n  return [{ json: { error: 'Producto no reconocido: ' + inp.producto } }];\n}\n\nconst m2Margen = Math.ceil(m2 * 1.10);\nconst subtotalPasto = m2Margen * precioPorM2;\nconst subtotalInst = conInst ? m2Margen * 4500 : 0;\nconst total = subtotalPasto + subtotalInst;\n\nconst fmt = n => n.toLocaleString('es-CL');\n\nreturn [{\n  json: {\n    producto: inp.producto,\n    m2_original: m2,\n    m2_con_margen: m2Margen,\n    precio_por_m2: precioPorM2,\n    subtotal_pasto: subtotalPasto,\n    instalacion: conInst,\n    subtotal_instalacion: subtotalInst,\n    total,\n    resumen: `${inp.producto} — $${fmt(precioPorM2)}/m²\\nSuperficie: ${m2} m² → ${m2Margen} m² (con margen técnico 10%)\\nSubtotal pasto: $${fmt(subtotalPasto)}${conInst ? `\\nInstalación: $${fmt(subtotalInst)}` : '\\nInstalación: no incluida'}\\nTOTAL: $${fmt(total)}`\n  }\n}];"
+      },
+      "id": "8abd17a1-bede-4cdd-83fd-322ffafbf76a",
+      "name": "Tool calcular_precio",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        -17088,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "name": "guardar_cotizacion",
+        "description": "Guarda la cotización en la base de datos. Úsala cuando tengas nombre, RUT, dirección, email, producto, m² y total. CRÍTICO: La herramienta retorna una cadena de texto. Esa cadena ES TU RESPUESTA COMPLETA al usuario — cópiala literalmente sin cambiar nada.",
+        "jsCode": "// En toolCode, el LLM pasa los datos como variable 'query' (string JSON)\nlet inp = {};\ntry {\n  if (typeof query !== 'undefined' && query) {\n    inp = (typeof query === 'string') ? JSON.parse(query) : query;\n  } else {\n    const raw = $input.first().json;\n    const q = raw.query || raw;\n    inp = (typeof q === 'string') ? JSON.parse(q) : q;\n  }\n} catch(e) { inp = {}; }\n\nconst year = new Date().getFullYear();\nconst seq = String(Date.now()).slice(-5);\nconst numero = 'COT-' + year + '-' + seq;\n\nconst m2 = Math.round(parseFloat(String(inp.m2 || inp.metros_cuadrados || '0').replace(/[^0-9.]/g, '')) || 0);\nconst rawTotal = String(inp.total || '0').replace(/[^0-9]/g, '');\nconst total = parseInt(rawTotal) || 0;\n\nconst nombre = String(inp.nombre || '');\nconst rut = String(inp.rut || '');\nconst email = String(inp.email || inp.correo || '');\nconst direccion = String(inp.direccion || '');\nconst producto = String(inp.producto || '');\nconst telefono = String(inp.telefono || '');\n\nconst fmt = n => Number(n).toLocaleString('es-CL');\nconst totalStr = total > 0 ? '$' + fmt(total) : 'A cotizar';\nconst footerStr = total > 0\n  ? 'Escribe PAGAR para continuar con el pago.'\n  : 'Un asesor te contactará con el precio final.';\n\nreturn '\\u2705 Cotizaci\\u00f3n N\\u00b0 ' + numero + ' generada.\\n\\ud83d\\udc64 ' + nombre + ' \\u2014 ' + rut + '\\n\\ud83d\\udce7 ' + email + (telefono ? '\\n\\ud83d\\udcde ' + telefono : '') + '\\n\\ud83d\\udccd ' + direccion + '\\n\\ud83c\\udf3f ' + producto + ' \\u2014 ' + m2 + ' m\\u00b2\\n\\ud83d\\udcb0 Total: ' + totalStr + '\\n\\n' + footerStr;\n"
+      },
+      "id": "6ca1cacc-a590-4454-a1a3-e5de5964f3f4",
+      "name": "Tool guardar_cotizacion",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        -16944,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "name": "generar_pago",
+        "description": "Genera el link de pago Mercado Pago para una cotización. Llámala cuando el cliente escriba PAGAR o quiera pagar. Pasa numero_cotizacion (ej: COT-2026-39293) y total (número entero sin puntos ni $, ej: 825000). CRÍTICO: La herramienta retorna una cadena. Cópiala literalmente como tu respuesta completa, sin agregar nada.",
+        "jsCode": "let inp = {};\ntry {\n  if (typeof query !== 'undefined' && query) {\n    inp = (typeof query === 'string') ? JSON.parse(query) : query;\n  } else {\n    const raw = $input.first().json;\n    const q = raw.query || raw;\n    inp = (typeof q === 'string') ? JSON.parse(q) : q;\n  }\n} catch(e) { inp = {}; }\n\nconst numero = String(inp.numero_cotizacion || inp.numero || '').trim();\nconst total  = parseInt(String(inp.total || '0').replace(/[^0-9]/g, '')) || 0;\n\nif (!numero || total <= 0) {\n  return 'Para procesar el pago necesito el número de cotización y el monto total. ¿Puedes confirmarlos?';\n}\n\nreturn '[PAGAR_MP:numero=' + numero + ', total=' + total + ']';\n"
+      },
+      "id": "5e08ec4e-ac03-4be9-bef6-57ce513a71d1",
+      "name": "Tool generar_pago",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        -16784,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ message: $json.output || '', action: 'CHAT', quote: null, paymentLink: null }) }}",
+        "options": {}
+      },
+      "id": "047029bd-65ca-4e8b-8ac3-558917202396",
+      "name": "Responder Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -16832,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst agentOutput = $input.first().json;\nconst message = String(agentOutput.output || '');\n\n// Ignorar markers de otros nodos (buscar/pagar)\nif (message.includes('[BUSCAR_COT:') || message.includes('[PAGAR_MP:')) {\n  return [{ json: agentOutput }];\n}\n\n// Solo procesar si el mensaje contiene un número de cotización\nconst cotMatch = message.match(/C[O0]T-([0-9]{4}-[0-9]+)/i);\nif (!cotMatch) {\n  return [{ json: agentOutput }];\n}\n\n// Forzamos siempre COT- con letra O para evitar confusiones con el cero\nconst numero = 'COT-' + cotMatch[1];\nlet nombre = '', rut = '', email = '', telefono = '', direccion = '', producto = '', m2 = 0, total = 0;\n\nconst lines = message.split('\\n');\nfor (const line of lines) {\n  const l = line.trim();\n  if (l.includes('\\ud83d\\udc64')) {\n    const parts = l.replace(/^.*\\ud83d\\udc64\\s*/, '').split(' \\u2014 ');\n    nombre = (parts[0] || '').trim();\n    rut = (parts[1] || '').trim();\n  } else if (l.includes('\\ud83d\\udce7')) {\n    email = l.replace(/^.*\\ud83d\\udce7\\s*/, '').trim();\n  } else if (l.includes('\\ud83d\\udcde')) {\n    telefono = l.replace(/^.*\\ud83d\\udcde\\s*/, '').trim();\n  } else if (l.includes('\\ud83d\\udccd')) {\n    direccion = l.replace(/^.*\\ud83d\\udccd\\s*/, '').trim();\n  } else if (l.includes('\\ud83c\\udf3f')) {\n    const parts = l.replace(/^.*\\ud83c\\udf3f\\s*/, '').split(' \\u2014 ');\n    producto = (parts[0] || '').trim();\n    m2 = parseInt((parts[1] || '').replace(/[^0-9]/g, '')) || 0;\n  } else if (l.includes('\\ud83d\\udcb0')) {\n    const afterDollar = l.indexOf('$');\n    if (afterDollar !== -1) {\n      total = parseInt(l.slice(afterDollar + 1).replace(/[^0-9]/g, '')) || 0;\n    } else {\n      total = 0;\n    }\n  }\n}\n\nlet sessionId = '';\ntry { sessionId = $('Extraer Input').first().json.sessionId || ''; } catch(e) {}\n\nconst SUPABASE_URL = 'https://enpzxntzphvezopbxbtx.supabase.co';\nconst SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4';\n\nconst quote = {\n  numero,\n  session_id: sessionId,\n  nombre, rut, email, direccion, producto,\n  m2, instalacion: true, total,\n  estado: 'P'\n};\n\ntry {\n    await this.helpers.httpRequest({\n    method: 'POST',\n    url: SUPABASE_URL + '/rest/v1/cotizaciones',\n    headers: {\n      'Content-Type': 'application/json',\n      'apikey': SUPABASE_KEY,\n      'Authorization': 'Bearer ' + SUPABASE_KEY,\n      'Prefer': 'return=minimal'\n    },\n    body: JSON.stringify(quote)\n  });\n} catch(e) {\n  console.error('Supabase error:', e.message);\n}\n\nreturn [{ json: { ...agentOutput, _customer_email: email, _quote_summary: message, _total: total } }];\n"
+      },
+      "id": "50b0874e-1aad-4f2d-872a-990e2b6db5c8",
+      "name": "Guardar en Supabase",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -17024,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const agentOutput = $input.first().json;\nconst message = String(agentOutput.output || '');\n\n// Solo actuar si hay marker de pago emitido por Tool generar_pago\nconst pagoMatch = message.match(/\\[PAGAR_MP:numero=([^,\\s\\]]+),\\s*total=([0-9]+)\\]/);\nif (!pagoMatch) {\n  return [{ json: agentOutput }];\n}\n\nconst numero   = pagoMatch[1].trim().replace(/['\"]/g, '').toUpperCase();\nconst total    = parseInt(pagoMatch[2]);\nconst row      = agentOutput._quote_data;\nconst MP_TOKEN = 'TEST-3130883879758417-040519-bf1c10ceecc464549aa07169a7d118a3-93809061';\n\nconst fmt = n => Number(n).toLocaleString('es-CL');\n\nlet paymentUrl = '';\nlet mpError    = '';\ntry {\n  const resp = await this.helpers.httpRequest({\n    method: 'POST',\n    url: 'https://api.mercadopago.com/checkout/preferences',\n    headers: {\n      'Authorization': 'Bearer ' + MP_TOKEN\n    },\n    json: true,\n    body: {\n      items: [{\n        id: numero,\n        title: 'Cotizacion ' + numero + ' - Cesped Sintetico ARM',\n        quantity: 1,\n        unit_price: total,\n        currency_id: 'CLP'\n      }],\n      external_reference: numero\n    }\n  });\n  paymentUrl = (resp.sandbox_init_point || resp.init_point || '').trim();\n} catch(e) {\n  mpError = String(e.message || e);\n}\n\nlet newOutput;\nif (paymentUrl) {\n  if (row) {\n    newOutput = '💳 Tu link de pago está listo para la cotización ' + numero + ':\\n' + '👤 ' + (row.nombre || '') + '\\n' + '📍 ' + (row.direccion || '') + '\\n' + '🌿 ' + (row.producto || '') + ' — ' + (row.m2 || 0) + ' m²\\n' + '💰 Total: $' + fmt(total) + '\\n\\n' + '[PAYMENT_URL:' + paymentUrl + ']';\n  } else {\n    newOutput = '💳 Tu link de pago está listo.\\n' + '🛒 ' + numero + '  |  💰 $' + fmt(total) + '\\n\\n' + '[PAYMENT_URL:' + paymentUrl + ']';\n  }\n} else {\n  newOutput = '💳 Hubo un error generando el link para ' + numero + '. Por favor intenta nuevamente o contacta a soporte.';\n}\n\nreturn [{ json: { ...agentOutput, output: newOutput, _mp_url: paymentUrl, _total: total, _quote_data: row } }];\n"
+      },
+      "id": "5d94d5e7-d208-419e-9eed-e97e56d10e0e",
+      "name": "Generar Pago MP",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16480,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "name": "buscar_cotizacion",
+        "description": "Busca una cotización existente en la base de datos por su número. Úsala SIEMPRE que el cliente mencione un número que empiece con COT- o pida ver, recuperar o pagar una cotización anterior. Pasa el número exacto (ej: COT-2026-93240). CRÍTICO: Copia literalmente el texto que devuelve la herramienta, sin agregar nada.",
+        "jsCode": "// toolCode sandbox: sin HTTP → solo emite marker para el nodo regular siguiente\nlet numero = '';\ntry {\n  if (typeof query !== 'undefined' && query) {\n    const q = (typeof query === 'string') ? query : JSON.stringify(query);\n    const m = q.match(/C[O0]T-[0-9]{4}-[0-9]+/i);\n    numero = m ? m[0].toUpperCase() : q.replace(/[^A-Z0-9-]/gi, '').toUpperCase().trim();\n  }\n} catch(e) { numero = ''; }\n\nif (!numero || !numero.match(/^C[O0]T-/i)) {\n  return 'Necesito el número de cotización exacto (formato COT-2026-XXXXX) para buscarla.';\n}\n\n// Retornamos el marcador directamente. El sistema se encarga de buscarlo en BD.\nreturn '[BUSCAR_COT:numero=' + numero.toUpperCase() + ']';\n"
+      },
+      "id": "4660f516-0b72-412b-9663-b81b6eaf0cb9",
+      "name": "Tool buscar_cotizacion",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        -16624,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const agentOutput = $input.first().json;\nconst message = String(agentOutput.output || '');\n\n// Detectar marker de búsqueda O de pago para inyectar datos de la cotización\nconst buscarMatch = message.match(/\\[BUSCAR_COT:numero=([^\\s\\]]+)\\]/i);\nconst pagoMatch = message.match(/\\[PAGAR_MP:numero=([^,\\s\\]]+)/i);\n\nif (!buscarMatch && !pagoMatch) {\n  return [{ json: agentOutput }];\n}\n\n// Remover posibles comillas que agregue el LLM y limpiar espacios\nlet numero = (buscarMatch ? buscarMatch[1] : pagoMatch[1]).trim().replace(/['\"]/g, '').toUpperCase();\n\nconst SUPABASE_URL = 'https://enpzxntzphvezopbxbtx.supabase.co';\nconst SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4';\nconst fmt = n => Number(n || 0).toLocaleString('es-CL');\n\nlet newOutput;\ntry {\n  // Normalizar numero para busqueda (Supabase eq es sensible)\n  // Probamos buscar con COT y con C0T si falla la primera?\n  const buscarEnSupabase = async (num) => {\n    return await this.helpers.httpRequest({\n      method: 'GET',\n      url: SUPABASE_URL + '/rest/v1/cotizaciones?numero=eq.' + encodeURIComponent(num) + '&limit=1',\n      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }\n    });\n  };\n\n  let resp = await buscarEnSupabase(numero);\n  let data = Array.isArray(resp) ? resp : JSON.parse(String(resp));\n\n  // Si no encuentra con COT, intentamos con C0T (o viceversa)\n  if (data.length === 0) {\n    const alternativo = numero.includes('COT') ? numero.replace('COT', 'C0T') : numero.replace('C0T', 'COT');\n    resp = await buscarEnSupabase(alternativo);\n    data = Array.isArray(resp) ? resp : JSON.parse(String(resp));\n  }\n\n  const row = data.length > 0 ? data[0] : null;\n\n  // Si es marker de pago o busqueda y no existe en DB, devolvemos error\n  if (!row) {\n    newOutput = 'Esa cotización (' + numero + ') no existe en nuestro sistema. Por favor, verifica el número en tu correo.';\n    return [{ json: { ...agentOutput, output: newOutput } }];\n  }\n\n  // Lógica de estado 'C' (ya pagada)\n  if (row.estado === 'C') {\n    newOutput = '⚠️ La cotización N° ' + row.numero + ' ya figura como PAGADA en nuestro sistema. No es posible volver a pagarla.';\n    return [{ json: { ...agentOutput, output: newOutput } }];\n  }\n\n  // Lógica de vigencia (10 días) o estado 'V'\n  const created = new Date(row.created_at);\n  const diffDays = Math.ceil((new Date() - created) / (1000 * 60 * 60 * 24));\n  if (row.estado === 'V' || diffDays > 10) {\n    newOutput = '⚠️ La cotización N° ' + row.numero + ' ya no está vigente (han pasado más de 10 días). Por favor, genera una nueva.';\n    return [{ json: { ...agentOutput, output: newOutput } }];\n  }\n\n  // Si es marker de pago, solo inyectamos la data y seguimos\n  if (pagoMatch) {\n    return [{ json: { ...agentOutput, _quote_data: row } }];\n  }\n\n  // Si es marker de búsqueda, formateamos el mensaje de \"Encontrada\"\n  const inst = row.instalacion ? 'Con instalación' : 'Sin instalación';\n  const totalStr = row.total > 0 ? '$' + fmt(row.total) : 'A confirmar';\n  newOutput = '✅ Cotización N° ' + row.numero + ' encontrada.\\n' + '👤 ' + (row.nombre || '—') + ' — ' + (row.rut || '') + '\\n' + '📍 ' + (row.direccion || '—') + '\\n' + '🌿 ' + (row.producto || '—') + ' — ' + (row.m2 || 0) + ' m²\\n' + '🔧 ' + inst + '\\n' + '💰 Total: ' + totalStr + '\\n\\n' + 'Escribe PAGAR para continuar con el pago.';\n  return [{ json: { ...agentOutput, output: newOutput, _customer_email: row.email || '', _total: row.total || 0, _quote_data: row } }];\n} catch(e) {\n  newOutput = 'Error al procesar la cotización: ' + e.message;\n}\n\nreturn [{ json: { ...agentOutput, output: newOutput } }];\n"
+      },
+      "id": "53505265-76d6-41df-aee5-53c6b8d727e6",
+      "name": "Buscar en Supabase",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16656,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeCast": false
+          },
+          "conditions": [
+            {
+              "id": "67b9380a-9d9e-49b0-a6e5-8f8f8f8f8f8f",
+              "leftValue": "={{ $json._customer_email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3076217f-2d76-456d-8c4c-d69f38f1f6b4",
+      "name": "Es Cotización?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        -16912,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeCast": false
+          },
+          "conditions": [
+            {
+              "id": "78c9491b-0e0f-5a1a-b7b7-9a9a9a9a9a9a",
+              "leftValue": "={{ $json._mp_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fe7c62e5-01d9-470b-b901-5350289fcc2b",
+      "name": "Es Pago?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        -16368,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ 'aromero.madrid@gmail.com' + ($json._customer_email ? ', ' + $json._customer_email : '') }}",
+        "subject": "={{ ($json._total >= 2000000 ? '🔴 URGENTE (+' + ($json._total || 0).toLocaleString(\"es-CL\") + '): ' : '🟢 ') + 'Notificación Trato Hecho' }}",
+        "message": "={{ (($json._total || 0) >= 2000000 ? '<h1 style=\"color:red; font-family: sans-serif; font-size: 20px;\">🚨 COTIZACIÓN DE ALTO MONTO 🚨</h1>' : '') + '<div style=\"font-family: sans-serif; font-size: 15px; line-height: 1.6; color: #333;\">' + ($json._quote_summary || $json.output || '').replace(/\\n/g, '<br>') + '</div>' }}\n",
+        "options": {}
+      },
+      "id": "61ad900f-fd61-49c4-8335-8c9765e549d8",
+      "name": "Gmail Notification",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -16608,
+        -16
+      ],
+      "webhookId": "7792478f-2194-4ac0-95cf-405497dad57d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "F7GcQZm8AEno5j25",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8605918152",
+        "text": "={{ ($json._total >= 2000000 ? '🚨 <b>URGENTE: COTIZACIÓN ALTO MONTO</b> 🚨\\n' : '') + ($json._quote_summary || $json.output) }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "19f82986-8ca4-4583-9adb-03a24c8c8f3c",
+      "name": "Telegram Notification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -16608,
+        -176
+      ],
+      "webhookId": "1af45de2-dc0f-40b2-ade4-c02552919d7e",
+      "credentials": {
+        "telegramApi": {
+          "id": "bvAxWV1D9HlkPRKc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputData = $input.first().json;\n\n// Solo registrar si tenemos link de pago generado\nif (!inputData._mp_url) {\n  return [{ json: inputData }];\n}\n\nconst SUPABASE_URL = 'https://enpzxntzphvezopbxbtx.supabase.co';\nconst SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4';\n\n// CASO 1: Datos vienen de buscar_cotizacion (flujo pago desde cotización buscada)\nlet row = inputData._quote_data;\n\nlet sale;\nif (row) {\n  // Usar directamente los datos del objeto de la BD\n  sale = {\n    numero: row.numero || '',\n    session_id: row.session_id || '',\n    nombre: row.nombre || '',\n    rut: row.rut || '',\n    direccion: row.direccion || '',\n    producto: row.producto || '',\n    m2: parseInt(row.m2 || 0),\n    instalacion: row.instalacion === true || String(row.instalacion).toLowerCase() === 'true',\n    total: parseInt(inputData._total || row.total || 0),\n    email: row.email || inputData._customer_email || '',\n    created_at: new Date().toISOString(),\n    estado: 'P'\n  };\n} else {\n  // CASO 2: Datos deben ser extraídos del mensaje del pago (flujo cotización nueva)\n  const message = String(inputData.output || '');\n\n  // Extraer numero de cotizacion del mensaje\n  const numMatch = message.match(/C[O0]T-[0-9]{4}-[0-9]+/i);\n  const numero = numMatch ? numMatch[0].toUpperCase() : '';\n\n  // Extraer total del mensaje\n  let total = parseInt(inputData._total || 0);\n  if (!total) {\n    const totalMatch = message.match(/\\$([0-9.,]+)/);\n    if (totalMatch) total = parseInt(totalMatch[1].replace(/[.,]/g, '')) || 0;\n  }\n\n  // Extraer datos del texto con emojis (mismo patron que Guardar en Supabase)\n  let nombre = '', rut = '', email = '', direccion = '', producto = '', m2 = 0;\n  const lines = message.split('\\n');\n  for (const line of lines) {\n    const l = line.trim();\n    if (l.includes('\\ud83d\\udc64')) {\n      const parts = l.replace(/^.*\\ud83d\\udc64\\s*/, '').split(' \\u2014 ');\n      nombre = (parts[0] || '').trim();\n      rut = (parts[1] || '').trim();\n    } else if (l.includes('\\ud83d\\udccd')) {\n      direccion = l.replace(/^.*\\ud83d\\udccd\\s*/, '').trim();\n    } else if (l.includes('\\ud83c\\udf3f')) {\n      const parts = l.replace(/^.*\\ud83c\\udf3f\\s*/, '').split(' \\u2014 ');\n      producto = (parts[0] || '').trim();\n      m2 = parseInt((parts[1] || '').replace(/[^0-9]/g, '')) || 0;\n    }\n  }\n\n  // Si no hay número de cotizacion no hay nada que grabar\n  if (!numero) {\n    return [{ json: inputData }];\n  }\n\n  let sessionId = '';\n  try { sessionId = $('Extraer Input').first().json.sessionId || ''; } catch(e) {}\n\n  sale = {\n    numero,\n    session_id: sessionId,\n    nombre,\n    rut,\n    direccion,\n    producto,\n    m2,\n    instalacion: true,\n    total,\n    email: inputData._customer_email || '',\n    created_at: new Date().toISOString(),\n    estado: 'P'\n  };\n}\n\ntry {\n  // 1. Guardar la venta\n  await this.helpers.httpRequest({\n    method: 'POST',\n    url: SUPABASE_URL + '/rest/v1/venta',\n    headers: {\n      'Content-Type': 'application/json',\n      'apikey': SUPABASE_KEY,\n      'Authorization': 'Bearer ' + SUPABASE_KEY,\n      'Prefer': 'return=minimal'\n    },\n    body: JSON.stringify(sale)\n  });\n\n  // 2. Actualizar el estado de la cotizacion a 'C'\n  if (sale.numero) {\n    await this.helpers.httpRequest({\n      method: 'PATCH',\n      url: SUPABASE_URL + '/rest/v1/cotizaciones?numero=eq.' + encodeURIComponent(sale.numero),\n      headers: {\n        'Content-Type': 'application/json',\n        'apikey': SUPABASE_KEY,\n        'Authorization': 'Bearer ' + SUPABASE_KEY,\n        'Prefer': 'return=minimal'\n      },\n      body: JSON.stringify({ estado: 'C' })\n    });\n  }\n} catch(e) {\n  console.error('Error en Registrar Venta o Actualizar Cotizacion:', e.message);\n}\n\nreturn [{ json: inputData }];"
+      },
+      "id": "056b5fe7-9f40-4c4a-a49b-adfa89feac96",
+      "name": "Registrar Venta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16304,
+        336
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Chat": {
+      "main": [
+        [
+          {
+            "node": "Extraer Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Input": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Guardar en Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Claude Sonnet": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool calcular_precio": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool guardar_cotizacion": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool generar_pago": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar en Supabase": {
+      "main": [
+        [
+          {
+            "node": "Buscar en Supabase",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Es Cotización?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar Pago MP": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Es Pago?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Registrar Venta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Cotización?": {
+      "main": [
+        [
+          {
+            "node": "Gmail Notification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Telegram Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Pago?": {
+      "main": [
+        [
+          {
+            "node": "Gmail Notification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Telegram Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool buscar_cotizacion": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar en Supabase": {
+      "main": [
+        [
+          {
+            "node": "Generar Pago MP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "3e8815e8-08ab-4aee-b908-f728625b96bc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fdc5b4216064fec80abf7d944e6a92b376d16553341741debf82ecc8c5d6ce98"
+  },
+  "id": "5Gn7CUoE26RNd0Oc",
+  "tags": [
+    {
+      "updatedAt": "2026-04-04T19:04:53.876Z",
+      "createdAt": "2026-04-04T19:04:53.876Z",
+      "id": "Zv1kbzH1D0iDAh7u",
+      "name": "trato-hecho"
+    },
+    {
+      "updatedAt": "2026-04-04T19:04:53.836Z",
+      "createdAt": "2026-04-04T19:04:53.836Z",
+      "id": "gNfnEMStD716pvdz",
+      "name": "chat-agent"
+    }
+  ]
+}
