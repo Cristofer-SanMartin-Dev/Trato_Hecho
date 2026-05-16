@@ -1,47 +1,32 @@
-﻿# Trato Hecho — Chatbot de Cotizaciones
+﻿# Trato Hecho — Manual de Instalación
 
-> Guía técnica para levantar el sistema completo en local.
-
----
-
-## Descripción
-
-Sistema de chatbot para Césped Sintético ARM. El chatbot **Queno** atiende clientes, calcula precios, genera cotizaciones formales y las guarda en Supabase. Incluye calculadora de metraje integrada en el chat.
-
-**Stack:**
-- Frontend: HTML + Tailwind CSS + JS vanilla (`index.html`)
-- Backend: n8n (Docker) con agente Claude AI
-- Base de datos: Supabase (cotizaciones)
-- IA: Anthropic Claude Sonnet 4.5
+> Manual de instalación y puesta en marcha para el proyecto Trato_Hecho.
 
 ---
 
-## Requisitos previos
+## 1. Requisitos previos
 
-Instalar en el equipo antes de continuar:
+Antes de instalar el proyecto, asegúrate de tener:
 
-| Herramienta | Versión mínima | Descarga |
-|---|---|---|
-| Docker Desktop | 4.x | https://www.docker.com/products/docker-desktop |
-| Python | 3.10+ | https://www.python.org/downloads |
-| Node.js | 18+ | https://nodejs.org |
-| Git | cualquiera | https://git-scm.com |
+- Docker Desktop 4.x o superior
+- Python 3.10+
+- Node.js 18+ (opcional, para servir el frontend con `npx serve`)
+- Git
 
 ---
 
-## 1. Clonar el repositorio
+## 2. Clonar el repositorio
 
 ```bash
 git clone https://github.com/Cristofer-SanMartin-Dev/Trato_Hecho.git
 cd Trato_Hecho
-git checkout desarrollo
 ```
 
 ---
 
-## 2. Levantar n8n con Docker
+## 3. Levantar n8n en Docker
 
-Ejecutar **una sola vez** para crear el contenedor:
+Ejecuta el siguiente comando para crear y ejecutar n8n:
 
 ```bash
 docker run -d ^
@@ -52,33 +37,35 @@ docker run -d ^
   n8nio/n8n:latest
 ```
 
-Verificar que está corriendo:
-
-```bash
-docker ps
-# Debe aparecer: trato_hecho_n8n   Up X minutes   127.0.0.1:5678->5678/tcp
-```
-
-Si el contenedor ya existe de una sesión anterior, solo iniciarlo:
+Si el contenedor ya existe, inicia n8n con:
 
 ```bash
 docker start trato_hecho_n8n
 ```
 
-n8n queda accesible en: **http://localhost:5678**
+Accede a la interfaz de n8n en: **http://localhost:5678**
 
 ---
 
-## 3. Configurar n8n (primera vez)
+## 4. Configurar n8n
 
-1. Abrir http://localhost:5678 en el navegador
-2. Crear una cuenta de administrador (email + contraseña cualquiera)
-3. Ir a **Settings → n8n API → Create API key**
-4. Copiar esa API key — la necesitarás en el siguiente paso
+### 4.1 Crear un usuario administrador
+
+1. Abre `http://localhost:5678`.
+2. Crea una cuenta de administrador.
+3. Inicia sesión.
+
+### 4.2 Generar API Key
+
+1. En n8n, ve a `Settings → API`.
+2. Crea una nueva API key.
+3. Copia el valor generado.
 
 ---
 
-## 4. Instalar dependencias Python
+## 5. Instalar dependencias Python
+
+Desde la raíz del proyecto:
 
 ```bash
 pip install requests
@@ -86,58 +73,61 @@ pip install requests
 
 ---
 
-## 5. Configurar credenciales en fix_v2.py
+## 6. Configurar el proyecto
 
-Abrir `n8n/fix_v2.py` y actualizar estas variables al inicio del archivo:
+### 6.1 Actualizar `config.js`
 
-```python
-N8N_BASE   = "http://localhost:5678"
-N8N_API_KEY = "TU_API_KEY_DE_N8N"   # La que generaste en el paso 3
+Edita `config.js` y actualiza la URL del webhook de n8n:
+
+```js
+const WEBHOOK_URL = 'http://localhost:5678/webhook/chat-v2';
 ```
 
-Las credenciales de Supabase y Anthropic ya están configuradas en el archivo.
-Pedir las API keys al equipo de desarrollo si necesitas actualizarlas.
+Si usas una URL pública (ngrok, Railway, etc.), reemplaza esta dirección por la URL pública.
 
-> **IMPORTANTE:** Nunca subas API keys a GitHub.
+### 6.2 Revisar `n8n/fix_v2.py`
+
+En `n8n/fix_v2.py`, revisa que las siguientes variables apunten a tu instancia local de n8n:
+
+- `API` — URL de la API de n8n
+- `KEY` — API key generada en n8n
+- `WF_ID` — ID del workflow en n8n (opcional según el script)
+
+> No publiques estas credenciales.
 
 ---
 
-## 6. Desplegar el workflow en n8n
+## 7. Desplegar el workflow de n8n
 
-Desde la carpeta raíz del proyecto:
+Ejecuta el script desde la raíz del proyecto:
 
 ```bash
 python n8n/fix_v2.py
 ```
 
-Salida esperada:
+### Resultado esperado
 
-```
-Got workflow: Trato Hecho - AI Agent v2 | active: True
-✓ Agent: system prompt updated
-✓ LLM: typeVersion=1.3, model=claude-sonnet-4-5
-✓ Tool calcular_precio: sports prices added
-✓ Tool guardar_cotizacion: simplified (no HTTP in sandbox)
-✓ Tool generar_pago: fixed (no fetch in sandbox)
-✓ Guardar en Supabase: code updated (existing node)
-✓ Connections: AI Agent → Guardar en Supabase → Responder Webhook
+Deberías ver algo similar a:
 
+```text
 PUT OK | nodes: 10 | active: True
 ```
 
-Si aparece `PUT OK` el backend está listo.
+Esto indica que el workflow se actualizó correctamente en n8n.
 
 ---
 
-## 7. Levantar el frontend
+## 8. Ejecutar el frontend
 
-Desde la carpeta raíz del proyecto:
+### Opción A — con Python
 
 ```bash
-# Opción A — Python (recomendado)
 python -m http.server 3000
+```
 
-# Opción B — Node.js
+### Opción B — con Node.js
+
+```bash
 npx serve . -p 3000
 ```
 
@@ -145,50 +135,18 @@ Abrir en el navegador: **http://localhost:3000**
 
 ---
 
-## 8. Probar el sistema
+## 9. Probar el sistema
 
-**Flujo completo de cotización:**
-1. Abrir http://localhost:3000
-2. Hacer clic en el ícono del chat (abajo a la derecha)
-3. Escribir: `Quiero cotizar Soft Touch 30mm`
-4. El bot preguntará si conoces las medidas
-5. Seguir el flujo hasta ingresar nombre, RUT y dirección
-6. Al final debe aparecer una tarjeta verde con el número de cotización
-
-**Probar la calculadora de metraje:**
-1. Cuando el bot pregunte por las medidas, responder: `no sé las medidas`
-2. Debe aparecer una calculadora verde dentro del chat
-3. Ingresar largo y ancho → presionar "✅ Usar estos metros"
-4. El mensaje se envía automáticamente y el bot continúa
+1. Abre `http://localhost:3000`.
+2. Haz clic en el widget de chat.
+3. Envía una solicitud de cotización.
+4. Sigue el flujo para elegir producto, medidas e instalación.
+5. Completa nombre, RUT y dirección.
+6. Verifica que se muestre una cotización con número único.
 
 ---
 
-## Arquitectura del sistema
-
-```
-Cliente (localhost:3000)
-        │
-        │  POST /webhook/chat-v2
-        ▼
-n8n (localhost:5678)
-   ├── Webhook Chat
-   ├── Extraer Input
-   ├── AI Agent (Claude Sonnet 4.5)
-   │     ├── Tool: calcular_precio
-   │     ├── Tool: guardar_cotizacion
-   │     └── Tool: generar_pago
-   ├── Guardar en Supabase
-   └── Responder Webhook
-        │
-        ▼
-Supabase (tabla: cotizaciones)
-  columnas: id, numero_cotizacion, nombre, rut, direccion,
-            producto, m2, precio_unitario, con_instalacion, total
-```
-
----
-
-## Comandos útiles
+## 10. Comandos útiles
 
 ```bash
 # Ver logs de n8n en tiempo real
@@ -200,28 +158,49 @@ docker restart trato_hecho_n8n
 # Detener n8n
 docker stop trato_hecho_n8n
 
-# Volver a iniciar n8n
+# Iniciar n8n
 docker start trato_hecho_n8n
 
-# Re-desplegar cambios del workflow (después de editar fix_v2.py)
+# Re-desplegar el workflow
 python n8n/fix_v2.py
 ```
 
 ---
 
-## Problemas frecuentes
+## 11. Troubleshooting
 
-| Error | Causa | Solución |
-|---|---|---|
-| `Connection refused` en el chat | n8n no está corriendo | `docker start trato_hecho_n8n` |
-| `PUT 400` al correr fix_v2.py | API key incorrecta o expirada | Regenerar en n8n Settings → API |
-| La calculadora no aparece | Caché del navegador | Recargar con Ctrl+Shift+R |
-| Cotización no se guarda en Supabase | Error en nodo "Guardar en Supabase" | Ver n8n → Executions → último error |
-| El bot no responde | Créditos de Anthropic agotados | Verificar en console.anthropic.com |
-| `docker: name already in use` | El contenedor ya existe | Usar `docker start trato_hecho_n8n` |
+- n8n no responde: asegúrate de que Docker esté corriendo y el contenedor `trato_hecho_n8n` esté activo.
+- El chat no conecta: revisa `WEBHOOK_URL` en `config.js`.
+- El workflow no se despliega: verifica `n8n/fix_v2.py` y la API key.
+- La cotización no se guarda: revisa la ejecución en n8n y la conexión a Supabase.
 
 ---
 
-## Contacto
+## 12. Notas finales
 
-Para obtener las API keys (Anthropic, Supabase) o acceso al proyecto, contactar al equipo de desarrollo.
+- No incluyas credenciales ni claves en el repositorio.
+- Actualiza `config.js` cuando cambie la URL del backend.
+- Usa `docker ps` para ver el estado del contenedor n8n.
+- Si necesitas reinstalar n8n, elimina el contenedor y vuelve a ejecutar el `docker run`.
+
+---
+
+## 13. Licencia
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+
+---
+
+## 14. Contribución
+
+¡Las contribuciones son bienvenidas! Para contribuir:
+
+1. Haz un fork del repositorio.
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`).
+3. Realiza tus cambios y haz commit (`git commit -am 'Añade nueva funcionalidad'`).
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`).
+5. Abre un Pull Request.
+
+Para reportar bugs o solicitar features, usa los [Issues](https://github.com/Cristofer-SanMartin-Dev/Trato_Hecho/issues) de GitHub.
+
+Asegúrate de seguir las buenas prácticas: no incluir credenciales, probar cambios localmente y documentar modificaciones.
