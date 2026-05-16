@@ -1179,9 +1179,23 @@
                 const producto  = get('🌿');
                 const total     = get('💰');
 
+                // Detectar si ya está pagada
+                const isPagada = /PAGADA/i.test(text);
+
                 // Última línea = instrucción de pago
                 const lines = text.split('\n').filter(l => l.trim());
                 const footer = lines[lines.length - 1] || 'Escribe PAGAR para continuar con el pago.';
+
+                // Fila de total o estado pagado
+                const totalRow = isPagada
+                    ? `<div style="background:rgba(255,255,255,0.18);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                        <span style="font-size:22px;">🚚</span>
+                        <span style="font-size:13px;font-weight:700;">Tu pedido ya está pagado</span>
+                      </div>`
+                    : `<div style="background:rgba(255,255,255,0.18);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                        <span style="opacity:.85;font-size:12px;">💰 Total</span>
+                        <span style="font-size:18px;font-weight:700;">${total.replace('Total: ','').replace('Total:','').trim()}</span>
+                      </div>`;
 
                 return `
                 <div style="background:linear-gradient(135deg,#1a4a2e 0%,#2c6e40 60%,#3a8a52 100%);border-radius:16px;padding:18px 20px;color:#fff;font-size:13px;box-shadow:0 4px 18px rgba(44,105,64,0.35);min-width:220px;">
@@ -1197,11 +1211,8 @@
                     ${producto ? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>🌿</span><span style="opacity:.9;">${producto}</span></div>` : ''}
                     ${direccion? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>📍</span><span style="opacity:.9;">${direccion}</span></div>` : ''}
                   </div>
-                  <div style="background:rgba(255,255,255,0.18);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-                    <span style="opacity:.85;font-size:12px;">💰 Total</span>
-                    <span style="font-size:18px;font-weight:700;">${total.replace('Total: ','').replace('Total:','').trim()}</span>
-                  </div>
-                  <div style="opacity:.8;font-size:12px;text-align:center;border-top:1px solid rgba(255,255,255,0.15);padding-top:10px;">${footer}</div>
+                  ${totalRow}
+                  ${isPagada ? '' : `<div style="opacity:.8;font-size:12px;text-align:center;border-top:1px solid rgba(255,255,255,0.15);padding-top:10px;">${footer}</div>`}
                 </div>`;
             }
 
@@ -1224,9 +1235,18 @@
                 }
 
                 // ── 2. Card de cotización (solo si NO hay payment URL)
+                // Si la cotización no existe o ya no está vigente, no mostrar card ni botón PAGAR
+                if (/no existe en nuestro sistema/i.test(t) || /ya no está vigente/i.test(t)) {
+                    return t
+                        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n/g, '<br>');
+                }
                 const card = formatCotizacionCard(t);
                 if (card) {
-                    // Botón PAGAR quick-reply debajo de la card
+                    // No mostrar botón PAGAR si la cotización ya está pagada
+                    const isPagada = /PAGADA/i.test(t);
+                    if (isPagada) return card;
                     return card + `<div style="margin-top:10px;text-align:center;"><button onclick="window.sendQuickMsg('PAGAR')" style="padding:10px 28px;background:#fff;color:#1a4a2e;font-size:13px;font-weight:700;border:none;border-radius:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15);">💳 PAGAR</button></div>`;
                 }
 
@@ -1314,15 +1334,20 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ message: message, sessionId: sessionId })
                     });
-                    const data = await response.json();
+                    const rawText = await response.text();
                     quenoAvatar.classList.remove('is-talking');
                     const loaderEl = document.getElementById(loaderId);
                     if (loaderEl) { loaderEl.remove(); saveChatHistory(); }
-                    let botReply = "Lo siento, hubo un problema al procesar la respuesta.";
-                    if (Array.isArray(data)) {
-                        botReply = data[0].output || data[0].text || botReply;
-                    } else {
-                        botReply = data.output || data.text || data.message || botReply;
+                    let botReply = "El asistente está ocupado en este momento. Por favor intenta en unos segundos.";
+                    if (rawText && rawText.trim()) {
+                        try {
+                            const data = JSON.parse(rawText);
+                            if (Array.isArray(data)) {
+                                botReply = data[0].output || data[0].text || botReply;
+                            } else {
+                                botReply = data.output || data.text || data.message || botReply;
+                            }
+                        } catch (_) { /* respuesta no es JSON válido */ }
                     }
                     addMessage(botReply, false);
                     speak(botReply);
