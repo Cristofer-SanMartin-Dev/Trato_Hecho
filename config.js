@@ -7,4 +7,4 @@
 //   - Railway: https://tu-n8n.railway.app/webhook/chat-v2
 // =====================================================
 
-const WEBHOOK_URL = 'http://localhost:5678/webhook/chat-v2';
+const WEBHOOK_URL = 'http://localhost:5678/webhook-test/chat-v2';
