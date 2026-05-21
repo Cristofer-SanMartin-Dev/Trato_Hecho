@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MockUp 6 — Panel de Gestión Dashboard | Trato Hecho</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #F5F5F5; display: flex; min-height: 100vh; font-size: 14px; }
+
+  /* SIDEBAR */
+  .sidebar { width: 240px; background: #1F497D; color: #fff; display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+  .sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .sidebar-logo .name { font-size: 18px; font-weight: 700; }
+  .sidebar-logo .sub { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+  .sidebar-nav { flex: 1; padding: 16px 0; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; transition: background .15s; font-size: 14px; font-weight: 500; }
+  .nav-item:hover { background: rgba(255,255,255,0.1); }
+  .nav-item.active { background: rgba(255,255,255,0.2); font-weight: 700; border-left: 3px solid #1D9E75; }
+  .nav-item .icon { font-size: 18px; width: 24px; text-align: center; }
+  .sidebar-footer { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.15); font-size: 11px; opacity: 0.65; }
+
+  /* MAIN */
+  .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* TOP BAR */
+  .topbar { background: #fff; padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .topbar h1 { font-size: 20px; color: #1F497D; font-weight: 700; }
+  .user-badge { display: flex; align-items: center; gap: 10px; }
+  .user-role { font-size: 13px; color: #555; text-align: right; }
+  .user-av { width: 38px; height: 38px; background: #1F497D; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; }
+
+  /* CONTENT */
+  .content { padding: 24px 28px; flex: 1; }
+
+  /* KPIS */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi { background: #fff; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 8px rgba(0,0,0,0.07); border-left: 4px solid; }
+  .kpi.red { border-color: #B85450; background: #FFF0F0; }
+  .kpi.green { border-color: #297520; background: #E6F7E6; }
+  .kpi.gray { border-color: #888780; background: #F5F5F5; }
+  .kpi.blue { border-color: #1F497D; background: #E8F0FA; }
+  .kpi .kpi-val { font-size: 26px; font-weight: 900; color: #333; margin-bottom: 4px; }
+  .kpi.red .kpi-val { color: #B85450; }
+  .kpi.green .kpi-val { color: #297520; }
+  .kpi.blue .kpi-val { color: #1F497D; }
+  .kpi .kpi-label { font-size: 12px; color: #666; font-weight: 600; }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-pill { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #ddd; background: #fff; color: #555; transition: all .15s; }
+  .filter-pill.active { background: #1F497D; color: #fff; border-color: #1F497D; }
+  .filter-pill:hover:not(.active) { border-color: #1F497D; color: #1F497D; }
+
+  /* TABLE */
+  .table-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 8px rgba(0,0,0,0.07); overflow: hidden; }
+  .table-header { padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 700; color: #1F497D; display: flex; justify-content: space-between; align-items: center; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: #F5F5F5; }
+  th { padding: 11px 16px; text-align: left; font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+  td { padding: 13px 16px; border-bottom: 1px solid #f5f5f5; font-size: 13px; color: #333; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #FAFAFE; }
+
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+  .badge.pendiente { background: #FFF3CD; color: #856404; }
+  .badge.aprobada { background: #D4EDDA; color: #155724; }
+  .badge.rechazada { background: #F8D7DA; color: #721c24; }
+
+  .action-btn { background: #EBF3FF; color: #1F497D; border: 1px solid #1F497D; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .action-btn:hover { background: #1F497D; color: #fff; }
+
+  /* PAGINATION */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid #eee; font-size: 13px; color: #666; }
+  .page-btns { display: flex; gap: 6px; }
+  .page-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .page-btn.active { background: #1F497D; color: #fff; border-color: #1F497D; }
+  .page-btn:hover:not(.active) { border-color: #1F497D; color: #1F497D; }
+
+  /* MODAL OVERLAY */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: flex; align-items: center; justify-content: center; }
+  .modal { background: #fff; border-radius: 16px; width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 12px 48px rgba(0,0,0,0.25); }
+  .modal-header { background: #1F497D; color: #fff; padding: 18px 24px; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; }
+  .modal-header h3 { font-size: 16px; }
+  .modal-close { background: rgba(255,255,255,0.2); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 16px; }
+  .modal-body { padding: 24px; }
+  .detail-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
+  .detail-row:last-of-type { border-bottom: none; }
+  .detail-row .dl { color: #666; font-weight: 600; }
+  .detail-row .dv { color: #333; text-align: right; max-width: 60%; }
+  .status-select { border: 1.5px solid #1F497D; border-radius: 8px; padding: 6px 12px; font-size: 13px; color: #1F497D; font-weight: 700; cursor: pointer; background: #EBF3FF; outline: none; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid #eee; display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-save { background: #1D9E75; color: #fff; border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn-cancel { background: #F5F5F5; color: #555; border: 1px solid #ddd; padding: 9px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+
+  .mockup-label { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #1D9E75; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 9999; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+</style>
+</head>
+<body>
+<div class="mockup-label">MockUp 6 — Panel de Gestión (Dashboard de Cotizaciones)</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="name">🌿 Trato Hecho</div>
+    <div class="sub">Panel de Gestión</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active"><span class="icon">📊</span> Dashboard</div>
+    <div class="nav-item"><span class="icon">📋</span> Cotizaciones</div>
+    <div class="nav-item"><span class="icon">⚙️</span> Configuración</div>
+    <div class="nav-item"><span class="icon">🚪</span> Cerrar sesión</div>
+  </nav>
+  <div class="sidebar-footer">v1.0 · Andrés Romero (admin)</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <h1>Panel de Gestión</h1>
+    <div class="user-badge">
+      <div class="user-role"><strong>Andrés Romero</strong><br>Propietario · Césped Sintético SpA</div>
+      <div class="user-av">AR</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPIs -->
+    <div class="kpis">
+      <div class="kpi red">
+        <div class="kpi-val">3</div>
+        <div class="kpi-label">🔴 Pendientes</div>
+      </div>
+      <div class="kpi green">
+        <div class="kpi-val">12</div>
+        <div class="kpi-label">🟢 Aprobadas</div>
+      </div>
+      <div class="kpi gray">
+        <div class="kpi-val">0</div>
+        <div class="kpi-label">⭕ Rechazadas</div>
+      </div>
+      <div class="kpi blue">
+        <div class="kpi-val" style="font-size:20px;">$8.947.000</div>
+        <div class="kpi-label">💰 Total recaudado CLP</div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <div class="filter-pill active">Todas ● 15</div>
+      <div class="filter-pill">Pendiente ● 3</div>
+      <div class="filter-pill">Aprobada ● 12</div>
+      <div class="filter-pill">Rechazada ● 0</div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <div class="table-header">
+        <span>Cotizaciones recientes</span>
+        <span style="font-size:12px;color:#888;font-weight:400;">Mostrando 3 de 15</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>N° Cotización</th>
+            <th>Cliente</th>
+            <th>Producto</th>
+            <th>m²</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>COT-2026-52874</strong></td>
+            <td>Juan Pérez G.</td>
+            <td>Soft Touch (30mm)</td>
+            <td>44 m²</td>
+            <td><strong>$1.205.600</strong></td>
+            <td><span class="badge pendiente">⏳ Pendiente</span></td>
+            <td>Hoy 14:36</td>
+            <td><button class="action-btn" onclick="document.getElementById('modal').style.display='flex'">👁 Ver</button></td>
+          </tr>
+          <tr>
+            <td><strong>COT-2026-49103</strong></td>
+            <td>María García R.</td>
+            <td>Pet-Friendly Turf (35mm)</td>
+            <td>55 m²</td>
+            <td><strong>$1.678.500</strong></td>
+            <td><span class="badge aprobada">✅ Aprobada</span></td>
+            <td>Ayer 09:15</td>
+            <td><button class="action-btn">👁 Ver</button></td>
+          </tr>
+          <tr>
+            <td><strong>COT-2026-41257</strong></td>
+            <td>Carlos López M.</td>
+            <td>Luxury Emerald (40mm)</td>
+            <td>22 m²</td>
+            <td><strong>$726.100</strong></td>
+            <td><span class="badge aprobada">✅ Aprobada</span></td>
+            <td>18/05 11:00</td>
+            <td><button class="action-btn">👁 Ver</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <span>Mostrando 3 de 15 cotizaciones</span>
+        <div class="page-btns">
+          <button class="page-btn">←</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div class="modal-overlay" id="modal" style="display:flex;">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📋 Detalle Cotización — COT-2026-52874</h3>
+      <button class="modal-close" onclick="document.getElementById('modal').style.display='none'">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-row"><span class="dl">N° Cotización</span><span class="dv"><strong>COT-2026-52874</strong></span></div>
+      <div class="detail-row"><span class="dl">Session ID</span><span class="dv" style="font-size:11px;word-break:break-all;">sess_abc7f3k9d</span></div>
+      <div class="detail-row"><span class="dl">Nombre</span><span class="dv">Juan Pérez González</span></div>
+      <div class="detail-row"><span class="dl">RUT</span><span class="dv">12.345.678-9</span></div>
+      <div class="detail-row"><span class="dl">Dirección</span><span class="dv">Calle Los Aromos 432, Melipilla</span></div>
+      <div class="detail-row"><span class="dl">Producto</span><span class="dv">Soft Touch (30mm)</span></div>
+      <div class="detail-row"><span class="dl">Superficie</span><span class="dv">44 m² (base: 40 m² + 10%)</span></div>
+      <div class="detail-row"><span class="dl">Instalación</span><span class="dv">✅ Incluida</span></div>
+      <div class="detail-row"><span class="dl">Subtotal material</span><span class="dv">$1.007.600 CLP</span></div>
+      <div class="detail-row"><span class="dl">Subtotal instalación</span><span class="dv">$198.000 CLP</span></div>
+      <div class="detail-row"><span class="dl">Total</span><span class="dv"><strong style="color:#1F497D;font-size:16px;">$1.205.600 CLP</strong></span></div>
+      <div class="detail-row"><span class="dl">Fecha</span><span class="dv">21/05/2026 14:36</span></div>
+      <div class="detail-row">
+        <span class="dl">Estado</span>
+        <span class="dv">
+          <select class="status-select">
+            <option value="pendiente" selected>⏳ Pendiente</option>
+            <option value="aprobada">✅ Aprobada</option>
+            <option value="rechazada">❌ Rechazada</option>
+          </select>
+        </span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="document.getElementById('modal').style.display='none'">Cancelar</button>
+      <button class="btn-save">💾 Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!--
+  TABLA SUPABASE: cotizaciones
+  CAMPOS VISIBLES: numero, session_id, nombre, rut, direccion, producto, m2, instalacion, total, estado, created_at
+  ENDPOINTS (pendiente implementación):
+    GET /api/cotizaciones?estado=pendiente → lista filtrada
+    GET /api/cotizaciones/:id → detalle completo
+    PUT /api/cotizaciones/:id/estado → actualizar estado
+  AUTENTICACIÓN: Authorization: Bearer {JWT} en cada request
+  JWT almacenado en: localStorage('trato_hecho_token')
+  EXPIRACIÓN JWT: 8 horas
+  [PENDIENTE VERIFICACIÓN MANUAL]: endpoints REST del panel no se encontraron
+  en el código fuente — pueden estar pendientes de implementar en n8n
+-->
+</body>
+</html>

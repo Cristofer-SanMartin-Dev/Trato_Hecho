@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MockUp 5 — Panel de Gestión Login | Trato Hecho</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #F5F5F5; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+  .mockup-label { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #1D9E75; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 9999; box-shadow: 0 2px 8px rgba(0,0,0,0.2); white-space: nowrap; }
+
+  .login-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px;
+  }
+
+  /* LOGO */
+  .logo-wrap { text-align: center; margin-bottom: 28px; }
+  .logo-circle { width: 64px; height: 64px; background: #1F497D; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; font-size: 28px; color: #fff; box-shadow: 0 4px 16px rgba(31,73,125,0.3); }
+  .logo-name { font-size: 22px; font-weight: 700; color: #1F497D; margin-top: 10px; }
+  .logo-sub { font-size: 12px; color: #666; margin-top: 4px; line-height: 1.4; }
+
+  /* FORM */
+  .form-group { margin-bottom: 18px; }
+  label { display: block; font-size: 13px; font-weight: 700; color: #444; margin-bottom: 6px; }
+  .input-wrap { position: relative; }
+  .input-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: #aaa; }
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    padding: 11px 40px 11px 40px;
+    font-size: 14px;
+    font-family: Arial;
+    outline: none;
+    transition: border .2s;
+    color: #333;
+  }
+  input[type="text"]:focus, input[type="password"]:focus { border-color: #1F497D; }
+  .eye-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #aaa; font-size: 16px; }
+
+  .check-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+  .check-row input { width: 16px; height: 16px; accent-color: #1F497D; cursor: pointer; }
+  .check-row label { font-size: 13px; color: #555; margin: 0; font-weight: normal; cursor: pointer; }
+
+  .login-btn { width: 100%; background: #1F497D; color: #fff; border: none; padding: 13px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background .2s; letter-spacing: 0.3px; }
+  .login-btn:hover { background: #2E75B6; }
+
+  .forgot-link { display: block; text-align: center; margin-top: 16px; font-size: 13px; color: #2E75B6; text-decoration: none; }
+  .forgot-link:hover { text-decoration: underline; }
+
+  /* ERROR BANNER */
+  .error-banner { background: #FFF0F0; border: 1px solid #f5c6cb; border-radius: 8px; padding: 10px 14px; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+  .error-banner .icon { font-size: 16px; flex-shrink: 0; }
+  .error-banner .msg { font-size: 13px; color: #721c24; }
+
+  /* FOOTER */
+  .card-footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid #f0f0f0; text-align: center; font-size: 12px; color: #999; }
+  .card-footer .lock { font-size: 14px; margin-right: 4px; }
+</style>
+</head>
+<body>
+<div class="mockup-label">MockUp 5 — Panel de Gestión (Login)</div>
+
+<div class="login-card">
+
+  <!-- LOGO -->
+  <div class="logo-wrap">
+    <div class="logo-circle">T</div>
+    <div class="logo-name">Trato Hecho</div>
+    <div class="logo-sub">Panel de Gestión<br>Solo para el equipo de Césped Sintético SpA</div>
+  </div>
+
+  <!-- ERROR BANNER (visible) -->
+  <div class="error-banner">
+    <span class="icon">❌</span>
+    <span class="msg">Credenciales incorrectas. Intento <strong>1 de 3</strong>. Al tercer intento se bloqueará por 5 minutos.</span>
+  </div>
+
+  <!-- USERNAME -->
+  <div class="form-group">
+    <label for="username">Usuario</label>
+    <div class="input-wrap">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+      <input type="text" id="username" value="admin" placeholder="Nombre de usuario" />
+    </div>
+  </div>
+
+  <!-- PASSWORD -->
+  <div class="form-group">
+    <label for="password">Contraseña</label>
+    <div class="input-wrap">
+      <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.8-2.2-5-5-5S7 3.2 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.7 1.4-3.1 3.1-3.1 1.7 0 3.1 1.4 3.1 3.1v2z"/></svg>
+      <input type="password" id="password" value="••••••••" placeholder="Contraseña" />
+      <button class="eye-btn" title="Mostrar contraseña">👁</button>
+    </div>
+  </div>
+
+  <!-- REMEMBER -->
+  <div class="check-row">
+    <input type="checkbox" id="remember" checked>
+    <label for="remember">Mantener sesión iniciada</label>
+  </div>
+
+  <!-- SUBMIT -->
+  <button class="login-btn">Iniciar sesión</button>
+
+  <!-- FORGOT -->
+  <a href="#" class="forgot-link">¿Olvidaste tu contraseña? → Recuperar acceso</a>
+
+  <!-- FOOTER -->
+  <div class="card-footer">
+    <span class="lock">🔒</span>Acceso protegido · Sesión JWT · Sistema Trato Hecho
+  </div>
+
+</div>
+
+<!--
+  ENDPOINT: POST /api/auth/login
+  BODY: { username: string, password: string }
+  RESPUESTA EXITOSA: { token: "JWT...", user: { nombre: string, rol: string } }
+  ALMACENAMIENTO: localStorage.setItem('trato_hecho_token', token)
+  EXPIRACIÓN JWT: 8 horas
+  INTENTOS FALLIDOS: bloqueo formulario tras 3 intentos por 5 minutos
+  AUTENTICACIÓN: JWT (JSON Web Token) — panel de gestión del negocio
+  [PENDIENTE VERIFICACIÓN MANUAL]: el endpoint /api/auth/login no se encontró
+  en el código fuente — puede estar configurado directamente en n8n o pendiente de implementar
+-->
+</body>
+</html>
