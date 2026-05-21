@@ -1,0 +1,434 @@
+<mxfile host="app.diagrams.net" modified="2026-05-12T00:00:00.000Z" agent="Claude" version="21.0.0" type="device">
+  <diagram name="Diagrama de Secuencia" id="secuencia-trato-hecho">
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- TÍTULO -->
+    <mxCell id="titulo" value="&lt;b style=&apos;font-size:15px&apos;&gt;Diagrama de Secuencia — Trato Hecho&lt;/b&gt;&lt;br/&gt;Interacción cronológica entre actores del sistema · DuocUC 2026"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontColor=#1a1a2e;"
+      vertex="1" parent="1">
+      <mxGeometry x="200" y="15" width="1200" height="45" as="geometry" />
+    </mxCell>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- ACTORES (cabeceras)                           -->
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- Actor 1: Cliente -->
+    <mxCell id="a1" value="&lt;b&gt;Cliente&lt;/b&gt;&lt;br/&gt;Navegador web"
+      style="shape=mxgraph.flowchart.actor;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=10;fontStyle=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="60" y="75" width="60" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- Actor 2: Frontend -->
+    <mxCell id="a2" value="&lt;b&gt;Frontend&lt;/b&gt;&lt;br/&gt;React.js"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;fontStyle=1;arcSize=15;"
+      vertex="1" parent="1">
+      <mxGeometry x="230" y="85" width="110" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Actor 3: n8n -->
+    <mxCell id="a3" value="&lt;b&gt;n8n&lt;/b&gt;&lt;br/&gt;Orquestador"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#7d5b00;fontSize=10;fontStyle=1;arcSize=15;"
+      vertex="1" parent="1">
+      <mxGeometry x="430" y="85" width="110" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Actor 4: Redis -->
+    <mxCell id="a4" value="&lt;b&gt;Redis&lt;/b&gt;&lt;br/&gt;Caché"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;fontStyle=1;arcSize=15;"
+      vertex="1" parent="1">
+      <mxGeometry x="630" y="85" width="110" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Actor 5: Claude API -->
+    <mxCell id="a5" value="&lt;b&gt;Claude API&lt;/b&gt;&lt;br/&gt;Anthropic"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6720c;fontColor=#7d3c00;fontSize=10;fontStyle=1;arcSize=15;"
+      vertex="1" parent="1">
+      <mxGeometry x="830" y="85" width="110" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Actor 6: PostgreSQL -->
+    <mxCell id="a6" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;br/&gt;Base de datos"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;fontStyle=1;arcSize=15;"
+      vertex="1" parent="1">
+      <mxGeometry x="1030" y="85" width="110" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Actor 7: Telegram + Gmail -->
+    <mxCell id="a7" value="&lt;b&gt;Telegram&lt;/b&gt;&lt;br/&gt;&lt;b&gt;+ Gmail&lt;/b&gt;"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;fontStyle=1;arcSize=15;"
+      vertex="1" parent="1">
+      <mxGeometry x="1230" y="85" width="110" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Actor 8: MercadoPago -->
+    <mxCell id="a8" value="&lt;b&gt;MercadoPago&lt;/b&gt;&lt;br/&gt;Checkout Pro"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#6b2120;fontSize=10;fontStyle=1;arcSize=15;"
+      vertex="1" parent="1">
+      <mxGeometry x="1430" y="85" width="110" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- LÍNEAS DE VIDA (lifelines)                    -->
+    <!-- ══════════════════════════════════════════════ -->
+    <mxCell id="ll1" value="" style="endArrow=none;dashed=1;strokeColor=#aaaaaa;strokeWidth=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="90" y="145" as="sourcePoint"/><mxPoint x="90" y="1420" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="ll2" value="" style="endArrow=none;dashed=1;strokeColor=#6a3d9a;strokeWidth=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="285" y="135" as="sourcePoint"/><mxPoint x="285" y="1420" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="ll3" value="" style="endArrow=none;dashed=1;strokeColor=#d6b656;strokeWidth=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="485" y="135" as="sourcePoint"/><mxPoint x="485" y="1420" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="ll4" value="" style="endArrow=none;dashed=1;strokeColor=#297520;strokeWidth=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="685" y="135" as="sourcePoint"/><mxPoint x="685" y="1420" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="ll5" value="" style="endArrow=none;dashed=1;strokeColor=#d6720c;strokeWidth=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="885" y="135" as="sourcePoint"/><mxPoint x="885" y="1420" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="ll6" value="" style="endArrow=none;dashed=1;strokeColor=#297520;strokeWidth=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="1085" y="135" as="sourcePoint"/><mxPoint x="1085" y="1420" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="ll7" value="" style="endArrow=none;dashed=1;strokeColor=#1469b5;strokeWidth=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="1285" y="135" as="sourcePoint"/><mxPoint x="1285" y="1420" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="ll8" value="" style="endArrow=none;dashed=1;strokeColor=#b85450;strokeWidth=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="1485" y="135" as="sourcePoint"/><mxPoint x="1485" y="1420" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- SECCIÓN 1: CONVERSACIÓN INICIAL                               -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <mxCell id="s1_bg" value="1. Conversación inicial — cliente escribe al agente"
+      style="swimlane;startSize=24;fillColor=#f0f0f0;strokeColor=#aaaaaa;fontStyle=1;fontSize=10;fontColor=#333333;horizontal=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="30" y="160" width="1580" height="230" as="geometry" />
+    </mxCell>
+
+    <!-- 1.1 Cliente escribe -->
+    <mxCell id="m1" value="Escribe mensaje en el chat"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#333333;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s1_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="60" y="50" as="sourcePoint"/><mxPoint x="255" y="50" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="m1_l" value="{ sessionId, message }" style="text;html=1;fontSize=8;fontColor=#666666;align=center;" vertex="1" parent="s1_bg"><mxGeometry x="90" y="30" width="150" height="16" as="geometry"/></mxCell>
+
+    <!-- 1.2 Frontend → n8n -->
+    <mxCell id="m2" value="POST /chat"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#6a3d9a;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s1_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="255" y="80" as="sourcePoint"/><mxPoint x="455" y="80" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="m2_l" value="{ uuid, message, history }" style="text;html=1;fontSize=8;fontColor=#666666;align=center;" vertex="1" parent="s1_bg"><mxGeometry x="265" y="60" width="170" height="16" as="geometry"/></mxCell>
+
+    <!-- 1.3 n8n → Redis GET historial -->
+    <mxCell id="m3" value="GET hist_{uuid}"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s1_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="110" as="sourcePoint"/><mxPoint x="655" y="110" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <!-- 1.4 Redis → n8n responde historial -->
+    <mxCell id="m4" value="Array historial (o null)"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s1_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="655" y="130" as="sourcePoint"/><mxPoint x="455" y="130" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 1.5 n8n → Redis GET cotización -->
+    <mxCell id="m5" value="GET th:quote:{uuid}"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s1_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="155" as="sourcePoint"/><mxPoint x="655" y="155" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <!-- 1.6 Redis → n8n responde cotización -->
+    <mxCell id="m6" value="Objeto quote (o null)"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s1_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="655" y="175" as="sourcePoint"/><mxPoint x="455" y="175" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 1.7 n8n → Claude -->
+    <mxCell id="m7" value="POST /v1/messages · prompt + historial"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6720c;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s1_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="200" as="sourcePoint"/><mxPoint x="855" y="200" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <!-- 1.8 Claude → n8n respuesta -->
+    <mxCell id="m8" value="Respuesta conversacional (action: CHAT)"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6720c;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s1_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="855" y="215" as="sourcePoint"/><mxPoint x="455" y="215" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- SECCIÓN 2: GENERACIÓN DE COTIZACIÓN                          -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <mxCell id="s2_bg" value="2. Generación de cotización — cliente entrega nombre, RUT y dirección"
+      style="swimlane;startSize=24;fillColor=#EEF0FB;strokeColor=#6a3d9a;fontStyle=1;fontSize=10;fontColor=#3d1a6e;horizontal=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="30" y="410" width="1580" height="330" as="geometry" />
+    </mxCell>
+
+    <!-- 2.1 Cliente escribe datos -->
+    <mxCell id="m9" value="Envía dirección (último dato requerido)"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#333333;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="60" y="50" as="sourcePoint"/><mxPoint x="255" y="50" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 2.2 Frontend → n8n -->
+    <mxCell id="m10" value="POST /chat · { uuid, message }"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#6a3d9a;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="255" y="80" as="sourcePoint"/><mxPoint x="455" y="80" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 2.3 n8n construye prompt con instrucción crítica y llama Claude -->
+    <mxCell id="m11" value="POST /v1/messages · instrucción crítica [COTIZAR:]"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6720c;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="115" as="sourcePoint"/><mxPoint x="855" y="115" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <!-- 2.4 Claude devuelve [COTIZAR:] -->
+    <mxCell id="m12" value="[COTIZAR: nombre=X, rut=X, m2=X, tipo=X, total=X]"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6720c;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="855" y="135" as="sourcePoint"/><mxPoint x="455" y="135" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 2.5 n8n → Redis INCR contador -->
+    <mxCell id="m13" value="INCR th:counter → obtiene número secuencial"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="165" as="sourcePoint"/><mxPoint x="655" y="165" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="m13r" value="Retorna: 42 → COT-2026-042"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="655" y="180" as="sourcePoint"/><mxPoint x="455" y="180" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 2.6 n8n → PostgreSQL INSERT -->
+    <mxCell id="m14" value="INSERT INTO cotizaciones (numero, nombre, rut, ...)"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="210" as="sourcePoint"/><mxPoint x="1055" y="210" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="m14r" value="OK · id generado"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="1055" y="225" as="sourcePoint"/><mxPoint x="455" y="225" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 2.7 n8n → Redis SET cotización -->
+    <mxCell id="m15" value="SETEX th:quote:{uuid} 864000 {quoteJSON}"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="255" as="sourcePoint"/><mxPoint x="655" y="255" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 2.8 n8n → Telegram + Gmail -->
+    <mxCell id="m16" value="Notificación cotización: número · m² · total · UUID"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#1469b5;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="285" as="sourcePoint"/><mxPoint x="1255" y="285" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 2.9 n8n → Frontend respuesta -->
+    <mxCell id="m17" value="HTTP 200 · { message: resumen COT-2026-042, quote: {...}, paymentLink: null }"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#6a3d9a;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="310" as="sourcePoint"/><mxPoint x="255" y="310" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <!-- 2.10 Frontend → Cliente muestra resultado -->
+    <mxCell id="m18" value="Renderiza QuoteCard · número · total CLP"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#333333;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s2_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="255" y="325" as="sourcePoint"/><mxPoint x="60" y="325" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- SECCIÓN 3: PAGO                                               -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <mxCell id="s3_bg" value="3. Proceso de pago — cliente confirma y paga"
+      style="swimlane;startSize=24;fillColor=#FFF0E6;strokeColor=#d6720c;fontStyle=1;fontSize=10;fontColor=#7d3c00;horizontal=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="30" y="760" width="1580" height="320" as="geometry" />
+    </mxCell>
+
+    <!-- 3.1 Cliente dice quiero pagar -->
+    <mxCell id="m19" value="Escribe: quiero pagar"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#333333;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="60" y="50" as="sourcePoint"/><mxPoint x="255" y="50" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 3.2 Frontend → n8n -->
+    <mxCell id="m20" value="POST /chat · { uuid, message: quiero pagar }"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#6a3d9a;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="255" y="80" as="sourcePoint"/><mxPoint x="455" y="80" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 3.3 n8n consulta Redis cotización activa -->
+    <mxCell id="m21" value="GET th:quote:{uuid} · recupera cotización vigente"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="110" as="sourcePoint"/><mxPoint x="655" y="110" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="m21r" value="{ numero: COT-2026-042, total: 429000 }"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="655" y="125" as="sourcePoint"/><mxPoint x="455" y="125" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 3.4 Claude emite [PAGAR:] -->
+    <mxCell id="m22" value="POST /v1/messages · contexto con quoteContext"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6720c;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="155" as="sourcePoint"/><mxPoint x="855" y="155" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="m22r" value="[PAGAR: numero=COT-2026-042, monto=429000]"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#d6720c;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="855" y="170" as="sourcePoint"/><mxPoint x="455" y="170" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 3.5 n8n → MercadoPago -->
+    <mxCell id="m23" value="POST /checkout/preferences · { title, unit_price: 429000, currency: CLP }"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="205" as="sourcePoint"/><mxPoint x="1455" y="205" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <mxCell id="m23r" value="{ init_point: https://mpago.la/... }"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="1455" y="220" as="sourcePoint"/><mxPoint x="455" y="220" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 3.6 n8n → Telegram + Gmail notificación pago -->
+    <mxCell id="m24" value="Notificación pago iniciado: número · monto · link"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#1469b5;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="252" as="sourcePoint"/><mxPoint x="1255" y="252" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 3.7 n8n → Frontend con paymentLink -->
+    <mxCell id="m25" value="HTTP 200 · { message, quote: null, paymentLink: URL }"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#6a3d9a;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="282" as="sourcePoint"/><mxPoint x="255" y="282" as="targetPoint"/></mxGeometry>
+    </mxCell>
+    <!-- 3.8 Frontend → Cliente muestra botón -->
+    <mxCell id="m26" value="Renderiza botón de pago MercadoPago"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#333333;dashed=1;fontSize=9;endArrow=open;endFill=0;"
+      edge="1" parent="s3_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="255" y="300" as="sourcePoint"/><mxPoint x="60" y="300" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- SECCIÓN 4: CONFIRMACIÓN DE PAGO                               -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <mxCell id="s4_bg" value="4. Confirmación — cliente completa el pago"
+      style="swimlane;startSize=24;fillColor=#E6F7E6;strokeColor=#297520;fontStyle=1;fontSize=10;fontColor=#1a4d10;horizontal=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="30" y="1100" width="1580" height="200" as="geometry" />
+    </mxCell>
+
+    <!-- 4.1 Cliente paga en MP -->
+    <mxCell id="m27" value="Completa pago en MercadoPago"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#333333;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s4_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="60" y="60" as="sourcePoint"/><mxPoint x="1455" y="60" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 4.2 MP → n8n webhook de pago confirmado -->
+    <mxCell id="m28" value="Webhook pago confirmado · external_reference: COT-2026-042"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#b85450;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s4_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="1455" y="100" as="sourcePoint"/><mxPoint x="455" y="100" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 4.3 n8n actualiza BD -->
+    <mxCell id="m29" value="UPDATE cotizaciones SET estado=aprobado WHERE numero=COT-2026-042"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#297520;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s4_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="130" as="sourcePoint"/><mxPoint x="1055" y="130" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- 4.4 n8n → Telegram + Gmail confirmación pago -->
+    <mxCell id="m30" value="Notificación PAGO CONFIRMADO · comprobante transacción"
+      style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#1469b5;fontSize=9;fontStyle=1;endArrow=open;endFill=0;"
+      edge="1" parent="s4_bg">
+      <mxGeometry relative="1" as="geometry"><mxPoint x="455" y="165" as="sourcePoint"/><mxPoint x="1255" y="165" as="targetPoint"/></mxGeometry>
+    </mxCell>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- LEYENDA                                                        -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <mxCell id="leg_bg" value=""
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#aaaaaa;arcSize=3;"
+      vertex="1" parent="1">
+      <mxGeometry x="30" y="1320" width="1580" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="leg_t" value="&lt;b&gt;Leyenda&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=11;"
+      vertex="1" parent="1">
+      <mxGeometry x="45" y="1330" width="100" height="20" as="geometry" />
+    </mxCell>
+
+    <mxCell id="lg1" value="Línea continua  →  mensaje de solicitud (ida)"
+      style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#333333;align=left;"
+      vertex="1" parent="1">
+      <mxGeometry x="45" y="1355" width="280" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="lg2" value="Línea punteada  →  mensaje de respuesta (vuelta)"
+      style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#333333;align=left;"
+      vertex="1" parent="1">
+      <mxGeometry x="45" y="1378" width="280" height="20" as="geometry" />
+    </mxCell>
+
+    <mxCell id="lg3" value="Morado · Frontend React.js"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;arcSize=20;"
+      vertex="1" parent="1">
+      <mxGeometry x="360" y="1340" width="180" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="lg4" value="Amarillo · n8n orquestador"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#7d5b00;fontSize=10;arcSize=20;"
+      vertex="1" parent="1">
+      <mxGeometry x="360" y="1378" width="180" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="lg5" value="Verde · Redis y PostgreSQL"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;"
+      vertex="1" parent="1">
+      <mxGeometry x="560" y="1340" width="180" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="lg6" value="Naranja · Claude API"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6720c;fontColor=#7d3c00;fontSize=10;arcSize=20;"
+      vertex="1" parent="1">
+      <mxGeometry x="560" y="1378" width="180" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="lg7" value="Azul · Telegram y Gmail"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;arcSize=20;"
+      vertex="1" parent="1">
+      <mxGeometry x="760" y="1340" width="180" height="28" as="geometry" />
+    </mxCell>
+    <mxCell id="lg8" value="Rojo · MercadoPago"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#6b2120;fontSize=10;arcSize=20;"
+      vertex="1" parent="1">
+      <mxGeometry x="760" y="1378" width="180" height="28" as="geometry" />
+    </mxCell>
+
+    <mxCell id="lg9" value="&lt;b&gt;4 flujos documentados:&lt;/b&gt; 1) Conversación CHAT · 2) Generación cotización COT-YYYY-XXX · 3) Proceso de pago con MercadoPago · 4) Confirmación y actualización de estado"
+      style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#555555;align=left;"
+      vertex="1" parent="1">
+      <mxGeometry x="960" y="1348" width="630" height="50" as="geometry" />
+    </mxCell>
+
+  </root>
+</mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,172 @@
+<mxfile host="app.diagrams.net" agent="Claude">
+  <diagram name="Estructura Redis" id="redis-trato-hecho">
+    <mxGraphModel dx="896" dy="541" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="1654" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="titulo" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontColor=#1a1a2e;" value="&lt;b style=&#39;font-size:15px&#39;&gt;Estructura de Datos Redis — Trato Hecho&lt;/b&gt;&lt;br/&gt;Caché de alta velocidad · 3 claves · TTL por clave · DuocUC 2026" vertex="1">
+          <mxGeometry height="45" width="870" x="150" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="redis_server" parent="1" style="swimlane;startSize=32;fillColor=#1a4d10;strokeColor=#1a4d10;fontColor=#ffffff;fontSize=11;fontStyle=1;arcSize=3;" value="Servidor Redis ·   Puerto 6379   ·   Docker container   ·   Railway / Render" vertex="1">
+          <mxGeometry height="860" width="1110" x="30" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="k1_bg" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;arcSize=5;" value="" vertex="1">
+          <mxGeometry height="230" width="1070" x="20" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="k1_name" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#297520;strokeColor=#297520;fontColor=#ffffff;fontSize=12;fontStyle=1;arcSize=8;" value="&lt;b&gt;CLAVE 1&lt;/b&gt;   hist_{uuid}" vertex="1">
+          <mxGeometry height="38" width="240" x="30" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="k1_meta" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#1a4d10;fontStyle=2;align=left;" value="Tipo: String (JSON serializado)     TTL: 86.400 s (24 horas)     Patrón: hist_usuario-abc-123" vertex="1">
+          <mxGeometry height="22" width="790" x="285" y="68" as="geometry" />
+        </mxCell>
+        <mxCell id="k1_hdr" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#1a4d10;fontStyle=1;align=left;" value="Contenido: Array JSON — últimos 20 turnos de conversación" vertex="1">
+          <mxGeometry height="20" width="500" x="30" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="k1_t1" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#297520;fontColor=#333333;fontSize=10;arcSize=5;align=left;" value="{ &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hola, necesito pasto para mi jardín&quot; }" vertex="1">
+          <mxGeometry height="28" width="500" x="30" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="k1_t1_l" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#297520;fontStyle=2;" value="Turno 1 — usuario" vertex="1">
+          <mxGeometry height="28" width="150" x="540" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="k1_t2" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;arcSize=5;align=left;" value="{ &quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;¡Hola! Soy Queno. ¿Es para jardín o cancha deportiva?&quot; }" vertex="1">
+          <mxGeometry height="28" width="500" x="30" y="166" as="geometry" />
+        </mxCell>
+        <mxCell id="k1_t2_l" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#6a3d9a;fontStyle=2;" value="Turno 2 — asistente" vertex="1">
+          <mxGeometry height="28" width="150" x="540" y="166" as="geometry" />
+        </mxCell>
+        <mxCell id="k1_tn" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#297520;fontColor=#555555;fontSize=10;arcSize=5;align=left;dashed=1;" value="{ &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;5 x 8 metros&quot; }   ...   máximo 20 turnos · los más antiguos se eliminan" vertex="1">
+          <mxGeometry height="28" width="700" x="30" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="k1_uso" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF5EA;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=5;align=left;" value="Lee: B3 · B5     Escribe: B9     Propósito: contexto conversacional para Claude · evita repetir preguntas ya respondidas" vertex="1">
+          <mxGeometry height="40" width="340" x="740" y="195" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_bg" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=5;" value="" vertex="1">
+          <mxGeometry height="360" width="1070" x="20" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_name" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6b656;strokeColor=#d6b656;fontColor=#ffffff;fontSize=12;fontStyle=1;arcSize=8;" value="&lt;b&gt;CLAVE 2&lt;/b&gt;   th:quote:{uuid}" vertex="1">
+          <mxGeometry height="38" width="260" x="30" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_meta" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#7d5b00;fontStyle=2;align=left;" value="Tipo: String (JSON serializado)     TTL: 864.000 s (10 días)     Patrón: th:quote:usuario-abc-123" vertex="1">
+          <mxGeometry height="22" width="775" x="305" y="318" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_hdr" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#7d5b00;fontStyle=1;align=left;" value="Contenido: Objeto JSON — cotización activa completa" vertex="1">
+          <mxGeometry height="20" width="500" x="30" y="358" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f1" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontColor=#333333;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="&quot;numero&quot;:      &quot;COT-2026-042&quot;" vertex="1">
+          <mxGeometry height="26" width="310" x="30" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f1l" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#7d5b00;align=left;" value="Número correlativo único" vertex="1">
+          <mxGeometry height="26" width="220" x="350" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f2" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#d6b656;fontColor=#333333;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="&quot;uuid&quot;:         &quot;usuario-abc-123&quot;" vertex="1">
+          <mxGeometry height="26" width="310" x="30" y="416" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f2l" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#7d5b00;align=left;" value="Sesión del cliente · enlace con historial" vertex="1">
+          <mxGeometry height="26" width="220" x="350" y="416" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f3" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontColor=#333333;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="&quot;m2&quot;:            44" vertex="1">
+          <mxGeometry height="26" width="310" x="30" y="448" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f3l" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#7d5b00;align=left;" value="m² con margen 10% ya aplicado" vertex="1">
+          <mxGeometry height="26" width="220" x="350" y="448" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f4" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#d6b656;fontColor=#333333;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="&quot;tipo&quot;:          &quot;Pasto Premium (35mm)&quot;" vertex="1">
+          <mxGeometry height="26" width="310" x="30" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f4l" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#7d5b00;align=left;" value="Producto seleccionado del catálogo" vertex="1">
+          <mxGeometry height="26" width="220" x="350" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f5" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontColor=#333333;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="&quot;instalacion&quot;:  true" vertex="1">
+          <mxGeometry height="26" width="310" x="30" y="512" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f5l" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#7d5b00;align=left;" value="Incluye servicio de instalación" vertex="1">
+          <mxGeometry height="26" width="220" x="350" y="512" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f6" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#d6b656;fontColor=#333333;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="&quot;total&quot;:         858000" vertex="1">
+          <mxGeometry height="26" width="310" x="30" y="544" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f6l" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#7d5b00;align=left;" value="Total en CLP · calculado por B5" vertex="1">
+          <mxGeometry height="26" width="220" x="350" y="544" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f7" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontColor=#333333;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="&quot;fecha&quot;:         &quot;2026-05-12T14:30:00.000Z&quot;" vertex="1">
+          <mxGeometry height="26" width="310" x="30" y="576" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_f7l" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#7d5b00;align=left;" value="ISO 8601 · timestamp de generación" vertex="1">
+          <mxGeometry height="26" width="220" x="350" y="576" as="geometry" />
+        </mxCell>
+        <mxCell id="k2_uso" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBE6;strokeColor=#d6b656;fontColor=#7d5b00;fontSize=10;arcSize=5;align=left;" value="Lee: B4 · B5     Escribe: B13     Comando: SETEX th:quote:{uuid} 864000 {JSON}&lt;br/&gt;Propósito: cotización activa · si cliente vuelve en 10 días el sistema la reconoce y ofrece pagar directamente" vertex="1">
+          <mxGeometry height="60" width="490" x="590" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="k3_bg" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#1469b5;arcSize=5;" value="" vertex="1">
+          <mxGeometry height="160" width="1070" x="20" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="k3_name" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1469b5;strokeColor=#1469b5;fontColor=#ffffff;fontSize=12;fontStyle=1;arcSize=8;" value="&lt;b&gt;CLAVE 3&lt;/b&gt;   th:counter" vertex="1">
+          <mxGeometry height="38" width="220" x="30" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="k3_meta" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#083d7a;fontStyle=2;align=left;" value="Tipo: Integer     TTL: Sin expiración (persiste indefinidamente)     Patrón: clave fija global" vertex="1">
+          <mxGeometry height="22" width="815" x="265" y="698" as="geometry" />
+        </mxCell>
+        <mxCell id="k3_hdr" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#083d7a;fontStyle=1;align=left;" value="Contenido: Entero global autoincremental · genera el número correlativo de cada cotización" vertex="1">
+          <mxGeometry height="20" width="700" x="30" y="738" as="geometry" />
+        </mxCell>
+        <mxCell id="k3_v0" parent="redis_server" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;" value="0&lt;br/&gt;(inicial)" vertex="1">
+          <mxGeometry height="52" width="60" x="30" y="762" as="geometry" />
+        </mxCell>
+        <mxCell id="k3_v1" parent="redis_server" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;" value="1&lt;br/&gt;COT-2026-001" vertex="1">
+          <mxGeometry height="52" width="80" x="120" y="762" as="geometry" />
+        </mxCell>
+        <mxCell id="k3_v2" parent="redis_server" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;" value="2&lt;br/&gt;COT-2026-002" vertex="1">
+          <mxGeometry height="52" width="80" x="230" y="762" as="geometry" />
+        </mxCell>
+        <mxCell id="k3_vn" parent="redis_server" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1469b5;strokeColor=#1469b5;fontColor=#ffffff;fontSize=10;fontStyle=1;" value="42&lt;br/&gt;COT-2026-042" vertex="1">
+          <mxGeometry height="52" width="80" x="340" y="762" as="geometry" />
+        </mxCell>
+        <mxCell id="k3_dots" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=none;fontSize=18;fontColor=#1469b5;align=center;" value="···" vertex="1">
+          <mxGeometry height="28" width="44" x="290" y="774" as="geometry" />
+        </mxCell>
+        <mxCell id="e_k3_01" edge="1" parent="redis_server" source="k3_v0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1469b5;fontSize=9;fontStyle=1;" target="k3_v1" value="INCR">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_k3_12" edge="1" parent="redis_server" source="k3_v1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1469b5;fontSize=9;fontStyle=1;" target="k3_v2" value="INCR">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="k3_uso" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF5FF;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;arcSize=5;align=left;" value="Lee / Escribe: B11 (INCR)     Comando: INCR th:counter → retorna nuevo valor&lt;br/&gt;Propósito: número único correlativo · atómico · sin duplicados aunque lleguen peticiones simultáneas" vertex="1">
+          <mxGeometry height="52" width="620" x="450" y="762" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd_title" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=#ffffff;fontStyle=1;fontSize=11;fontColor=#1a4d10;align=left;" value="Comandos Redis utilizados en el sistema" vertex="1">
+          <mxGeometry height="22" width="400" x="20" y="858" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd1" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4d10;strokeColor=#1a4d10;fontColor=#ffffff;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="GET hist_{uuid}             →  recupera historial (B3)" vertex="1">
+          <mxGeometry height="26" width="510" x="20" y="886" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd2" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4d10;strokeColor=#1a4d10;fontColor=#ffffff;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="GET th:quote:{uuid}         →  recupera cotización (B4)" vertex="1">
+          <mxGeometry height="26" width="510" x="20" y="918" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd3" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#297520;strokeColor=#297520;fontColor=#ffffff;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="SETEX hist_{uuid} 86400 {JSON}        →  guarda historial con TTL (B9)" vertex="1">
+          <mxGeometry height="26" width="540" x="20" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd4" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6b656;strokeColor=#d6b656;fontColor=#ffffff;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="SETEX th:quote:{uuid} 864000 {JSON}   →  guarda cotización con TTL (B13)" vertex="1">
+          <mxGeometry height="26" width="540" x="20" y="982" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd5" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1469b5;strokeColor=#1469b5;fontColor=#ffffff;fontSize=10;arcSize=5;align=left;fontFamily=Courier New;" value="INCR th:counter             →  incrementa contador atómico (B11)" vertex="1">
+          <mxGeometry height="26" width="510" x="20" y="1014" as="geometry" />
+        </mxCell>
+        <mxCell id="ttl_title" parent="redis_server" style="text;html=1;strokeColor=none;fillColor=#ffffff;fontStyle=1;fontSize=11;fontColor=#1a4d10;align=left;" value="Comparativa de vigencia por clave" vertex="1">
+          <mxGeometry height="22" width="300" x="590" y="858" as="geometry" />
+        </mxCell>
+        <mxCell id="ttl_h" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4d10;strokeColor=#1a4d10;fontColor=#ffffff;fontSize=10;fontStyle=1;align=left;" value="Clave                   TTL              Uso" vertex="1">
+          <mxGeometry height="26" width="480" x="590" y="886" as="geometry" />
+        </mxCell>
+        <mxCell id="ttl_r1" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;align=left;" value="hist_{uuid}           24 horas         Sesión activa de conversación" vertex="1">
+          <mxGeometry height="26" width="480" x="590" y="918" as="geometry" />
+        </mxCell>
+        <mxCell id="ttl_r2" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#7d5b00;fontSize=10;align=left;" value="th:quote:{uuid}       10 días          Vigencia comercial de cotización" vertex="1">
+          <mxGeometry height="26" width="480" x="590" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="ttl_r3" parent="redis_server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;align=left;" value="th:counter            Sin TTL          Contador global permanente" vertex="1">
+          <mxGeometry height="26" width="480" x="590" y="982" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
