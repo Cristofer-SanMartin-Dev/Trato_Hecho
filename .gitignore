@@ -1,3 +1,6 @@
+# Claude Code (local config — no subir al repo)
+.claude/
+
 __pycache__/
 *.pyc
 *.pyo
