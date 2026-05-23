@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es-CL">
 
 <head>
@@ -7,7 +7,7 @@
 
     <title>Buscar Documento | Cesped Sintetico Chile</title>
     <meta name="description"
-        content="Busca tus cotizaciones o ventas registradas en nuestro sistema de Césped Sintético." />
+        content="Busca tus cotizaciones o ventas registradas en nuestro sistema de C�sped Sint�tico." />
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
@@ -40,6 +40,22 @@
 
         body {
             font-family: 'Inter', sans-serif;
+        }
+
+        /* ===== ANIMACIONES DEL CHATBOT BUTTON ===== */
+        @keyframes chat-pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 15px 40px rgba(0,0,0,0.2), 0 0 0 0 rgba(76, 175, 80, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 20px 50px rgba(0,0,0,0.25), 0 0 0 10px rgba(76, 175, 80, 0);
+            }
+        }
+
+        .animate-chat-pulse {
+            animation: chat-pulse 2.5s ease-in-out infinite;
         }
     </style>
 </head>
@@ -118,12 +134,12 @@
             </div>
             <div class="relative p-8 md:p-12 w-full">
                 <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Buscar Documento</h1>
-                <p class="text-white/80 max-w-2xl text-lg">Consulta rápidamente tus cotizaciones y ventas en nuestro
+                <p class="text-white/80 max-w-2xl text-lg">Consulta r�pidamente tus cotizaciones y ventas en nuestro
                     sistema.</p>
             </div>
         </section>
 
-        <!-- Formulario de búsqueda de documento -->
+        <!-- Formulario de b�squeda de documento -->
         <div class="max-w-2xl border border-primary/10 bg-white p-8 rounded-2xl shadow-sm dark:bg-slate-900 mx-auto">
             <div class="mb-6 flex items-center gap-3">
                 <span class="material-symbols-outlined text-primary">search</span>
@@ -137,22 +153,22 @@
                         Documento</label>
                     <select id="tipo_documento" name="tipo_documento" required
                         class="w-full rounded-xl border border-primary/10 bg-background-light p-4 focus:border-primary focus:ring-primary dark:bg-background-dark transition-colors appearance-none">
-                        <option value="cotizacion" selected>Cotización</option>
+                        <option value="cotizacion" selected>Cotizaci�n</option>
                         <option value="venta">Orden de Compra</option>
                     </select>
                 </div>
 
-                <!-- Número / RUT -->
+                <!-- N�mero / RUT -->
                 <div class="space-y-2" id="campo_rut_wrapper">
                     <label for="numero_documento" class="text-sm font-bold text-slate-700 dark:text-slate-300">Consultar
                         por
-                        RUT o N° de Orden de Compra</label>
+                        RUT o N� de Orden de Compra</label>
                     <div class="relative">
                         <input type="text" id="numero_documento" maxlength="12" name="numero_documento"
                             placeholder="Ej: 12.345.678-9" autocomplete="off"
                             class="w-full rounded-xl border border-primary/10 bg-background-light p-4 pr-12 focus:outline-none dark:bg-background-dark transition-all duration-200"
                             id="rut_input" />
-                        <!-- Ícono de estado de validación -->
+                        <!-- �cono de estado de validaci�n -->
                         <span id="rut_status_icon"
                             class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-xl hidden transition-all duration-300">
                         </span>
@@ -161,7 +177,7 @@
                     <p id="rut_feedback" class="text-xs font-medium hidden"></p>
                 </div>
 
-                <!-- Botón de Búsqueda -->
+                <!-- Bot�n de B�squeda -->
                 <div class="pt-4">
                     <button type="button" id="btnBuscar"
                         class="w-full rounded-xl bg-primary py-4 text-sm font-black text-white hover:bg-green-700 transition-colors flex justify-center items-center gap-2">
@@ -175,7 +191,7 @@
             <div id="resultadoBusqueda"
                 class="hidden mt-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
                 <h4 class="font-bold text-lg mb-2 text-primary">Resultados encontrados:</h4>
-                <p class="text-sm text-slate-600 dark:text-slate-400">Funcionalidad en construcción. Aquí se mostrarán
+                <p class="text-sm text-slate-600 dark:text-slate-400">Funcionalidad en construcci�n. Aqu� se mostrar�n
                     los datos recuperados desde la base de datos.</p>
             </div>
         </div>
@@ -191,7 +207,7 @@
                         <h2 class="text-lg font-black uppercase">Cesped Sintetico</h2>
                     </div>
                     <p class="text-sm text-slate-500 leading-relaxed">
-                        Líderes en soluciones de césped sintético para proyectos deportivos y residenciales de alta
+                        L�deres en soluciones de c�sped sint�tico para proyectos deportivos y residenciales de alta
                         gama.
                     </p>
                 </div>
@@ -199,8 +215,8 @@
                     <h4 class="mb-4 text-sm font-black uppercase text-slate-900 dark:text-white">Productos</h4>
                     <ul class="space-y-2 text-sm text-slate-500">
                         <li><a class="hover:text-primary" href="#">Pasto Residencial</a></li>
-                        <li><a class="hover:text-primary" href="#">Canchas de Fútbol</a></li>
-                        <li><a class="hover:text-primary" href="#">Pádel &amp; Tenis</a></li>
+                        <li><a class="hover:text-primary" href="#">Canchas de F�tbol</a></li>
+                        <li><a class="hover:text-primary" href="#">P�del &amp; Tenis</a></li>
                         <li><a class="hover:text-primary" href="#">Insumos Profesionales</a></li>
                     </ul>
                 </div>
@@ -209,7 +225,7 @@
                     <ul class="space-y-2 text-sm text-slate-500">
                         <li><a class="hover:text-primary" href="calculadora.html">Calculadora de Materiales</a></li>
                         <li><a class="hover:text-primary" href="documento.html">Buscar Documento</a></li>
-                        <li><a class="hover:text-primary" href="#">Guía de Instalación</a></li>
+                        <li><a class="hover:text-primary" href="#">Gu�a de Instalaci�n</a></li>
                     </ul>
                 </div>
                 <div>
@@ -225,19 +241,19 @@
                 </div>
             </div>
             <div class="mt-12 border-t border-primary/5 pt-8 text-center text-xs text-slate-400">
-                © 2024 Cesped Sintetico. Todos los derechos reservados.
+                � 2024 Cesped Sintetico. Todos los derechos reservados.
             </div>
         </div>
     </footer>
 
-    <!-- Validador de RUT chileno + Lógica de Búsqueda -->
+    <!-- Validador de RUT chileno + L�gica de B�squeda -->
     <script>
         // =========================================================
-        // UTILIDADES DE RUT CHILENO (Algoritmo Módulo 11 - SII)
+        // UTILIDADES DE RUT CHILENO (Algoritmo M�dulo 11 - SII)
         // =========================================================
 
         /**
-         * Limpia el RUT dejando sólo dígitos y la letra K.
+         * Limpia el RUT dejando s�lo d�gitos y la letra K.
          * @param {string} rut
          * @returns {string}
          */
@@ -246,8 +262,8 @@
         }
 
         /**
-         * Formatea visualmente el RUT en el patrón XX.XXX.XXX-D
-         * @param {string} rut - RUT limpio (sin puntos ni guión)
+         * Formatea visualmente el RUT en el patr�n XX.XXX.XXX-D
+         * @param {string} rut - RUT limpio (sin puntos ni gui�n)
          * @returns {string}
          */
         function formatearRut(rut) {
@@ -260,7 +276,7 @@
         }
 
         /**
-         * Calcula el dígito verificador de un RUT usando el algoritmo módulo 11.
+         * Calcula el d�gito verificador de un RUT usando el algoritmo m�dulo 11.
          * @param {string|number} cuerpo - Cuerpo del RUT sin DV
          * @returns {string} - DV calculado ('0'-'9' o 'K')
          */
@@ -291,7 +307,7 @@
                 return { valido: false, mensaje: 'RUT muy corto. Ingresa al menos 7 caracteres.' };
             }
             if (limpio.length > 9) {
-                return { valido: false, mensaje: 'RUT demasiado largo. Revisa el número ingresado.' };
+                return { valido: false, mensaje: 'RUT demasiado largo. Revisa el n�mero ingresado.' };
             }
 
             const cuerpo = limpio.slice(0, -1);
@@ -299,20 +315,20 @@
             const dvCalculado = calcularDV(cuerpo);
 
             if (!/^\d+$/.test(cuerpo)) {
-                return { valido: false, mensaje: 'El cuerpo del RUT sólo debe contener números.' };
+                return { valido: false, mensaje: 'El cuerpo del RUT s�lo debe contener n�meros.' };
             }
             if (dvIngresado !== dvCalculado) {
                 return {
                     valido: false,
-                    mensaje: `Dígito verificador incorrecto. El DV correcto para este RUT es: ${dvCalculado}.`
+                    mensaje: `D�gito verificador incorrecto. El DV correcto para este RUT es: ${dvCalculado}.`
                 };
             }
 
-            return { valido: true, mensaje: `RUT válido: ${formatearRut(limpio)}` };
+            return { valido: true, mensaje: `RUT v�lido: ${formatearRut(limpio)}` };
         }
 
         // =========================================================
-        // LÓGICA DE INTERFAZ: Feedback visual en tiempo real
+        // L�GICA DE INTERFAZ: Feedback visual en tiempo real
         // =========================================================
 
         const rutInput = document.getElementById('rut_input');
@@ -345,14 +361,14 @@
                     : crudo;
             }
 
-            // Si el campo está vacío, limpiar estado
+            // Si el campo est� vac�o, limpiar estado
             if (this.value.trim() === '') {
                 resetFeedback();
                 actualizarBoton(false);
                 return;
             }
 
-            // Validar sólo cuando hay suficientes caracteres
+            // Validar s�lo cuando hay suficientes caracteres
             const limpio = limpiarRut(this.value);
             if (limpio.length >= 7) {
                 const resultado = validarRut(this.value);
@@ -366,11 +382,11 @@
             actualizarBoton(rutEsValido);
         });
 
-        // Cuando cambia el tipo de documento, resetear validación
+        // Cuando cambia el tipo de documento, resetear validaci�n
         tipoBusqueda.addEventListener('change', function () {
             resetFeedback();
             if (this.value === 'cotizacion') {
-                rutInput.placeholder = 'Ej: 345665 (Número de cotización)';
+                rutInput.placeholder = 'Ej: 345665 (N�mero de cotizaci�n)';
                 actualizarBoton(true);
             } else {
                 rutInput.placeholder = 'Ej: 12.345.678-9';
@@ -379,7 +395,7 @@
             rutInput.value = '';
         });
 
-        /** Muestra el ícono y mensaje de feedback (válido o inválido) */
+        /** Muestra el �cono y mensaje de feedback (v�lido o inv�lido) */
         function mostrarFeedback(valido, mensaje) {
             rutFeedback.classList.remove('hidden', 'text-green-600', 'text-red-500');
             rutStatusIcon.classList.remove('hidden', 'text-green-600', 'text-red-400');
@@ -394,13 +410,13 @@
                 rutInput.classList.add('border-green-500', 'focus:ring-green-300');
                 rutStatusIcon.textContent = 'check_circle';
                 rutStatusIcon.classList.add('text-green-600');
-                rutFeedback.textContent = '✓ ' + mensaje;
+                rutFeedback.textContent = '? ' + mensaje;
                 rutFeedback.classList.add('text-green-600');
             } else {
                 rutInput.classList.add('border-red-500', 'focus:ring-red-300');
                 rutStatusIcon.textContent = 'cancel';
                 rutStatusIcon.classList.add('text-red-400');
-                rutFeedback.textContent = '✗ ' + mensaje;
+                rutFeedback.textContent = '? ' + mensaje;
                 rutFeedback.classList.add('text-red-500');
             }
         }
@@ -417,7 +433,7 @@
             rutEsValido = false;
         }
 
-        /** Habilita o deshabilita el botón Buscar */
+        /** Habilita o deshabilita el bot�n Buscar */
         function actualizarBoton(habilitado) {
             if (habilitado) {
                 btnBuscar.disabled = false;
@@ -428,17 +444,17 @@
             }
         }
 
-        // Estado inicial del botón (deshabilitado hasta que se valide el RUT)
+        // Estado inicial del bot�n (deshabilitado hasta que se valide el RUT)
         actualizarBoton(tipoBusqueda.value === 'cotizacion');
 
         // =========================================================
-        // LÓGICA DE BÚSQUEDA (Click en botón BUSCAR)
+        // L�GICA DE B�SQUEDA (Click en bot�n BUSCAR)
         // =========================================================
         btnBuscar.addEventListener('click', function () {
             const tipoDoc = tipoBusqueda.value;
             const valorInput = rutInput.value.trim();
 
-            // Validación final antes de enviar
+            // Validaci�n final antes de enviar
             if (tipoDoc === 'venta') {
                 const resultado = validarRut(valorInput);
                 if (!resultado.valido) {
@@ -449,7 +465,7 @@
             }
 
             if (!valorInput) {
-                rutFeedback.textContent = '✗ Por favor ingresa un valor para buscar.';
+                rutFeedback.textContent = '? Por favor ingresa un valor para buscar.';
                 rutFeedback.classList.remove('hidden', 'text-green-600');
                 rutFeedback.classList.add('text-red-500');
                 return;
@@ -460,7 +476,7 @@
             this.disabled = true;
             this.classList.add('opacity-75', 'cursor-not-allowed');
 
-            // Simular búsqueda al backend
+            // Simular b�squeda al backend
             setTimeout(() => {
                 document.getElementById('resultadoBusqueda').classList.remove('hidden');
                 this.innerHTML = originalHTML;
@@ -471,7 +487,7 @@
     </script>
 
     <!-- Chatbot Widget -->
-    <div id="chatbot-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+    <div id="chatbot-widget" class="fixed bottom-6 right-6 z-50 flex items-center">
         <!-- Chat Window -->
         <div id="chatbot-window"
             class="hidden w-80 md:w-96 h-[500px] max-h-[80vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-primary/20 flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right">
@@ -486,7 +502,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm"> Queno</h3>
-                        <p class="text-xs text-white/80">En línea</p>
+                        <p class="text-xs text-white/80">En l�nea</p>
                     </div>
                 </div>
                 <button id="close-chatbot" class="text-white/80 hover:text-white transition-colors">
@@ -500,9 +516,9 @@
                     <img src="chatbot-avatar.png" alt=" Queno" class="w-8 h-8 rounded-full object-cover mt-1">
                     <div
                         class="bg-white dark:bg-slate-700 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-600">
-                        ¡Hola! Soy Queno, tu asistente de ventas de pasto sintético. 🌱 ¿En qué puedo ayudarte hoy?
-                        Si tienes una cotización anterior, ingresa el número y la buscamos juntos. Si no lo recuerdas, lo puedes encontrar en tu correo.
-                        Si es una cotización o venta nueva, ¡solo hazme saber y avanzamos juntos!
+                        �Hola! Soy Queno, tu asistente de ventas de pasto sint�tico. ?? �En qu� puedo ayudarte hoy?
+                        Si tienes una cotizaci�n anterior, ingresa el n�mero y la buscamos juntos. Si no lo recuerdas, lo puedes encontrar en tu correo.
+                        Si es una cotizaci�n o venta nueva, �solo hazme saber y avanzamos juntos!
                     </div>
                 </div>
             </div>
@@ -520,16 +536,18 @@
             </div>
         </div>
 
-        <!-- Chat Button -->
+        <!-- Chat Button UPDATED v3.0 -->
+        <div id="chat-tooltip"
+            class="mr-3 bg-gradient-to-r from-[#2c5926] to-[#4caf50] text-white text-lg font-bold px-6 py-4 rounded-2xl shadow-2xl whitespace-nowrap border border-white/20"
+            style="display: block;">
+            💬 ¡Cotiza con Queno!
+        </div>
         <button id="chatbot-button"
-            class="relative group flex items-center justify-center w-[76px] h-[76px] rounded-full bg-white dark:bg-slate-800 shadow-xl border-2 border-primary hover:scale-105 transition-transform duration-300">
+            class="relative flex-shrink-0 rounded-full bg-white dark:bg-slate-800 shadow-xl border-2 border-primary hover:scale-105 transition-transform duration-300 animate-chat-pulse overflow-hidden"
+            style="width: 250px; height: 250px; min-width: 250px; min-height: 250px;">
             <img src="chatbot-avatar.png" alt="Abrir Chat" class="w-full h-full rounded-full object-cover">
             <span
-                class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 border-[3px] border-white dark:border-slate-800 rounded-full"></span>
-            <div
-                class="absolute right-full mr-4 bg-black/80 text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                ¿Necesitas ayuda?
-            </div>
+                class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 border-[3px] border-white dark:border-slate-800 rounded-full animate-pulse"></span>
         </button>
     </div>
 
