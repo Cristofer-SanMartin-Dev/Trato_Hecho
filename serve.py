@@ -7,6 +7,7 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Pragma', 'no-cache')
         self.send_header('Expires', '0')
         super().end_headers()
+    
     def log_message(self, fmt, *args):
         pass  # silenciar logs
 
