@@ -1,0 +1,302 @@
+<mxfile host="app.diagrams.net" agent="Claude">
+  <diagram name="Modelo de Datos ERD" id="erd-trato-hecho">
+    <mxGraphModel dx="2150" dy="592" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="1654" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="titulo" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=13;fontColor=#1a1a2e;" value="&lt;b style=&#39;font-size:15px&#39;&gt;Modelo de Datos — Trato Hecho&lt;/b&gt;&lt;br/&gt;Diagrama Entidad-Relación · PostgreSQL · DuocUC 2026" vertex="1">
+          <mxGeometry height="50" width="700" x="200" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="t_header" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1F497D;strokeColor=#1F497D;fontColor=#ffffff;fontSize=13;fontStyle=1;arcSize=5;" value="&lt;b&gt;cotizaciones&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="520" x="150" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="t_sub" parent="1" style="text;html=1;strokeColor=none;fillColor=#E6F0FF;align=center;fontSize=9;fontColor=#1F497D;fontStyle=2;" value="PostgreSQL · Fuente de verdad transaccional · Supabase compatible" vertex="1">
+          <mxGeometry height="18" width="520" x="150" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="col_hdr" parent="1" style="text;html=0;strokeColor=#1F497D;fillColor=#D6E4F0;align=left;fontSize=9;fontStyle=1;fontColor=#1F497D;" value="Campo                          Tipo                          Restricción          Descripción" vertex="1">
+          <mxGeometry height="22" width="520" x="150" y="148" as="geometry" />
+        </mxCell>
+        <mxCell id="f_id" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#FFF9E6;align=left;fontSize=10;fontStyle=1;fontColor=#7d5b00;" value="🔑  id" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="f_id_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#FFF9E6;align=left;fontSize=10;fontColor=#333333;" value="SERIAL" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="f_id_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#FFF9E6;align=left;fontSize=10;fontColor=#b85450;fontStyle=1;" value="PRIMARY KEY" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="f_id_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#FFF9E6;align=left;fontSize=9;fontColor=#555555;" value="Identificador autoincremental único" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="f_num" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontStyle=1;fontColor=#1F497D;" value="📄  numero" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="198" as="geometry" />
+        </mxCell>
+        <mxCell id="f_num_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#333333;" value="VARCHAR(20)" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="198" as="geometry" />
+        </mxCell>
+        <mxCell id="f_num_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#b85450;fontStyle=1;" value="UNIQUE · NOT NULL" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="198" as="geometry" />
+        </mxCell>
+        <mxCell id="f_num_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=9;fontColor=#555555;" value="COT-2026-001 · índice único" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="198" as="geometry" />
+        </mxCell>
+        <mxCell id="f_sid" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F0F7E6;align=left;fontSize=10;fontStyle=1;fontColor=#297520;" value="🔗  session_id" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="226" as="geometry" />
+        </mxCell>
+        <mxCell id="f_sid_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F0F7E6;align=left;fontSize=10;fontColor=#333333;" value="VARCHAR(50)" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="226" as="geometry" />
+        </mxCell>
+        <mxCell id="f_sid_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F0F7E6;align=left;fontSize=10;fontColor=#297520;fontStyle=1;" value="NULLABLE · INDEX" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="226" as="geometry" />
+        </mxCell>
+        <mxCell id="f_sid_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F0F7E6;align=left;fontSize=9;fontColor=#555555;" value="UUID sesión chat · ref. Redis" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="226" as="geometry" />
+        </mxCell>
+        <mxCell id="f_nom" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="👤  nombre" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="254" as="geometry" />
+        </mxCell>
+        <mxCell id="f_nom_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#333333;" value="VARCHAR(100)" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="254" as="geometry" />
+        </mxCell>
+        <mxCell id="f_nom_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#b85450;fontStyle=1;" value="NOT NULL" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="254" as="geometry" />
+        </mxCell>
+        <mxCell id="f_nom_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=9;fontColor=#555555;" value="Nombre completo del cliente" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="254" as="geometry" />
+        </mxCell>
+        <mxCell id="f_rut" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="🪪  rut" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="282" as="geometry" />
+        </mxCell>
+        <mxCell id="f_rut_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontColor=#333333;" value="VARCHAR(20)" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="282" as="geometry" />
+        </mxCell>
+        <mxCell id="f_rut_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontColor=#b85450;fontStyle=1;" value="NOT NULL" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="282" as="geometry" />
+        </mxCell>
+        <mxCell id="f_rut_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=9;fontColor=#555555;" value="RUT chileno · ej: 12.345.678-9" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="282" as="geometry" />
+        </mxCell>
+        <mxCell id="f_dir" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="📍  direccion" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="f_dir_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#333333;" value="TEXT" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="f_dir_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#b85450;fontStyle=1;" value="NOT NULL" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="f_dir_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=9;fontColor=#555555;" value="Dirección de instalación" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="f_prod" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="🌿  producto" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="338" as="geometry" />
+        </mxCell>
+        <mxCell id="f_prod_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontColor=#333333;" value="VARCHAR(100)" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="338" as="geometry" />
+        </mxCell>
+        <mxCell id="f_prod_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontColor=#b85450;fontStyle=1;" value="NOT NULL" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="338" as="geometry" />
+        </mxCell>
+        <mxCell id="f_prod_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=9;fontColor=#555555;" value="Básico / Premium / Deportivo" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="338" as="geometry" />
+        </mxCell>
+        <mxCell id="f_m2" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="📐  m2" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="366" as="geometry" />
+        </mxCell>
+        <mxCell id="f_m2_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#333333;" value="DECIMAL(10,2)" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="366" as="geometry" />
+        </mxCell>
+        <mxCell id="f_m2_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#b85450;fontStyle=1;" value="NOT NULL" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="366" as="geometry" />
+        </mxCell>
+        <mxCell id="f_m2_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=9;fontColor=#555555;" value="Con margen 10% incluido" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="366" as="geometry" />
+        </mxCell>
+        <mxCell id="f_pu" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="💲  precio_unitario" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="394" as="geometry" />
+        </mxCell>
+        <mxCell id="f_pu_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontColor=#333333;" value="DECIMAL(10,2)" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="394" as="geometry" />
+        </mxCell>
+        <mxCell id="f_pu_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontColor=#297520;fontStyle=1;" value="NULLABLE" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="394" as="geometry" />
+        </mxCell>
+        <mxCell id="f_pu_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=9;fontColor=#555555;" value="CLP/m² según producto" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="394" as="geometry" />
+        </mxCell>
+        <mxCell id="f_inst" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="🔧  instalacion" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="422" as="geometry" />
+        </mxCell>
+        <mxCell id="f_inst_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#333333;" value="BOOLEAN" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="422" as="geometry" />
+        </mxCell>
+        <mxCell id="f_inst_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#297520;fontStyle=1;" value="DEFAULT FALSE" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="422" as="geometry" />
+        </mxCell>
+        <mxCell id="f_inst_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=9;fontColor=#555555;" value="+$4.500/m² si TRUE" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="422" as="geometry" />
+        </mxCell>
+        <mxCell id="f_tot" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="💰  total" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="f_tot_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontColor=#333333;" value="DECIMAL(10,2)" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="f_tot_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontColor=#b85450;fontStyle=1;" value="NOT NULL" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="f_tot_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=9;fontColor=#555555;" value="m2 × precio + instalación (CLP)" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="f_est" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="🔄  estado" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="478" as="geometry" />
+        </mxCell>
+        <mxCell id="f_est_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#333333;" value="VARCHAR(20)" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="478" as="geometry" />
+        </mxCell>
+        <mxCell id="f_est_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#297520;fontStyle=1;" value="DEFAULT pendiente" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="478" as="geometry" />
+        </mxCell>
+        <mxCell id="f_est_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=9;fontColor=#555555;" value="pendiente / aprobado / rechazado" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="478" as="geometry" />
+        </mxCell>
+        <mxCell id="f_cat" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="🕐  created_at" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="506" as="geometry" />
+        </mxCell>
+        <mxCell id="f_cat_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontColor=#333333;" value="TIMESTAMP" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="506" as="geometry" />
+        </mxCell>
+        <mxCell id="f_cat_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=10;fontColor=#297520;fontStyle=1;" value="DEFAULT NOW()" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="506" as="geometry" />
+        </mxCell>
+        <mxCell id="f_cat_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#F5F5F5;align=left;fontSize=9;fontColor=#555555;" value="Fecha/hora de generación" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="506" as="geometry" />
+        </mxCell>
+        <mxCell id="f_uat" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontStyle=1;fontColor=#333333;" value="🕑  updated_at" vertex="1">
+          <mxGeometry height="28" width="130" x="150" y="534" as="geometry" />
+        </mxCell>
+        <mxCell id="f_uat_t" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#333333;" value="TIMESTAMP" vertex="1">
+          <mxGeometry height="28" width="120" x="280" y="534" as="geometry" />
+        </mxCell>
+        <mxCell id="f_uat_r" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=10;fontColor=#297520;fontStyle=1;" value="DEFAULT NOW()" vertex="1">
+          <mxGeometry height="28" width="120" x="400" y="534" as="geometry" />
+        </mxCell>
+        <mxCell id="f_uat_d" parent="1" style="text;html=1;strokeColor=#cccccc;fillColor=#ffffff;align=left;fontSize=9;fontColor=#555555;" value="Última modificación del registro" vertex="1">
+          <mxGeometry height="28" width="150" x="520" y="534" as="geometry" />
+        </mxCell>
+        <mxCell id="t_border" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1F497D;strokeWidth=2;arcSize=3;" value="" vertex="1">
+          <mxGeometry height="414" width="520" x="150" y="148" as="geometry" />
+        </mxCell>
+        <mxCell id="idx_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=11;fontColor=#333333;" value="&lt;b&gt;Índices de la tabla&lt;/b&gt;" vertex="1">
+          <mxGeometry height="22" width="240" x="150" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="idx1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#7d5b00;fontSize=10;align=left;arcSize=8;" value="&lt;b&gt;idx_numero&lt;/b&gt;&lt;br/&gt;CREATE INDEX idx_numero ON cotizaciones(numero);&lt;br/&gt;Búsqueda rápida por número de cotización (COT-YYYY-XXX)" vertex="1">
+          <mxGeometry height="52" width="520" x="150" y="608" as="geometry" />
+        </mxCell>
+        <mxCell id="idx2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;align=left;arcSize=8;" value="&lt;b&gt;idx_session_id&lt;/b&gt;&lt;br/&gt;CREATE INDEX idx_session_id ON cotizaciones(session_id);&lt;br/&gt;Recuperar cotizaciones por sesión de chat del cliente" vertex="1">
+          <mxGeometry height="52" width="520" x="150" y="668" as="geometry" />
+        </mxCell>
+        <mxCell id="redis_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=11;fontColor=#297520;" value="&lt;b&gt;Caché Redis — complementario a PostgreSQL&lt;/b&gt;" vertex="1">
+          <mxGeometry height="22" width="380" x="150" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="r_h" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4d10;strokeColor=#1a4d10;fontColor=#ffffff;fontSize=11;fontStyle=1;arcSize=8;" value="&lt;b&gt;hist_{uuid}&lt;/b&gt;" vertex="1">
+          <mxGeometry height="32" width="160" x="150" y="768" as="geometry" />
+        </mxCell>
+        <mxCell id="r_h_d" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;align=left;arcSize=8;" value="Array JSON · últimos 20 turnos de conversación&lt;br/&gt;TTL: 24 horas (86.400 segundos)" vertex="1">
+          <mxGeometry height="32" width="350" x="320" y="768" as="geometry" />
+        </mxCell>
+        <mxCell id="r_q" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4d10;strokeColor=#1a4d10;fontColor=#ffffff;fontSize=11;fontStyle=1;arcSize=8;" value="&lt;b&gt;th:quote:{uuid}&lt;/b&gt;" vertex="1">
+          <mxGeometry height="32" width="160" x="150" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="r_q_d" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;align=left;arcSize=8;" value="Objeto JSON cotización activa · espejo de PostgreSQL&lt;br/&gt;TTL: 10 días (864.000 segundos)" vertex="1">
+          <mxGeometry height="32" width="350" x="320" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="r_c" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a4d10;strokeColor=#1a4d10;fontColor=#ffffff;fontSize=11;fontStyle=1;arcSize=8;" value="&lt;b&gt;th:counter&lt;/b&gt;" vertex="1">
+          <mxGeometry height="32" width="160" x="150" y="852" as="geometry" />
+        </mxCell>
+        <mxCell id="r_c_d" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;align=left;arcSize=8;" value="Integer global autoincremental · genera numero correlativo&lt;br/&gt;Sin TTL · nunca expira" vertex="1">
+          <mxGeometry height="32" width="350" x="320" y="852" as="geometry" />
+        </mxCell>
+        <mxCell id="e_redis_pg" edge="1" parent="1" source="r_q" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#297520;fontSize=9;fontStyle=2;dashed=1;" target="t_border" value="th:quote sincroniza&lt;br/&gt;con INSERT">
+          <mxGeometry relative="1" x="-0.6608" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="70" y="826" />
+              <mxPoint x="70" y="660" />
+              <mxPoint x="410" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="form_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=11;fontColor=#333333;" value="&lt;b&gt;Fórmula de cálculo del campo total&lt;/b&gt;" vertex="1">
+          <mxGeometry height="22" width="380" x="150" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="f1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#aaaaaa;fontColor=#333333;fontSize=10;fontFamily=Courier New;align=left;arcSize=5;" value="m2_margen  =  CEIL( m2_solicitados × 1.10 )" vertex="1">
+          <mxGeometry height="28" width="520" x="150" y="938" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#aaaaaa;fontColor=#333333;fontSize=10;fontFamily=Courier New;align=left;arcSize=5;" value="subtotal_pasto  =  m2_margen × precio_unitario" vertex="1">
+          <mxGeometry height="28" width="520" x="150" y="972" as="geometry" />
+        </mxCell>
+        <mxCell id="f3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#aaaaaa;fontColor=#333333;fontSize=10;fontFamily=Courier New;align=left;arcSize=5;" value="subtotal_inst   =  instalacion = TRUE  ?  m2_margen × 4.500  :  0" vertex="1">
+          <mxGeometry height="28" width="520" x="150" y="1006" as="geometry" />
+        </mxCell>
+        <mxCell id="f4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;fontFamily=Courier New;fontStyle=1;align=left;arcSize=5;" value="total  =  subtotal_pasto  +  subtotal_inst   →  campo total en BD" vertex="1">
+          <mxGeometry height="28" width="520" x="150" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_bg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#aaaaaa;arcSize=3;" value="" vertex="1">
+          <mxGeometry height="500" width="310" x="720" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_t" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=11;" value="&lt;b&gt;Leyenda de restricciones&lt;/b&gt;" vertex="1">
+          <mxGeometry height="22" width="290" x="730" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_pk" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF9E6;fontSize=10;fontColor=#7d5b00;align=left;" value="🔑  PRIMARY KEY · identificador único de la tabla" vertex="1">
+          <mxGeometry height="28" width="290" x="730" y="618" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_uk" parent="1" style="text;html=1;strokeColor=none;fillColor=#F5F5F5;fontSize=10;fontColor=#1F497D;align=left;" value="UNIQUE · no pueden existir valores duplicados" vertex="1">
+          <mxGeometry height="28" width="290" x="730" y="652" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_nn" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFF0F0;fontSize=10;fontColor=#b85450;align=left;" value="NOT NULL · campo obligatorio siempre" vertex="1">
+          <mxGeometry height="28" width="290" x="730" y="686" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_nu" parent="1" style="text;html=1;strokeColor=none;fillColor=#F0F7E6;fontSize=10;fontColor=#297520;align=left;" value="NULLABLE · puede ser NULL si no aplica" vertex="1">
+          <mxGeometry height="28" width="290" x="730" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_df" parent="1" style="text;html=1;strokeColor=none;fillColor=#F0F7E6;fontSize=10;fontColor=#297520;align=left;" value="DEFAULT · valor automático si no se especifica" vertex="1">
+          <mxGeometry height="28" width="290" x="730" y="754" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_ix" parent="1" style="text;html=1;strokeColor=none;fillColor=#EEF5FF;fontSize=10;fontColor=#083d7a;align=left;" value="🔗  INDEX · mejora velocidad de búsqueda" vertex="1">
+          <mxGeometry height="28" width="290" x="730" y="788" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_t2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=11;" value="&lt;b&gt;Valores del campo estado&lt;/b&gt;" vertex="1">
+          <mxGeometry height="22" width="290" x="730" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_e1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#7d5b00;fontSize=10;align=left;arcSize=8;" value="pendiente · cotización generada · sin pago aún" vertex="1">
+          <mxGeometry height="28" width="290" x="730" y="858" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_e2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;align=left;arcSize=8;" value="aprobado · pago confirmado por MercadoPago" vertex="1">
+          <mxGeometry height="28" width="290" x="730" y="894" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_e3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#6b2120;fontSize=10;align=left;arcSize=8;" value="rechazado · cancelado o expirado" vertex="1">
+          <mxGeometry height="28" width="290" x="730" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_t3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=11;" value="&lt;b&gt;Precios por producto (precio_unitario)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="22" width="290" x="730" y="974" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_p1" parent="1" style="text;html=1;strokeColor=none;fillColor=#F5F5F5;fontSize=10;fontColor=#333333;align=left;" value="Pasto Básico (20mm)      →  $8.500 CLP/m²" vertex="1">
+          <mxGeometry height="22" width="290" x="730" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_p2" parent="1" style="text;html=1;strokeColor=none;fillColor=#F5F5F5;fontSize=10;fontColor=#333333;align=left;" value="Pasto Premium (35mm)    →  $15.000 CLP/m²" vertex="1">
+          <mxGeometry height="22" width="290" x="730" y="1026" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_p3" parent="1" style="text;html=1;strokeColor=none;fillColor=#F5F5F5;fontSize=10;fontColor=#333333;align=left;" value="Pasto Deportivo (25mm) →  $12.000 CLP/m²" vertex="1">
+          <mxGeometry height="22" width="290" x="730" y="1052" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_p4" parent="1" style="text;html=1;strokeColor=none;fillColor=#F5F5F5;fontSize=10;fontColor=#333333;align=left;" value="Instalación (opcional)     →  +$4.500 CLP/m²" vertex="1">
+          <mxGeometry height="22" width="290" x="730" y="1078" as="geometry" />
+        </mxCell>
+        <mxCell id="nota_sup" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF5FF;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;align=left;arcSize=8;" value="&lt;b&gt;Nota:&lt;/b&gt; Compatible con Supabase (PostgreSQL managed).&lt;br/&gt;Endpoints REST: POST /rest/v1/cotizaciones · GET /rest/v1/cotizaciones?session_id=eq.{id}" vertex="1">
+          <mxGeometry height="52" width="520" x="150" y="1085" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

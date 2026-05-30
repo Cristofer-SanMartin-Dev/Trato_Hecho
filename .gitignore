@@ -1,6 +1,20 @@
+# Claude Code (local config — no subir al repo)
+.claude/
+
 __pycache__/
 *.pyc
 *.pyo
 .env
+.env.local
+.env.production
 node_modules/
 *.log
+.DS_Store
+Thumbs.db
+dist/
+build/
+.cache/
+*.tmp
+# Configuración de IDEs
+.vscode/
+.idea/  

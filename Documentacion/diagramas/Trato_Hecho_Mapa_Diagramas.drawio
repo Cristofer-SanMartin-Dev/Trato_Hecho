@@ -1,0 +1,323 @@
+<mxfile host="app.diagrams.net" modified="2026-05-12T00:00:00.000Z" agent="Claude" version="21.0.0" type="device">
+  <diagram name="Mapa de Diagramas" id="mapa-diagramas-trato-hecho">
+<mxGraphModel dx="1422" dy="762" grid="0" gridSize="10" guides="1" tooltips="1" connect="0" arrows="0" fold="0" page="1" pageScale="1" pageWidth="900" pageHeight="1100" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- BANDA ESENCIALES                   -->
+    <!-- ═══════════════════════════════════ -->
+    <mxCell id="band1" value="Esenciales — exigidos en cualquier entrega académica o profesional"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#534AB7;fontColor=#3C3489;fontSize=11;fontStyle=1;arcSize=5;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="26" width="848" height="34" as="geometry" />
+    </mxCell>
+
+    <!-- CARD 1: Flujo n8n -->
+    <mxCell id="c1_bg" value=""
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#534AB7;arcSize=5;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="70" width="404" height="150" as="geometry" />
+    </mxCell>
+    <mxCell id="c1_t" value="&lt;b&gt;1. Diagrama de flujo n8n&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#3C3489;fontStyle=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="86" width="404" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="c1_d1" value="Flowchart completo del workflow"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#534AB7;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="112" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c1_d2" value="Los 23 nodos con 3 ramas"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#534AB7;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="134" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c1_d3" value="(COTIZAR / PAGAR / CHAT)"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#534AB7;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="156" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c1_d4" value="Tipo: Flowchart · draw.io"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#534AB7;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="182" width="404" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- CARD 2: Arquitectura -->
+    <mxCell id="c2_bg" value=""
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#534AB7;arcSize=5;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="70" width="404" height="150" as="geometry" />
+    </mxCell>
+    <mxCell id="c2_t" value="&lt;b&gt;2. Arquitectura del sistema&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#3C3489;fontStyle=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="86" width="404" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="c2_d1" value="Las 4 capas del sistema"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#534AB7;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="112" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c2_d2" value="Frontend → n8n → Servicios"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#534AB7;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="134" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c2_d3" value="→ BD + Notificaciones"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#534AB7;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="156" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c2_d4" value="Tipo: Diagrama estructural · draw.io"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#534AB7;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="182" width="404" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- BANDA IMPORTANTES                  -->
+    <!-- ═══════════════════════════════════ -->
+    <mxCell id="band2" value="Importantes — completan la documentación técnica del proyecto"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#0F6E56;fontColor=#085041;fontSize=11;fontStyle=1;arcSize=5;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="240" width="848" height="34" as="geometry" />
+    </mxCell>
+
+    <!-- CARD 3: ERD -->
+    <mxCell id="c3_bg" value=""
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#0F6E56;arcSize=5;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="284" width="404" height="150" as="geometry" />
+    </mxCell>
+    <mxCell id="c3_t" value="&lt;b&gt;3. Modelo entidad-relación&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#085041;fontStyle=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="300" width="404" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="c3_d1" value="Tabla cotizaciones en PostgreSQL"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#0F6E56;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="326" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c3_d2" value="con todos sus campos, tipos"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#0F6E56;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="348" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c3_d3" value="y relaciones"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#0F6E56;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="370" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c3_d4" value="Tipo: ERD · draw.io"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#0F6E56;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="396" width="404" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- CARD 4: Secuencia -->
+    <mxCell id="c4_bg" value=""
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#0F6E56;arcSize=5;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="284" width="404" height="150" as="geometry" />
+    </mxCell>
+    <mxCell id="c4_t" value="&lt;b&gt;4. Diagrama de secuencia&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#085041;fontStyle=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="300" width="404" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="c4_d1" value="Interacción entre actores:"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#0F6E56;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="326" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c4_d2" value="Usuario → Frontend → n8n"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#0F6E56;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="348" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c4_d3" value="→ Claude → Redis → Telegram"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#0F6E56;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="370" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c4_d4" value="Tipo: Secuencia · draw.io"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#0F6E56;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="396" width="404" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- BANDA COMPLEMENTARIOS              -->
+    <!-- ═══════════════════════════════════ -->
+    <mxCell id="band3" value="Complementarios — diferencian y enriquecen la documentación"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAEEDA;strokeColor=#854F0B;fontColor=#63380A;fontSize=11;fontStyle=1;arcSize=5;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="454" width="848" height="34" as="geometry" />
+    </mxCell>
+
+    <!-- CARD 5: UX -->
+    <mxCell id="c5_bg" value=""
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAEEDA;strokeColor=#854F0B;arcSize=5;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="498" width="404" height="150" as="geometry" />
+    </mxCell>
+    <mxCell id="c5_t" value="&lt;b&gt;5. Flujo de usuario (UX)&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#63380A;fontStyle=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="514" width="404" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="c5_d1" value="Pasos del cliente desde que"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#854F0B;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="540" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c5_d2" value="llega al sitio hasta que paga"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#854F0B;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="562" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c5_d3" value="5 decision points incluidos"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#854F0B;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="584" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c5_d4" value="Tipo: Flowchart UX · draw.io"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#854F0B;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="610" width="404" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- CARD 6: Redis -->
+    <mxCell id="c6_bg" value=""
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAEEDA;strokeColor=#854F0B;arcSize=5;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="498" width="404" height="150" as="geometry" />
+    </mxCell>
+    <mxCell id="c6_t" value="&lt;b&gt;6. Estructura Redis&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#63380A;fontStyle=1;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="514" width="404" height="22" as="geometry" />
+    </mxCell>
+    <mxCell id="c6_d1" value="Las 3 claves (hist_, th:quote,"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#854F0B;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="540" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c6_d2" value="th:counter) con TTL, tipo"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#854F0B;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="562" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c6_d3" value="y relación entre nodos"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#854F0B;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="584" width="404" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="c6_d4" value="Tipo: Diagrama estructural · draw.io"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#854F0B;"
+      vertex="1" parent="1">
+      <mxGeometry x="470" y="610" width="404" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- BANDA HERRAMIENTAS                 -->
+    <!-- ═══════════════════════════════════ -->
+    <mxCell id="band4" value="Herramienta recomendada por diagrama"
+      style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#5F5E5A;fontColor=#333333;fontSize=11;fontStyle=1;arcSize=5;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="668" width="848" height="34" as="geometry" />
+    </mxCell>
+
+    <!-- TABLA CABECERA -->
+    <mxCell id="th_bg" value=""
+      style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#AAAAAA;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="712" width="848" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="th1" value="&lt;b&gt;#&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontStyle=1;fontColor=#333333;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="712" width="80" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="th2" value="&lt;b&gt;Diagrama&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontStyle=1;fontColor=#333333;"
+      vertex="1" parent="1">
+      <mxGeometry x="106" y="712" width="230" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="th3" value="&lt;b&gt;Herramienta&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontStyle=1;fontColor=#333333;"
+      vertex="1" parent="1">
+      <mxGeometry x="336" y="712" width="330" height="32" as="geometry" />
+    </mxCell>
+    <mxCell id="th4" value="&lt;b&gt;Formato final&lt;/b&gt;"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontStyle=1;fontColor=#333333;"
+      vertex="1" parent="1">
+      <mxGeometry x="666" y="712" width="208" height="32" as="geometry" />
+    </mxCell>
+
+    <!-- Líneas separadoras verticales tabla -->
+    <mxCell id="vl1" value="" style="line;strokeColor=#CCCCCC;fillColor=none;horizontal=0;" vertex="1" parent="1"><mxGeometry x="106" y="712" width="10" height="238" as="geometry" /></mxCell>
+    <mxCell id="vl2" value="" style="line;strokeColor=#CCCCCC;fillColor=none;horizontal=0;" vertex="1" parent="1"><mxGeometry x="336" y="712" width="10" height="238" as="geometry" /></mxCell>
+    <mxCell id="vl3" value="" style="line;strokeColor=#CCCCCC;fillColor=none;horizontal=0;" vertex="1" parent="1"><mxGeometry x="666" y="712" width="10" height="238" as="geometry" /></mxCell>
+
+    <!-- FILA 1 -->
+    <mxCell id="r1_bg" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#DDDDDD;" vertex="1" parent="1"><mxGeometry x="26" y="744" width="848" height="32" as="geometry" /></mxCell>
+    <mxCell id="r1c1" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="26" y="744" width="80" height="32" as="geometry" /></mxCell>
+    <mxCell id="r1c2" value="Flujo n8n" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="106" y="744" width="230" height="32" as="geometry" /></mxCell>
+    <mxCell id="r1c3" value="draw.io / Claude" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="336" y="744" width="330" height="32" as="geometry" /></mxCell>
+    <mxCell id="r1c4" value="PNG + docx" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="666" y="744" width="208" height="32" as="geometry" /></mxCell>
+
+    <!-- FILA 2 -->
+    <mxCell id="r2_bg" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F9F9F9;strokeColor=#DDDDDD;" vertex="1" parent="1"><mxGeometry x="26" y="776" width="848" height="32" as="geometry" /></mxCell>
+    <mxCell id="r2c1" value="2" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="26" y="776" width="80" height="32" as="geometry" /></mxCell>
+    <mxCell id="r2c2" value="Arquitectura" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="106" y="776" width="230" height="32" as="geometry" /></mxCell>
+    <mxCell id="r2c3" value="draw.io / Claude" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="336" y="776" width="330" height="32" as="geometry" /></mxCell>
+    <mxCell id="r2c4" value="PNG + docx" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="666" y="776" width="208" height="32" as="geometry" /></mxCell>
+
+    <!-- FILA 3 -->
+    <mxCell id="r3_bg" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#DDDDDD;" vertex="1" parent="1"><mxGeometry x="26" y="808" width="848" height="32" as="geometry" /></mxCell>
+    <mxCell id="r3c1" value="3" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="26" y="808" width="80" height="32" as="geometry" /></mxCell>
+    <mxCell id="r3c2" value="ERD / modelo de datos" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="106" y="808" width="230" height="32" as="geometry" /></mxCell>
+    <mxCell id="r3c3" value="draw.io / Claude" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="336" y="808" width="330" height="32" as="geometry" /></mxCell>
+    <mxCell id="r3c4" value="PNG + docx" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="666" y="808" width="208" height="32" as="geometry" /></mxCell>
+
+    <!-- FILA 4 -->
+    <mxCell id="r4_bg" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F9F9F9;strokeColor=#DDDDDD;" vertex="1" parent="1"><mxGeometry x="26" y="840" width="848" height="32" as="geometry" /></mxCell>
+    <mxCell id="r4c1" value="4" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="26" y="840" width="80" height="32" as="geometry" /></mxCell>
+    <mxCell id="r4c2" value="Secuencia de actores" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="106" y="840" width="230" height="32" as="geometry" /></mxCell>
+    <mxCell id="r4c3" value="draw.io / Claude" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="336" y="840" width="330" height="32" as="geometry" /></mxCell>
+    <mxCell id="r4c4" value="PNG + docx" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="666" y="840" width="208" height="32" as="geometry" /></mxCell>
+
+    <!-- FILA 5 -->
+    <mxCell id="r5_bg" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#DDDDDD;" vertex="1" parent="1"><mxGeometry x="26" y="872" width="848" height="32" as="geometry" /></mxCell>
+    <mxCell id="r5c1" value="5" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="26" y="872" width="80" height="32" as="geometry" /></mxCell>
+    <mxCell id="r5c2" value="Flujo de usuario (UX)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="106" y="872" width="230" height="32" as="geometry" /></mxCell>
+    <mxCell id="r5c3" value="draw.io / Claude" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="336" y="872" width="330" height="32" as="geometry" /></mxCell>
+    <mxCell id="r5c4" value="PNG + docx" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="666" y="872" width="208" height="32" as="geometry" /></mxCell>
+
+    <!-- FILA 6 -->
+    <mxCell id="r6_bg" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F9F9F9;strokeColor=#DDDDDD;" vertex="1" parent="1"><mxGeometry x="26" y="904" width="848" height="32" as="geometry" /></mxCell>
+    <mxCell id="r6c1" value="6" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="26" y="904" width="80" height="32" as="geometry" /></mxCell>
+    <mxCell id="r6c2" value="Estructura Redis" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="106" y="904" width="230" height="32" as="geometry" /></mxCell>
+    <mxCell id="r6c3" value="draw.io / Claude" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="336" y="904" width="330" height="32" as="geometry" /></mxCell>
+    <mxCell id="r6c4" value="PNG + docx" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#555555;" vertex="1" parent="1"><mxGeometry x="666" y="904" width="208" height="32" as="geometry" /></mxCell>
+
+    <!-- línea final tabla -->
+    <mxCell id="rl_fin" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#DDDDDD;" vertex="1" parent="1"><mxGeometry x="26" y="936" width="848" height="2" as="geometry" /></mxCell>
+
+    <!-- TÍTULO SUPERIOR -->
+    <mxCell id="titulo" value="&lt;b style=&apos;font-size:16px&apos;&gt;Diagramas recomendados — Trato Hecho&lt;/b&gt;&lt;br/&gt;Mapa de prioridad · Portafolio DuocUC 2026"
+      style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#1a1a2e;"
+      vertex="1" parent="1">
+      <mxGeometry x="26" y="950" width="848" height="40" as="geometry" />
+    </mxCell>
+
+  </root>
+</mxGraphModel>
+  </diagram>
+</mxfile>

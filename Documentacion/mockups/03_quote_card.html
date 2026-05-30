@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MockUp 3 — QuoteCard | Trato Hecho</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #F5F5F5; min-height: 100vh; }
+  .page-bg { position: fixed; inset: 0; background: linear-gradient(135deg, #1F497D 0%, #2E75B6 60%, #1D9E75 100%); z-index: 0; filter: blur(2px) brightness(0.65); }
+  .mockup-label { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #1D9E75; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 9999; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+  /* CHAT WIDGET */
+  .chat-widget { position: fixed; bottom: 24px; right: 24px; width: 390px; max-height: 580px; background: #fff; border-radius: 20px; box-shadow: 0 8px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column; z-index: 100; overflow: hidden; }
+  .chat-header { background: #1F497D; padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: #2E75B6; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; font-size: 18px; border: 2px solid rgba(255,255,255,0.4); flex-shrink: 0; }
+  .header-info .name { color: #fff; font-weight: 700; font-size: 15px; }
+  .header-info .status { color: rgba(255,255,255,0.85); font-size: 12px; }
+  .close-btn { background: rgba(255,255,255,0.15); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; margin-left: auto; }
+
+  .chat-body { flex: 1; overflow-y: auto; padding: 14px; background: #F5F5F5; display: flex; flex-direction: column; gap: 10px; }
+  .chat-body::-webkit-scrollbar { width: 4px; }
+  .chat-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+  .msg { display: flex; gap: 8px; align-items: flex-end; }
+  .msg.user { flex-direction: row-reverse; align-self: flex-end; }
+  .msg-av { width: 26px; height: 26px; border-radius: 50%; background: #2E75B6; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .bubble { padding: 9px 13px; border-radius: 16px; font-size: 13px; line-height: 1.5; max-width: 280px; }
+  .bubble.bot { background: #fff; color: #333; border-radius: 16px 16px 16px 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  .bubble.user { background: #1F497D; color: #fff; border-radius: 16px 16px 4px 16px; }
+  .msg-time { font-size: 10px; color: #999; margin-top: 3px; }
+
+  /* QUOTE CARD */
+  .quote-card { background: #fff; border: 2px solid #1F497D; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(31,73,125,0.15); margin: 4px 0; max-width: 320px; }
+  .quote-header { background: #1F497D; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .quote-title { color: #fff; font-weight: 700; font-size: 14px; }
+  .badge-gen { background: #1D9E75; color: #fff; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+
+  .quote-body { padding: 14px 16px; }
+  .quote-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
+  .quote-row:last-of-type { border-bottom: none; }
+  .quote-row .label { color: #666; }
+  .quote-row .value { color: #333; font-weight: 600; text-align: right; max-width: 55%; }
+  .quote-total { background: #EBF3FF; border-radius: 8px; padding: 10px 14px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .quote-total .t-label { font-weight: 700; color: #1F497D; font-size: 14px; }
+  .quote-total .t-value { font-weight: 900; color: #1F497D; font-size: 18px; }
+  .quote-vigencia { font-size: 11px; color: #888; margin-top: 8px; text-align: center; }
+  .badge-estado { display: inline-block; background: #FFF3CD; color: #856404; border-radius: 8px; padding: 2px 8px; font-size: 11px; font-weight: 700; margin-top: 4px; }
+
+  .pay-btn { display: block; width: 100%; margin-top: 12px; background: #009ee3; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background .2s; text-align: center; }
+  .pay-btn:hover { background: #0080c0; }
+  .secure-note { font-size: 10px; color: #999; text-align: center; margin-top: 6px; }
+
+  .chat-footer { padding: 12px; background: #fff; border-top: 1px solid #eee; display: flex; gap: 8px; }
+  .chat-input { flex: 1; border: 1.5px solid #ddd; border-radius: 20px; padding: 9px 14px; font-size: 13px; outline: none; font-family: Arial; }
+  .send-btn { width: 38px; height: 38px; background: #1F497D; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .send-btn svg { width: 18px; height: 18px; fill: #fff; }
+</style>
+</head>
+<body>
+<div class="page-bg"></div>
+<div class="mockup-label">MockUp 3 — QuoteCard (Cotización Generada)</div>
+
+<div class="chat-widget">
+  <div class="chat-header">
+    <div class="avatar">Q</div>
+    <div class="header-info">
+      <div class="name">Queno · Asesor Trato Hecho</div>
+      <div class="status">✅ Cotización generada</div>
+    </div>
+    <button class="close-btn">✕</button>
+  </div>
+
+  <div class="chat-body">
+    <!-- Prev context -->
+    <div class="msg">
+      <div class="msg-av">Q</div>
+      <div>
+        <div class="bubble bot">Gracias Juan. ¿Cuál es la dirección de instalación completa?</div>
+      </div>
+    </div>
+    <div class="msg user">
+      <div>
+        <div class="bubble user">Calle Los Aromos 432, Melipilla</div>
+      </div>
+    </div>
+
+    <!-- Success message -->
+    <div class="msg">
+      <div class="msg-av">Q</div>
+      <div>
+        <div class="bubble bot">¡Tu cotización está lista! 🎉</div>
+        <div class="msg-time">14:36</div>
+
+        <!-- QUOTE CARD -->
+        <div class="quote-card">
+          <div class="quote-header">
+            <span class="quote-title">📋 Cotización COT-2026-52874</span>
+            <span class="badge-gen">✓ Generada</span>
+          </div>
+          <div class="quote-body">
+            <div class="quote-row"><span class="label">Producto</span><span class="value">Soft Touch (30mm)</span></div>
+            <div class="quote-row"><span class="label">Cliente</span><span class="value">Juan Pérez González</span></div>
+            <div class="quote-row"><span class="label">RUT</span><span class="value">12.345.678-9</span></div>
+            <div class="quote-row"><span class="label">Dirección</span><span class="value">Los Aromos 432, Melipilla</span></div>
+            <div class="quote-row"><span class="label">Superficie</span><span class="value">40 m² → 44 m² (+10%)</span></div>
+            <div class="quote-row"><span class="label">Precio/m²</span><span class="value">$22.900 CLP</span></div>
+            <div class="quote-row"><span class="label">Instalación</span><span class="value">Incluida (+$4.500/m²)</span></div>
+            <div class="quote-row"><span class="label">Subtotal material</span><span class="value">$1.007.600 CLP</span></div>
+            <div class="quote-row"><span class="label">Subtotal instalación</span><span class="value">$198.000 CLP</span></div>
+            <div class="quote-total">
+              <span class="t-label">TOTAL</span>
+              <span class="t-value">$1.205.600 CLP</span>
+            </div>
+            <div style="text-align:center; margin-top:8px;">
+              <span class="badge-estado">⏳ Estado: pendiente</span>
+            </div>
+            <div class="quote-vigencia">Válida por 10 días · Vence: 31/05/2026</div>
+            <button class="pay-btn">💳 Pagar ahora con MercadoPago →</button>
+            <div class="secure-note">🔒 Pago 100% seguro · Tus datos de tarjeta son privados</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification message -->
+    <div class="msg">
+      <div class="msg-av">Q</div>
+      <div>
+        <div class="bubble bot">¡También se le notificó al equipo de Césped Sintético SpA! 📲 Recibirás confirmación en breve.</div>
+        <div class="msg-time">14:36</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-footer">
+    <input class="chat-input" type="text" placeholder="Escribe PAGAR para continuar..." />
+    <button class="send-btn"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+  </div>
+</div>
+
+<!--
+  FLUJO: Acción COTIZAR detectada en respuesta de Claude
+  TABLA SUPABASE: cotizaciones
+  CAMPOS: numero, session_id, nombre, rut, direccion, producto, m2, instalacion, total, estado
+  NÚMERO COTIZACIÓN: COT-2026-XXXXX (últimos 5 dígitos de Date.now())
+  NOTIFICACIONES: Telegram chat_id=8605918152 + Gmail aromero.madrid@gmail.com
+  ENDPOINT: POST https://main-production-38ed.up.railway.app/webhook/chat-v2
+  RESPUESTA n8n: { message: string, quote: { numero, session_id, nombre, ... }, paymentLink: null }
+-->
+</body>
+</html>

@@ -1,0 +1,241 @@
+<mxfile host="app.diagrams.net" agent="Claude">
+  <diagram name="Flujo n8n Trato Hecho" id="trato-hecho-n8n">
+    <mxGraphModel dx="1030" dy="622" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;fontColor=#1a1a2e;" value="&lt;b style=&#39;font-size:16px;&#39;&gt;Flujo n8n — Trato Hecho&lt;/b&gt;&lt;br/&gt;Sistema de Cotización con Agente IA · DuocUC 2026" vertex="1">
+          <mxGeometry height="50" width="500" x="500" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="n1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=10;arcSize=20;" value="&lt;b&gt;B1 · Webhook Chat&lt;/b&gt;&lt;br/&gt;POST /chat · entrada al flujo" vertex="1">
+          <mxGeometry height="50" width="220" x="600" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;arcSize=20;" value="&lt;b&gt;B2 · Extraer input&lt;/b&gt;&lt;br/&gt;Normaliza uuid y message (Code JS)" vertex="1">
+          <mxGeometry height="50" width="220" x="600" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="&lt;b&gt;B3 · Obtener historial Redis&lt;/b&gt;&lt;br/&gt;GET hist_{uuid} · TTL 24h" vertex="1">
+          <mxGeometry height="50" width="220" x="600" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="&lt;b&gt;B4 · Obtener cotización Redis&lt;/b&gt;&lt;br/&gt;GET th:quote:{uuid} · TTL 10 días" vertex="1">
+          <mxGeometry height="50" width="220" x="600" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;arcSize=20;" value="&lt;b&gt;B5 · Construir prompt Claude&lt;/b&gt;&lt;br/&gt;Calcula total · detecta estado · system prompt" vertex="1">
+          <mxGeometry height="50" width="240" x="590" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6720c;fontColor=#7d3c00;fontSize=10;arcSize=20;" value="&lt;b&gt;B6 · Llamar Claude API&lt;/b&gt;&lt;br/&gt;POST api.anthropic.com · timeout 30s" vertex="1">
+          <mxGeometry height="50" width="220" x="600" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;arcSize=20;" value="&lt;b&gt;B7 · Parsear respuesta Claude&lt;/b&gt;&lt;br/&gt;Detecta [COTIZAR] o [PAGAR] con regex" vertex="1">
+          <mxGeometry height="50" width="220" x="600" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;arcSize=20;" value="&lt;b&gt;B8 · Preparar historial&lt;/b&gt;&lt;br/&gt;Agrega turno · límite 20 mensajes" vertex="1">
+          <mxGeometry height="50" width="220" x="600" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="&lt;b&gt;B9 · Guardar historial Redis&lt;/b&gt;&lt;br/&gt;SET hist_{uuid} · TTL 86400s" vertex="1">
+          <mxGeometry height="50" width="220" x="600" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=10;" value="&lt;b&gt;B10 · Switch acción&lt;/b&gt;&lt;br/&gt;COTIZAR / PAGAR / CHAT" vertex="1">
+          <mxGeometry height="80" width="200" x="610" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="n1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#555555;fontSize=9;" target="n2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="n2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#555555;fontSize=9;" target="n3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="n3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#555555;fontSize=9;" target="n4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="n4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#555555;fontSize=9;" target="n5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="n5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#555555;fontSize=9;" target="n6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="n6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#555555;fontSize=9;" target="n7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="n7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#555555;fontSize=9;" target="n8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="n8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#555555;fontSize=9;" target="n9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="n9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#555555;fontSize=9;" target="n10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_cot" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=11;fontColor=#6a3d9a;" value="&lt;b&gt;RAMA COTIZAR (B11–B17)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="25" width="220" x="130" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="&lt;b&gt;B11 · Incrementar contador&lt;/b&gt;&lt;br/&gt;INCR th:counter · sin TTL" vertex="1">
+          <mxGeometry height="50" width="220" x="130" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;arcSize=20;" value="&lt;b&gt;B12 · Crear cotización&lt;/b&gt;&lt;br/&gt;Genera COT-2026-XXX · objeto quote" vertex="1">
+          <mxGeometry height="50" width="220" x="130" y="1130" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="&lt;b&gt;B13 · Guardar cotización Redis&lt;/b&gt;&lt;br/&gt;SET th:quote:{uuid} · TTL 10 días" vertex="1">
+          <mxGeometry height="50" width="220" x="130" y="1220" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;arcSize=20;" value="&lt;b&gt;B14 · Respuesta cotización&lt;/b&gt;&lt;br/&gt;Empaqueta { message, quote, null }" vertex="1">
+          <mxGeometry height="50" width="220" x="130" y="1310" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;arcSize=20;" value="&lt;b&gt;B15 · Telegram — cotización&lt;/b&gt;&lt;br/&gt;Alerta al negocio · menos de 30s" vertex="1">
+          <mxGeometry height="50" width="220" x="130" y="1400" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#6b2120;fontSize=10;arcSize=20;" value="&lt;b&gt;B16 · Gmail — cotización&lt;/b&gt;&lt;br/&gt;HTML · número · m2 · total CLP" vertex="1">
+          <mxGeometry height="50" width="220" x="130" y="1490" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="&lt;b&gt;B17 · Responder webhook&lt;/b&gt;&lt;br/&gt;HTTP 200 JSON al frontend" vertex="1">
+          <mxGeometry height="50" width="220" x="130" y="1580" as="geometry" />
+        </mxCell>
+        <mxCell id="ec1" edge="1" parent="1" source="c1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6a3d9a;" target="c2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6a3d9a;" target="c3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec3" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6a3d9a;" target="c4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec4" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6a3d9a;" target="c5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec5" edge="1" parent="1" source="c5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6a3d9a;" target="c6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec6" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6a3d9a;" target="c7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="es_cot" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6a3d9a;fontStyle=1;fontSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="c1" value="&lt;b&gt;COTIZAR&lt;/b&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="610" y="940" />
+              <mxPoint x="240" y="940" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hdr_pag" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=11;fontColor=#d6720c;" value="&lt;b&gt;RAMA PAGAR (B18–B21)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="25" width="240" x="590" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="p0" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#7d5b00;fontSize=10;" value="&lt;b&gt;B18 · If — monto válido&lt;/b&gt;&lt;br/&gt;monto &gt; 0 ?" vertex="1">
+          <mxGeometry height="70" width="200" x="610" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="p_err" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#6b2120;fontSize=10;arcSize=20;" value="&lt;b&gt;B23 · Sin cotización&lt;/b&gt;&lt;br/&gt;Monto inválido · mensaje de error" vertex="1">
+          <mxGeometry height="50" width="220" x="880" y="1050" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6720c;fontColor=#7d3c00;fontSize=10;arcSize=20;" value="&lt;b&gt;B19 · Llamar MercadoPago&lt;/b&gt;&lt;br/&gt;POST checkout/preferences · init_point" vertex="1">
+          <mxGeometry height="50" width="220" x="610" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;arcSize=20;" value="&lt;b&gt;B20 · Respuesta pago&lt;/b&gt;&lt;br/&gt;Empaqueta paymentLink para frontend" vertex="1">
+          <mxGeometry height="50" width="220" x="610" y="1240" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;arcSize=20;" value="&lt;b&gt;B21a · Telegram — pago&lt;/b&gt;&lt;br/&gt;Número · monto · link de pago" vertex="1">
+          <mxGeometry height="50" width="220" x="610" y="1330" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#6b2120;fontSize=10;arcSize=20;" value="&lt;b&gt;B21b · Gmail — pago&lt;/b&gt;&lt;br/&gt;HTML · detalle transacción completa" vertex="1">
+          <mxGeometry height="50" width="220" x="610" y="1420" as="geometry" />
+        </mxCell>
+        <mxCell id="ep0" edge="1" parent="1" source="p0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#d6720c;fontSize=9;fontStyle=1;" target="p1" value="TRUE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ep_err" edge="1" parent="1" source="p0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#b85450;fontSize=9;fontStyle=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="p_err" value="FALSE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ep1" edge="1" parent="1" source="p1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#d6720c;" target="p2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ep2" edge="1" parent="1" source="p2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#d6720c;" target="p3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ep3" edge="1" parent="1" source="p3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#d6720c;" target="p4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="es_pag" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#d6720c;fontStyle=1;fontSize=10;" target="p0" value="&lt;b&gt;PAGAR&lt;/b&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_cha" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=11;fontColor=#555555;" value="&lt;b&gt;RAMA CHAT (B22)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="25" width="200" x="1060" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="ch1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=10;arcSize=20;" value="&lt;b&gt;B22 · Respuesta simple&lt;/b&gt;&lt;br/&gt;cleanText conversacional · sin acción" vertex="1">
+          <mxGeometry height="50" width="200" x="1110" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="es_cha" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#555555;fontStyle=1;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ch1" value="&lt;b&gt;CHAT&lt;/b&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1210" y="940" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fin" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="&lt;b&gt;Responder webhook — todas las ramas&lt;/b&gt;&lt;br/&gt;HTTP 200 · { message, quote, paymentLink }" vertex="1">
+          <mxGeometry height="50" width="300" x="560" y="1650" as="geometry" />
+        </mxCell>
+        <mxCell id="ef_c7" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#297520;" target="fin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="1675" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ef_p4" edge="1" parent="1" source="p4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#297520;" target="fin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="720" y="1580" />
+              <mxPoint x="720" y="1580" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ef_ch1" edge="1" parent="1" source="ch1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#297520;" target="fin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1210" y="1675" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ef_err" edge="1" parent="1" source="p_err" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#297520;" target="fin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="970" y="1520" />
+              <mxPoint x="770" y="1520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=11;" value="&lt;b&gt;Leyenda — tipos de nodo&lt;/b&gt;" vertex="1">
+          <mxGeometry height="25" width="200" x="1320" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8def8;strokeColor=#6a3d9a;fontColor=#3d1a6e;fontSize=10;arcSize=20;" value="Code JS · lógica de negocio" vertex="1">
+          <mxGeometry height="36" width="200" x="1320" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="Redis · persistencia caché" vertex="1">
+          <mxGeometry height="36" width="200" x="1320" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6720c;fontColor=#7d3c00;fontSize=10;arcSize=20;" value="HTTP · llamadas API externas" vertex="1">
+          <mxGeometry height="36" width="200" x="1320" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#1469b5;fontColor=#083d7a;fontSize=10;arcSize=20;" value="Telegram · notificaciones" vertex="1">
+          <mxGeometry height="36" width="200" x="1320" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="leg5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#6b2120;fontSize=10;arcSize=20;" value="Gmail · correo electrónico" vertex="1">
+          <mxGeometry height="36" width="200" x="1320" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="leg6" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#7d5b00;fontSize=10;" value="If / Switch · decisión" vertex="1">
+          <mxGeometry height="50" width="200" x="1320" y="345" as="geometry" />
+        </mxCell>
+        <mxCell id="leg7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=10;arcSize=20;" value="Infraestructura (Webhook / Respond)" vertex="1">
+          <mxGeometry height="36" width="200" x="1320" y="405" as="geometry" />
+        </mxCell>
+        <mxCell id="r_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=11;" value="&lt;b&gt;Claves Redis del sistema&lt;/b&gt;" vertex="1">
+          <mxGeometry height="25" width="240" x="1320" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="&lt;b&gt;hist_{uuid}&lt;/b&gt; · Historial conv. · TTL 24h" vertex="1">
+          <mxGeometry height="36" width="240" x="1320" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="&lt;b&gt;th:quote:{uuid}&lt;/b&gt; · Cotización activa · TTL 10d" vertex="1">
+          <mxGeometry height="36" width="240" x="1320" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="r3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#297520;fontColor=#1a4d10;fontSize=10;arcSize=20;" value="&lt;b&gt;th:counter&lt;/b&gt; · Contador global · Sin TTL" vertex="1">
+          <mxGeometry height="36" width="240" x="1320" y="590" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

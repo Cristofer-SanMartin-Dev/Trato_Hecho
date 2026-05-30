@@ -1,0 +1,303 @@
+const extract = $('Extraer Input').first().json;
+const { uuid, message, bodyHistory } = extract;
+
+// ── 1. HISTORIAL ──────────────────────────────────────────────────────────────
+let history = [];
+try {
+  const raw = $('GET Historial Supabase').first()?.json;
+  if (Array.isArray(raw) && raw.length > 0 && Array.isArray(raw[0].messages)) {
+    history = raw[0].messages;
+  } else if (raw && Array.isArray(raw.messages)) {
+    history = raw.messages;
+  }
+} catch(e) {}
+if (!Array.isArray(history) || history.length === 0) {
+  if (Array.isArray(bodyHistory) && bodyHistory.length > 0) history = bodyHistory;
+}
+history = history.filter(m => m && m.content);
+
+// ── 2. COTIZACIÓN EXISTENTE ───────────────────────────────────────────────────
+let quoteContext = '';
+try {
+  const raw = $('GET Cotización Supabase').first()?.json;
+  const q = Array.isArray(raw) && raw.length > 0 ? raw[0]
+            : (raw && raw.numero ? raw : null);
+  if (q) {
+    quoteContext = '\n\nCOTIZACIÓN EXISTENTE #' + q.numero
+      + ': ' + q.producto
+      + ', ' + q.m2 + ' m²'
+      + ', instalacion=' + (q.instalacion ? 'SI' : 'NO')
+      + ', total=$' + Number(q.total).toLocaleString('es-CL')
+      + '. Estado: ' + q.estado + '.';
+  }
+} catch(e) {}
+
+// ── 3. ANÁLISIS DEL HISTORIAL ─────────────────────────────────────────────────
+
+// Estado según último mensaje del asistente
+const lastAssistant = [...history].reverse().find(m => m.role === 'assistant');
+const lastAsstMsg = lastAssistant ? lastAssistant.content.toLowerCase() : '';
+
+const estadoPidiendoNombre      = /nombre completo|tu nombre|cómo te llamas|cuál es tu nombre/.test(lastAsstMsg);
+const estadoPidiendoRut         = /\brut\b/.test(lastAsstMsg) && !/direcci/.test(lastAsstMsg);
+const estadoPidiendoDireccion   = /direcci/.test(lastAsstMsg);
+const estadoEnDatos             = estadoPidiendoNombre || estadoPidiendoRut || estadoPidiendoDireccion;
+const estadoPidiendoInstalacion = /instalaci/i.test(lastAsstMsg) && /\?\s*$|si o no|responde si/i.test(lastAsstMsg);
+
+// Texto completo del historial + mensaje actual (para detección de keywords)
+const historialTexto = history.map(m => m.content).join(' ').toLowerCase() + ' ' + message.toLowerCase();
+
+// ── Detección de tipo de producto ─────────────────────────────────────────────
+const PRODUCTOS = {
+  'Luxury Emerald (40mm)':    { keywords: ['luxury', 'emerald', '40mm'], precio: 28500 },
+  'Soft Touch (30mm)':        { keywords: ['soft touch', '30mm', 'suave', 'residencial'], precio: 22900 },
+  'Pet-Friendly Turf (35mm)': { keywords: ['pet', 'friendly', '35mm', 'mascota', 'perro', 'gato'], precio: 26000 },
+};
+
+let productoNombre = null;
+let precioPorM2 = 0;
+let tipoCancha = '';
+
+// Detectar si es deportivo y qué deporte específico
+const esDeportivo = /deportivo|fútbol|futbol|tenis|pádel|padel|cancha/.test(historialTexto);
+if (esDeportivo) {
+  if (/fútbol 7|futbol 7/.test(historialTexto))         { tipoCancha = 'Fútbol 7';  productoNombre = 'Pasto Deportivo Fútbol 7'; }
+  else if (/fútbol 11|futbol 11/.test(historialTexto))  { tipoCancha = 'Fútbol 11'; productoNombre = 'Pasto Deportivo Fútbol 11'; }
+  else if (/fútbol|futbol/.test(historialTexto))        { tipoCancha = 'Fútbol';    productoNombre = 'Pasto Deportivo Fútbol'; }
+  else if (/tenis/.test(historialTexto))                { tipoCancha = 'Tenis';     productoNombre = 'Pasto Tenis & Pádel'; }
+  else if (/pádel|padel/.test(historialTexto))          { tipoCancha = 'Pádel';     productoNombre = 'Pasto Tenis & Pádel'; }
+  // precioPorM2 = 0 para deportivos (precio a cotizar)
+} else {
+  for (const [nombre, info] of Object.entries(PRODUCTOS)) {
+    if (info.keywords.some(k => historialTexto.includes(k))) {
+      productoNombre = nombre;
+      precioPorM2 = info.precio;
+      break;
+    }
+  }
+}
+
+// ── Detección de m² ───────────────────────────────────────────────────────────
+// Desactivada durante captura de nombre/RUT/dirección
+let m2Final = 0;
+if (!estadoEnDatos) {
+  // Formato "5x8", "5 por 8", "5 * 8"
+  const regexDim = /(\d+(?:[.,]\d+)?)\s*(?:x|×|por|\*)\s*(\d+(?:[.,]\d+)?)/i;
+  const matchDim = message.match(regexDim);
+  if (matchDim) {
+    m2Final = parseFloat(matchDim[1].replace(',', '.')) * parseFloat(matchDim[2].replace(',', '.'));
+  }
+  // Número solo o con unidad
+  if (!m2Final) {
+    const matchM2 = message.trim().match(/^(\d+(?:[.,]\d+)?)\s*(?:m2|m²|mt2|mt|mts|metros?)?\s*$/i);
+    if (matchM2) m2Final = parseFloat(matchM2[1].replace(',', '.'));
+  }
+}
+// Buscar m² en historial si no se encontró en el mensaje actual
+if (!m2Final) {
+  for (const turn of [...history].reverse()) {
+    if (turn.role !== 'user') continue;
+    const dimM = turn.content.match(/(\d+(?:[.,]\d+)?)\s*(?:x|×|por|\*)\s*(\d+(?:[.,]\d+)?)/i);
+    if (dimM) { m2Final = parseFloat(dimM[1].replace(',', '.')) * parseFloat(dimM[2].replace(',', '.')); break; }
+    const m2M = turn.content.trim().match(/^(\d+(?:[.,]\d+)?)\s*(?:m2|m²|mt2|mt|mts|metros?)?\s*$/i);
+    if (m2M) { m2Final = parseFloat(m2M[1].replace(',', '.')); break; }
+  }
+}
+
+// ── Detección de instalación ──────────────────────────────────────────────────
+let instalacionDefinida = null;
+for (let i = history.length - 1; i >= 0; i--) {
+  const m = history[i];
+  if (m.role === 'assistant' && /instalaci/i.test(m.content) && /\?\s*$|si o no|responde si/i.test(m.content.toLowerCase())) {
+    if (i + 1 < history.length && history[i + 1].role === 'user') {
+      const resp = history[i + 1].content.toLowerCase().trim();
+      if (/^s[ií]\b|con instalaci|quiero instalaci|necesito instalaci/.test(resp)) instalacionDefinida = true;
+      else if (/^no\b|sin instalaci|no quiero|no necesito/.test(resp)) instalacionDefinida = false;
+    }
+    break;
+  }
+}
+// Verificar mensaje actual como respuesta a pregunta de instalación
+if (instalacionDefinida === null && estadoPidiendoInstalacion) {
+  const resp = message.toLowerCase().trim();
+  if (/^s[ií]\b|con instalaci|quiero instalaci|necesito instalaci/.test(resp)) instalacionDefinida = true;
+  else if (/^no\b|sin instalaci|no quiero|no necesito/.test(resp)) instalacionDefinida = false;
+}
+
+// ── Captura de datos del cliente desde historial ──────────────────────────────
+let nombreCapturado = '';
+let rutCapturado = '';
+let direccionCapturada = '';
+for (let i = 0; i < history.length - 1; i++) {
+  const aMsg = history[i];
+  const uMsg = history[i + 1];
+  if (aMsg.role !== 'assistant' || uMsg.role !== 'user') continue;
+  const aLow = aMsg.content.toLowerCase();
+  if (!nombreCapturado && /nombre completo|tu nombre|cómo te llamas|cuál es tu nombre/.test(aLow)) nombreCapturado = uMsg.content.trim();
+  if (!rutCapturado && /\brut\b/.test(aLow) && !/direcci/.test(aLow)) rutCapturado = uMsg.content.trim();
+  if (!direccionCapturada && /direcci/.test(aLow)) direccionCapturada = uMsg.content.trim();
+}
+
+// ── Cálculo determinístico del total (server-side) ────────────────────────────
+let m2Margen = 0, subtotalPasto = 0, subtotalInst = 0, totalFinal = 0;
+if (m2Final > 0) {
+  m2Margen      = Math.ceil(m2Final * 1.10);
+  subtotalPasto = m2Margen * precioPorM2;           // 0 para deportivos
+  subtotalInst  = (instalacionDefinida === true && precioPorM2 > 0) ? m2Margen * 4500 : 0;
+  totalFinal    = subtotalPasto + subtotalInst;
+}
+
+// ── 4. INSTRUCCIÓN CRÍTICA ─────────────────────────────────────────────────────
+let instruccionInmediata = '';
+const msgLow = message.toLowerCase().trim();
+
+// Detectar si ya se informó el total o se pidió COTIZAR (para no repetir)
+const yaSeInformoTotal = history.some(m =>
+  m.role === 'assistant' && /escribe cotizar|escribe "cotizar"/i.test(m.content)
+);
+// Detectar si ya se preguntó el deporte específico
+const yaSePreguntoDeporte = history.some(m =>
+  m.role === 'assistant' && /fútbol 7|fútbol 11|tipo de cancha|qué tipo/i.test(m.content)
+);
+// Detectar si ya se preguntaron las dimensiones (deportivo)
+const yaSePreguntoMedidas = history.some(m =>
+  m.role === 'assistant' && /dimensiones|largo.*ancho|medidas.*cancha/i.test(m.content)
+);
+
+if (estadoPidiendoDireccion && !direccionCapturada && nombreCapturado && rutCapturado && message.trim().length >= 5) {
+  // → Usuario dio la dirección: emitir [COTIZAR:]
+  instruccionInmediata =
+    `INSTRUCCIÓN CRÍTICA — MÁXIMA PRIORIDAD. Emite ÚNICAMENTE esta línea, sin ningún texto antes ni después:\n` +
+    `[COTIZAR: nombre=${nombreCapturado}, rut=${rutCapturado}, direccion=${message.trim()}, m2=${m2Final}, tipo=${productoNombre || 'No especificado'}, instalacion=${instalacionDefinida ? 'SI' : 'NO'}, total=${totalFinal}]`;
+
+} else if (estadoPidiendoRut && !rutCapturado) {
+  // → Usuario dio el RUT: pedir dirección
+  instruccionInmediata =
+    `INSTRUCCIÓN CRÍTICA: El cliente acaba de entregar su RUT. Responde EXACTAMENTE:\n` +
+    `"Gracias. ¿Cuál es la dirección de instalación completa?"`;
+
+} else if (estadoPidiendoNombre && !nombreCapturado) {
+  // → Usuario dio el nombre: pedir RUT
+  instruccionInmediata =
+    `INSTRUCCIÓN CRÍTICA: El cliente acaba de dar su nombre. Responde EXACTAMENTE:\n` +
+    `"Gracias. ¿Cuál es tu RUT? (formato: 12.345.678-9)"`;
+
+} else if (/^cotizar$/.test(msgLow)) {
+  // → Cliente escribe COTIZAR: iniciar captura de datos
+  instruccionInmediata =
+    `INSTRUCCIÓN CRÍTICA: El cliente quiere cotizar. Responde EXACTAMENTE:\n` +
+    `"Perfecto. ¿Cuál es tu nombre completo?"`;
+
+// ── Flujo DEPORTIVO ───────────────────────────────────────────────────────────
+} else if (esDeportivo && tipoCancha && m2Final > 0 && !yaSeInformoTotal) {
+  // → Tiene deporte + m²: mostrar resumen y pedir COTIZAR
+  instruccionInmediata =
+    `INSTRUCCIÓN CRÍTICA: El cliente quiere ${tipoCancha}. Área confirmada: ${m2Final} m² (con margen técnico: ${m2Margen} m²).\n` +
+    `Responde con este resumen exacto:\n` +
+    `"Producto: ${productoNombre}\n` +
+    `Área: ${m2Final} m² → con margen técnico: ${m2Margen} m²\n` +
+    `Precio: a cotizar según especificaciones técnicas de la cancha.\n` +
+    `Escribe COTIZAR para generar tu cotización formal."`;
+
+} else if (esDeportivo && tipoCancha && !m2Final && !yaSePreguntoMedidas) {
+  // → Tiene deporte pero no m²: pedir dimensiones
+  instruccionInmediata =
+    `INSTRUCCIÓN CRÍTICA: El cliente quiere ${tipoCancha}. Responde EXACTAMENTE:\n` +
+    `"¿Cuáles son las dimensiones de la cancha? (largo × ancho en metros, ej: 50x40)"`;
+
+} else if (esDeportivo && tipoCancha && !m2Final && yaSePreguntoMedidas) {
+  // → Ya se preguntó medidas, cliente está respondiendo de forma no numérica
+  instruccionInmediata =
+    `INSTRUCCIÓN CRÍTICA: Estás esperando las dimensiones de la cancha de ${tipoCancha} en metros. ` +
+    `Si el cliente no sabe, dile que puede estimar con largo × ancho. No avances hasta tener las medidas.`;
+
+} else if (esDeportivo && !tipoCancha && !yaSePreguntoDeporte) {
+  // → Es deportivo pero no especificó el deporte: preguntar
+  instruccionInmediata =
+    `INSTRUCCIÓN CRÍTICA: El cliente quiere cancha deportiva. Responde EXACTAMENTE:\n` +
+    `"¿Qué tipo de cancha necesitas? Fútbol 7, Fútbol 11, Tenis o Pádel"`;
+
+// ── Flujo RESIDENCIAL ─────────────────────────────────────────────────────────
+} else if (productoNombre && m2Final > 0 && instalacionDefinida !== null && !yaSeInformoTotal) {
+  // → Tiene producto + m² + instalación: mostrar total y pedir COTIZAR
+  instruccionInmediata =
+    `INSTRUCCIÓN CRÍTICA: Muestra este resumen exacto y luego di "Escribe COTIZAR para tu cotización formal.":\n` +
+    `Producto: ${productoNombre} — $${precioPorM2.toLocaleString('es-CL')}/m²\n` +
+    `Superficie: ${m2Final} m² → con margen técnico: ${m2Margen} m²\n` +
+    `Subtotal pasto: ${m2Margen} × $${precioPorM2.toLocaleString('es-CL')} = $${subtotalPasto.toLocaleString('es-CL')}\n` +
+    (instalacionDefinida ? `Instalación: ${m2Margen} × $4.500 = $${subtotalInst.toLocaleString('es-CL')}\n` : `Instalación: no incluida\n`) +
+    `TOTAL: $${totalFinal.toLocaleString('es-CL')}`;
+
+} else if (productoNombre && m2Final > 0 && instalacionDefinida === null && !estadoPidiendoInstalacion) {
+  // → Tiene producto + m² pero no preguntó instalación: mostrar subtotal y preguntar
+  const m2M = Math.ceil(m2Final * 1.10);
+  const subP = m2M * precioPorM2;
+  instruccionInmediata =
+    `INSTRUCCIÓN CRÍTICA: Muestra el desglose y pregunta por instalación:\n` +
+    `Producto: ${productoNombre} — $${precioPorM2.toLocaleString('es-CL')}/m²\n` +
+    `Superficie: ${m2Final} m² → con margen técnico: ${m2M} m²\n` +
+    `Subtotal pasto: ${m2M} × $${precioPorM2.toLocaleString('es-CL')} = $${subP.toLocaleString('es-CL')}\n` +
+    `Luego pregunta EXACTAMENTE: "¿Necesita instalación? (+$4.500/m²) — responde SI o NO"`;
+}
+
+// ── 5. SYSTEM PROMPT ──────────────────────────────────────────────────────────
+const systemPrompt = `Eres Queno, vendedor virtual de Césped Sintético ARM en Melipilla, Chile.
+Tu objetivo es vender césped sintético, tomar medidas, calcular precios y generar cotizaciones formales.
+${instruccionInmediata ? '\n' + instruccionInmediata + '\n\nSI HAY UNA INSTRUCCIÓN CRÍTICA ARRIBA, SÍGUELA AL PIE DE LA LETRA. No hagas nada más que lo que indica.\n' : ''}${quoteContext}
+
+CATÁLOGO (precios CLP/m2, con IVA):
+- Luxury Emerald (40mm): $28.500/m2 — jardín o terraza premium
+- Soft Touch (30mm): $22.900/m2 — jardín residencial, suave al tacto
+- Pet-Friendly Turf (35mm): $26.000/m2 — jardines con mascotas, fibra antimicrobiana
+- Pasto Deportivo Fútbol: precio a cotizar — canchas fútbol 11 y fútbol 7
+- Pasto Tenis & Pádel: precio a cotizar — canchas tenis y pádel
+- Instalación opcional: +$4.500/m2 (solo productos residenciales)
+
+FLUJO DE VENTA (solo si NO hay instrucción crítica arriba):
+1. Sin producto → pregunta si es jardín/terraza o cancha deportiva
+2. Con producto residencial, sin m2 → pregunta cuántos m2 o dimensiones
+3. Con producto + m2 → muestra desglose y pregunta instalación (SI o NO)
+4. Con instalación definida → muestra total. Di: "Escribe COTIZAR para cotización formal"
+5. Producto deportivo sin deporte → pregunta: Fútbol 7, Fútbol 11, Tenis o Pádel
+6. Deporte elegido, sin m2 → pregunta dimensiones (largo × ancho en metros)
+7. Deporte + m2 → muestra resumen. Di: "Escribe COTIZAR para cotización formal"
+8. Cliente escribe COTIZAR → pide nombre completo
+9. Tras nombre → pide RUT (formato: 12.345.678-9)
+10. Tras RUT → pide dirección de instalación completa
+11. Tras dirección → emite solo: [COTIZAR: nombre=X, rut=X, direccion=X, m2=X, tipo=X, instalacion=SI/NO, total=X]
+
+INTERPRETACIÓN DE MEDIDAS:
+- Número solo (20) o con unidad (20m2) = m2 directamente
+- Dos números con x/por/* (50x40, 5 por 8) = largo × ancho → calcula m2
+- EXCEPCIÓN: en modo nombre/RUT/dirección, nunca interpretes texto como m2
+
+CUANDO EL CLIENTE NO SABE SUS MEDIDAS:
+- Explica brevemente cómo medir y agrega al final: [CALCULAR]
+
+SI HAY COTIZACIÓN EXISTENTE en el contexto:
+- Muéstrale los datos y ofrece proceder al pago: [PAGAR: numero=X, monto=X]
+
+REGLAS ESTRICTAS:
+- Máximo 4 líneas por respuesta. Solo 1 pregunta por mensaje.
+- NUNCA saludar con "Hola" si ya hay historial.
+- NUNCA reiniciar el flujo ni volver a preguntar algo ya respondido.
+- NUNCA pedir datos ya entregados en el historial.
+- NUNCA calcular precios para productos deportivos (precio a cotizar).
+- NUNCA agregar texto antes o después de [COTIZAR:] o [PAGAR:].
+- No interpretar RUT, nombre ni dirección como metros cuadrados.`;
+
+// ── 6. MENSAJES PARA CLAUDE ───────────────────────────────────────────────────
+const messages = [
+  ...history.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content })),
+  { role: 'user', content: message }
+];
+
+// ── 7. BODY PARA LA API ───────────────────────────────────────────────────────
+const claudeBody = JSON.stringify({
+  model: 'claude-sonnet-4-5',
+  max_tokens: 1024,
+  system: systemPrompt,
+  messages
+});
+
+return [{ json: { uuid, message, claudeBody, historyLength: history.length } }];
