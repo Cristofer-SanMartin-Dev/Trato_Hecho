@@ -8,8 +8,8 @@
 //   - Railway: https://tu-n8n.railway.app/webhook/chat-v2
 // =====================================================
 
-// URL LOCAL — Descomentar para desarrollo local con n8n corriendo en localhost
-// const WEBHOOK_URL = 'http://localhost:5678/webhook/chat-v2';
+// URL LOCAL — desarrollo local con n8n corriendo en localhost
+const WEBHOOK_URL = 'http://localhost:5678/webhook/chat-v2';
 
-// URL PRODUCCIÓN — Railway (activa)
-const WEBHOOK_URL = 'https://main-production-38ed.up.railway.app/webhook/chat-v2';
+// URL PRODUCCIÓN — Railway
+// const WEBHOOK_URL = 'https://main-production-38ed.up.railway.app/webhook/chat-v2';
