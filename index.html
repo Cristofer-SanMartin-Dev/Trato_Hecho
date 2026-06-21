@@ -1193,10 +1193,10 @@
                     const m = text.match(re);
                     return m ? m[1].trim() : '';
                 };
-                const cliente  = get('??');
-                const direccion = get('??');
-                const producto  = get('??');
-                const total     = get('??');
+                const cliente  = get('👤');
+                const direccion = get('📍');
+                const producto  = get('🌿');
+                const total     = get('💰');
 
                 // Detectar si ya está pagada
                 const isPagada = /PAGADA/i.test(text);
@@ -1208,27 +1208,27 @@
                 // Fila de total o estado pagado
                 const totalRow = isPagada
                     ? `<div style="background:rgba(255,255,255,0.18);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-                        <span style="font-size:22px;">??</span>
+                        <span style="font-size:22px;">✅</span>
                         <span style="font-size:13px;font-weight:700;">Tu pedido ya está pagado</span>
                       </div>`
                     : `<div style="background:rgba(255,255,255,0.18);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-                        <span style="opacity:.85;font-size:12px;">?? Total</span>
+                        <span style="opacity:.85;font-size:12px;">💰 Total</span>
                         <span style="font-size:18px;font-weight:700;">${total.replace('Total: ','').replace('Total:','').trim()}</span>
                       </div>`;
 
                 return `
                 <div style="background:linear-gradient(135deg,#1a4a2e 0%,#2c6e40 60%,#3a8a52 100%);border-radius:16px;padding:18px 20px;color:#fff;font-size:13px;box-shadow:0 4px 18px rgba(44,105,64,0.35);min-width:220px;">
                   <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-                    <span style="font-size:22px;">?</span>
+                    <span style="font-size:22px;">✅</span>
                     <div>
                       <div style="font-size:10px;opacity:0.75;text-transform:uppercase;letter-spacing:.06em;">Cotización generada</div>
                       <div style="font-size:16px;font-weight:700;letter-spacing:.04em;">${numero}</div>
                     </div>
                   </div>
                   <div style="background:rgba(255,255,255,0.12);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
-                    ${cliente  ? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>??</span><span style="opacity:.9;">${cliente}</span></div>`   : ''}
-                    ${producto ? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>??</span><span style="opacity:.9;">${producto}</span></div>` : ''}
-                    ${direccion? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>??</span><span style="opacity:.9;">${direccion}</span></div>` : ''}
+                    ${cliente  ? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>👤</span><span style="opacity:.9;">${cliente}</span></div>`   : ''}
+                    ${producto ? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>🌿</span><span style="opacity:.9;">${producto}</span></div>` : ''}
+                    ${direccion? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>📍</span><span style="opacity:.9;">${direccion}</span></div>` : ''}
                   </div>
                   ${totalRow}
                   ${isPagada ? '' : `<div style="opacity:.8;font-size:12px;text-align:center;border-top:1px solid rgba(255,255,255,0.15);padding-top:10px;">${footer}</div>`}
@@ -1245,7 +1245,7 @@
                     const url = payMatch[1].trim();
                     t = t.replace(payMatch[0], '').trim();
                     const safeUrl = url.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
-                    const btnHtml = `<div style="margin-top:14px;text-align:center;"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:13px 32px;background:#009ee3;color:#fff;font-size:15px;font-weight:700;border-radius:14px;text-decoration:none;box-shadow:0 3px 12px rgba(0,158,227,0.45);">?? Pagar con Mercado Pago</a></div>`;
+                    const btnHtml = `<div style="margin-top:14px;text-align:center;"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:13px 32px;background:#009ee3;color:#fff;font-size:15px;font-weight:700;border-radius:14px;text-decoration:none;box-shadow:0 3px 12px rgba(0,158,227,0.45);">💳 Pagar con Mercado Pago</a></div>`;
                     return t
                         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
                         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -1266,7 +1266,7 @@
                     // No mostrar botón PAGAR si la cotización ya está pagada
                     const isPagada = /PAGADA/i.test(t);
                     if (isPagada) return card;
-                    return card + `<div style="margin-top:10px;text-align:center;"><button onclick="window.sendQuickMsg('PAGAR')" style="padding:10px 28px;background:#fff;color:#1a4a2e;font-size:13px;font-weight:700;border:none;border-radius:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15);">?? PAGAR</button></div>`;
+                    return card + `<div style="margin-top:10px;text-align:center;"><button onclick="window.sendQuickMsg('PAGAR')" style="padding:10px 28px;background:#fff;color:#1a4a2e;font-size:13px;font-weight:700;border:none;border-radius:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15);">💳 PAGAR</button></div>`;
                 }
 
                 // -- 3. Texto plano
@@ -1286,7 +1286,7 @@
                 return `
                 <div id="${id}" style="background:linear-gradient(135deg,#1a4a2e 0%,#2c6e40 100%);border-radius:16px;padding:18px 20px;color:#fff;font-size:13px;box-shadow:0 4px 18px rgba(44,105,64,0.3);margin-top:8px;min-width:220px;">
                   <div style="font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
-                    <span style="font-size:20px;">??</span> Calculadora de metraje
+                    <span style="font-size:20px;">📐</span> Calculadora de metraje
                   </div>
                   <div style="display:flex;gap:10px;margin-bottom:12px;">
                     <div style="flex:1;">
