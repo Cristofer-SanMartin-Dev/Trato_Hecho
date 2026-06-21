@@ -515,17 +515,17 @@
     {
       "parameters": {
         "method": "GET",
-        "url": "={{ 'https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/historial?session_id=eq.' + $json.uuid + '&select=messages' }}",
+        "url": "={{ '[REDACTED-USE-ENV]/rest/v1/historial?session_id=eq.' + $json.uuid + '&select=messages' }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              "value": "[REDACTED-USE-ENV]"
             },
             {
               "name": "Authorization",
-              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              "value": "Bearer [REDACTED-USE-ENV]"
             }
           ]
         },
@@ -543,17 +543,17 @@
     {
       "parameters": {
         "method": "GET",
-        "url": "={{ 'https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/cotizaciones?session_id=eq.' + $('Extraer Input').first().json.uuid + '&order=created_at.desc&limit=1&select=*' }}",
+        "url": "={{ '[REDACTED-USE-ENV]/rest/v1/cotizaciones?session_id=eq.' + $('Extraer Input').first().json.uuid + '&order=created_at.desc&limit=1&select=*' }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              "value": "[REDACTED-USE-ENV]"
             },
             {
               "name": "Authorization",
-              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              "value": "Bearer [REDACTED-USE-ENV]"
             }
           ]
         },
@@ -571,17 +571,17 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/historial",
+        "url": "[REDACTED-USE-ENV]/rest/v1/historial",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              "value": "[REDACTED-USE-ENV]"
             },
             {
               "name": "Authorization",
-              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              "value": "Bearer [REDACTED-USE-ENV]"
             },
             {
               "name": "Content-Type",
@@ -610,17 +610,17 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://enpzxntzphvezopbxbtx.supabase.co/rest/v1/cotizaciones",
+        "url": "[REDACTED-USE-ENV]/rest/v1/cotizaciones",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              "value": "[REDACTED-USE-ENV]"
             },
             {
               "name": "Authorization",
-              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVucHp4bnR6cGh2ZXpvcGJ4YnR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTEzMDUsImV4cCI6MjA5MzI4NzMwNX0.kdT61HJFXFiDXPQUqwZivOmjDFJO3aoY7XETf_LoZQ4"
+              "value": "Bearer [REDACTED-USE-ENV]"
             },
             {
               "name": "Content-Type",
