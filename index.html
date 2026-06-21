@@ -1182,12 +1182,11 @@
             });
 
             function formatCotizacionCard(text) {
-                // Detecta: ? Cotización N° COT-XXXX-XXXXX generada.
                 const cotMatch = text.match(/COT-(\d{4}-\d+)/);
                 if (!cotMatch) return null;
                 const numero = 'COT-' + cotMatch[1];
 
-                // Extrae campos con regex sobre el texto plano
+                // Extrae campos con emoji del formato estructurado del workflow
                 const get = (emoji) => {
                     const re = new RegExp(emoji + '\\s*([^\\n]+)');
                     const m = text.match(re);
@@ -1196,14 +1195,16 @@
                 const cliente  = get('👤');
                 const direccion = get('📍');
                 const producto  = get('🌿');
-                const total     = get('💰');
+                let   total     = get('💰');
+
+                // Fallback: extraer monto de texto natural ("$6.783.000", "$ 6.783.000", etc.)
+                if (!total) {
+                    const m = text.match(/\$\s?[\d\.,]+/);
+                    if (m) total = m[0].replace(/\s/, '');
+                }
 
                 // Detectar si ya está pagada
                 const isPagada = /PAGADA/i.test(text);
-
-                // última línea = instrucción de pago
-                const lines = text.split('\n').filter(l => l.trim());
-                const footer = lines[lines.length - 1] || 'Escribe PAGAR para continuar con el pago.';
 
                 // Fila de total o estado pagado
                 const totalRow = isPagada
@@ -1213,25 +1214,22 @@
                       </div>`
                     : `<div style="background:rgba(255,255,255,0.18);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
                         <span style="opacity:.85;font-size:12px;">💰 Total</span>
-                        <span style="font-size:18px;font-weight:700;">${total.replace('Total: ','').replace('Total:','').trim()}</span>
+                        <span style="font-size:18px;font-weight:700;">${total.replace(/^Total:\s*/,'').trim()}</span>
                       </div>`;
 
                 return `
                 <div style="background:linear-gradient(135deg,#1a4a2e 0%,#2c6e40 60%,#3a8a52 100%);border-radius:16px;padding:18px 20px;color:#fff;font-size:13px;box-shadow:0 4px 18px rgba(44,105,64,0.35);min-width:220px;">
                   <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
                     <span style="font-size:22px;">✅</span>
-                    <div>
-                      <div style="font-size:10px;opacity:0.75;text-transform:uppercase;letter-spacing:.06em;">Cotización generada</div>
-                      <div style="font-size:16px;font-weight:700;letter-spacing:.04em;">${numero}</div>
-                    </div>
+                    <div style="font-size:10px;opacity:0.75;text-transform:uppercase;letter-spacing:.06em;">Cotización generada</div>
                   </div>
                   <div style="background:rgba(255,255,255,0.12);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+                    <div style="font-size:15px;font-weight:700;letter-spacing:.03em;">${numero}</div>
                     ${cliente  ? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>👤</span><span style="opacity:.9;">${cliente}</span></div>`   : ''}
                     ${producto ? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>🌿</span><span style="opacity:.9;">${producto}</span></div>` : ''}
                     ${direccion? `<div style="display:flex;gap:8px;align-items:flex-start;"><span>📍</span><span style="opacity:.9;">${direccion}</span></div>` : ''}
                   </div>
                   ${totalRow}
-                  ${isPagada ? '' : `<div style="opacity:.8;font-size:12px;text-align:center;border-top:1px solid rgba(255,255,255,0.15);padding-top:10px;">${footer}</div>`}
                 </div>`;
             }
 
