@@ -1,3 +1,13 @@
+// Sanitiza texto del usuario/LLM antes de insertarlo como HTML
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const chatbotButton = document.getElementById('chatbot-button');
     const chatbotWindow = document.getElementById('chatbot-window');
@@ -12,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let sessionId = sessionStorage.getItem('chatSessionId');
     if (!sessionId) {
         // If no session ID exists, check localStorage as fallback or create new
-        sessionId = localStorage.getItem('chatSessionId') || "sess_" + Math.random().toString(36).substr(2, 9);
+        sessionId = localStorage.getItem('chatSessionId') || "sess_" + crypto.randomUUID();
         sessionStorage.setItem('chatSessionId', sessionId);
         localStorage.setItem('chatSessionId', sessionId);
     }
@@ -109,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!message) return;
 
         chatInput.disabled = true;
-        addMessage(message, true);
+        addMessage(escapeHtml(message), true);
         chatInput.value = '';
         const loaderId = addLoader();
 
@@ -182,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 wzpBtn = `<br><a href="https://wa.me/${phone.replace('+','')}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:10px;padding:10px 22px;background:#25d366;color:#fff;font-size:13px;font-weight:700;border-radius:14px;text-decoration:none;box-shadow:0 2px 8px rgba(37,211,102,0.35);">💬 Hablar con un asesor</a>`;
             }
 
-            addMessage(botReply + calcularBtn + pagoBtn + pagarQuickBtn + wzpBtn, false);
+            addMessage(escapeHtml(botReply) + calcularBtn + pagoBtn + pagarQuickBtn + wzpBtn, false);
 
             // Guardar historial estructurado para enviar a n8n en el próximo mensaje
             try {

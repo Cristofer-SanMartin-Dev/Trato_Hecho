@@ -1,0 +1,29 @@
+{
+  "name": "trato-hecho-tests",
+  "version": "1.0.0",
+  "description": "Suite de pruebas para Trato Hecho - Césped Sintético ARM",
+  "scripts": {
+    "test": "jest --runInBand --forceExit",
+    "test:unit": "jest tests/unit       --runInBand --forceExit",
+    "test:integration": "jest tests/integration --runInBand --forceExit",
+    "test:functional": "jest tests/functional  --runInBand --forceExit",
+    "test:security": "jest tests/security    --runInBand --forceExit",
+    "test:performance": "node tests/performance/loadTest.js",
+    "test:all": "npm test && npm run test:performance",
+    "test:coverage": "jest --coverage --runInBand --forceExit"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 30000,
+    "testPathPattern": "tests/(unit|integration|functional|security)/.*\\.test\\.js$",
+    "collectCoverageFrom": [
+      "../chatbot.js",
+      "../config.js",
+      "../server.js"
+    ],
+    "verbose": true
+  }
+}

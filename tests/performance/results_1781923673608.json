@@ -1,0 +1,66 @@
+{
+  "timestamp": "2026-06-20T02:47:53.608Z",
+  "webhook": "http://localhost:5678/webhook/chat-v2",
+  "report": [
+    {
+      "scenario": "Calentamiento",
+      "stats": {
+        "total": 3,
+        "ok": 3,
+        "errRate": "0.0",
+        "avg": 1792,
+        "min": 608,
+        "p50": 987,
+        "p90": 3780,
+        "p99": 3780,
+        "max": 3780
+      },
+      "passed": true
+    },
+    {
+      "scenario": "Carga baja",
+      "stats": {
+        "total": 6,
+        "ok": 6,
+        "errRate": "0.0",
+        "avg": 761,
+        "min": 660,
+        "p50": 784,
+        "p90": 940,
+        "p99": 940,
+        "max": 940
+      },
+      "passed": true
+    },
+    {
+      "scenario": "Carga media",
+      "stats": {
+        "total": 15,
+        "ok": 15,
+        "errRate": "0.0",
+        "avg": 2762,
+        "min": 1271,
+        "p50": 2754,
+        "p90": 4620,
+        "p99": 4930,
+        "max": 4930
+      },
+      "passed": true
+    },
+    {
+      "scenario": "Carga alta",
+      "stats": {
+        "total": 20,
+        "ok": 20,
+        "errRate": "0.0",
+        "avg": 2794,
+        "min": 1852,
+        "p50": 3140,
+        "p90": 3775,
+        "p99": 4007,
+        "max": 4007
+      },
+      "passed": true
+    }
+  ]
+}
