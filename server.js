@@ -3,6 +3,7 @@ const fs   = require('fs');
 const path = require('path');
 
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
 const ROOT = __dirname;
 
 const MIME = {
@@ -46,6 +47,6 @@ http.createServer((req, res) => {
     res.writeHead(200);
     fs.createReadStream(filePath).pipe(res);
 
-}).listen(PORT, '127.0.0.1', () => {
-    console.log('Frontend corriendo en http://localhost:' + PORT);
+}).listen(PORT, HOST, () => {
+    console.log('Frontend corriendo en http://' + HOST + ':' + PORT);
 });

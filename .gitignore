@@ -4,3 +4,13 @@ __pycache__/
 .env
 node_modules/
 *.log
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/*.tfvars
+terraform/.terraform.lock.hcl
+terraform/crash.log
+terraform/tfplan
+*.pem
