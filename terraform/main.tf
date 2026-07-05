@@ -105,8 +105,11 @@ resource "aws_instance" "app" {
   }
 
   user_data = templatefile("${path.module}/user_data.sh.tpl", {
-    webhook_host = aws_eip.app.public_ip
-    repo_url     = var.repo_url
+    webhook_host              = aws_eip.app.public_ip
+    repo_url                  = var.repo_url
+    supabase_url              = var.supabase_url
+    supabase_key              = var.supabase_key
+    mercadopago_access_token  = var.mercadopago_access_token
   })
 
   tags = {

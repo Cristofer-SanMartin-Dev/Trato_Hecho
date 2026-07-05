@@ -51,3 +51,23 @@ variable "project_name" {
   type        = string
   default     = "trato-hecho"
 }
+
+# ── Secretos: NO tienen default. Se pasan vía terraform.tfvars ──
+# (terraform.tfvars está en .gitignore, nunca se sube al repo)
+variable "supabase_url" {
+  description = "URL del proyecto Supabase"
+  type        = string
+  sensitive   = true
+}
+
+variable "supabase_key" {
+  description = "API key (anon) de Supabase"
+  type        = string
+  sensitive   = true
+}
+
+variable "mercadopago_access_token" {
+  description = "Access token de MercadoPago (TEST- o APP_USR-)"
+  type        = string
+  sensitive   = true
+}
