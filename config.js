@@ -9,7 +9,10 @@
 // =====================================================
 
 // URL LOCAL â€” Descomentar para desarrollo local con n8n corriendo en localhost
-const WEBHOOK_URL = 'http://localhost:5678/webhook/chat-v2';
+// const WEBHOOK_URL = 'http://localhost:5678/webhook/chat-v2';
 
-// URL PRODUCCIÃ“N â€” Railway (activa)
+// URL EC2 (AWS Academy) â€” activa
+const WEBHOOK_URL = 'http://34.195.161.246:5678/webhook/chat-v2';
+
+// URL PRODUCCIÃ“N â€” Railway
 // const WEBHOOK_URL = 'https://main-production-38ed.up.railway.app/webhook/chat-v2';
