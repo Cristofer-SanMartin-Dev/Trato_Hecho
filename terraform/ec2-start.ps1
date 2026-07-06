@@ -51,11 +51,17 @@ if ($ready) {
     Write-Host "n8n todavia no responde despues de esperar. Puede necesitar mas tiempo, o revisar por SSH." -ForegroundColor Yellow
 }
 
+$niphost = "$publicIp.nip.io"
+
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host " Frontend:  http://$publicIp`:3000"
 Write-Host " n8n:       http://$publicIp`:5678"
 Write-Host " Webhook:   http://$publicIp`:5678/webhook/chat-v2"
+Write-Host "------------------------------------------" -ForegroundColor DarkGray
+Write-Host " Para Gmail/OAuth usa SIEMPRE este host (es" -ForegroundColor DarkGray
+Write-Host " el que quedo registrado en Google Cloud):" -ForegroundColor DarkGray
+Write-Host " n8n (OAuth): http://$niphost`:5678" -ForegroundColor Yellow
 Write-Host "==========================================" -ForegroundColor Cyan
 
 Pop-Location
