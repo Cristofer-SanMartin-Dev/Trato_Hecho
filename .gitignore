@@ -14,3 +14,7 @@ terraform/.terraform.lock.hcl
 terraform/crash.log
 terraform/tfplan
 *.pem
+
+# Editor / tooling config
+.claude/
+.vscode/settings.json
